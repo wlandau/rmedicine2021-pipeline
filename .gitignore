@@ -3,3 +3,5 @@
 .RData
 .Ruserdata
 model
+_targets.R
+_targets_r
