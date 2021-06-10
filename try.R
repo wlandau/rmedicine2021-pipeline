@@ -38,5 +38,6 @@ library(CholWishart)
 data <- simulate_data()
 model <- cmdstan_model("model.stan")
 fit <- model$sample(
-  data = data
+  data = data,
+  init = 1
 )
