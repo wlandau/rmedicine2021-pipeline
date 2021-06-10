@@ -4,7 +4,7 @@ simulate_data <- function(n_patients = 500, n_visits = 4, n_arms = 2) {
     mutate(covariate1 = rnorm(n()), covariate2 = rnorm(n())) %>%
     expand_grid(visit = as.character(seq_len(n_visits))) %>%
     mutate(group = paste0(arm, visit))
-  x <- model.matrix(~ 0 + covariate1 + covariate2 + group, data = structure) %>%
+  x <- model.matrix(~ covariate1 + covariate2 + group, data = structure) %>%
     as.matrix()
   beta <- rnorm(ncol(x), 10)
   covariance <- NULL
