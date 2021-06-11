@@ -165,8 +165,8 @@ tar_stan_mcmc_rep_summary(
   name = mcmc,
   stan_files = "model.stan",
   data = simulate_data(), # Runs once per rep.
-  batches = 2, # Number of branch targets.
-  reps = 1, # Number of model reps per branch target.
+  batches = 100, # Number of branch targets.
+  reps = 10, # Number of model reps per branch target.
   chains = 4, # Number of MCMC chains.
   parallel_chains = 4, # How many MCMC chains to run in parallel.
   iter_warmup = 100, # Number of MCMC warmup iterations to run.
@@ -214,7 +214,8 @@ tar_visnetwork()
 Because there are so many simulations to run, the pipeline could take a long time. Below, we use the `tar_make_clustermq()` to run different targets in parallel across multiple workers on an SGE cluster. If there are any outdated targets according to the graph above, it is recommended to run this report in a non-interactive background process (e.g. via the included shell script `run.sh`) rather than clicking the "Knit" button in the RStudio IDE. While the pipeline is running, you may wish to monitor the cluster workers with `qstat` and monitor the progress of targets using `tar_watch()` and/or `tar_poll()`.
 
 ```{r pipeline}
-tar_make()
+unlink("logs", recursive = TRUE)
+tar_make_clustermq(workers = 100)
 ```
 
 # Results
