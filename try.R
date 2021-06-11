@@ -28,6 +28,8 @@ simulate_data <- function(n_patients = 500, n_visits = 4, n_arms = 2) {
     n_observations = n_patients * n_visits,
     n_patients = n_patients,
     n_visits = n_visits,
+    s_beta = 10,
+    s_sigma = 5,
     .join_data = list(
       beta = beta,
       sigma = sigma,
