@@ -206,9 +206,10 @@ tar_visnetwork()
 
 ## Run the pipeline
 
-Because there are so many simulations to run, the pipeline could take a long time. Below, we use the `tar_make_clustermq()` to run different targets in parallel across multiple workers on an SGE cluster. If there are any outdated targets according to the graph above, it is recommended to run this report in a non-interactive background process (e.g. via the included shell script `run.sh`) rather than clicking the "Knit" button in the RStudio IDE.
+Because there are so many simulations to run, the pipeline could take a long time. Below, we use the `tar_make_clustermq()` to run different targets in parallel across multiple workers on an SGE cluster. If there are any outdated targets according to the graph above, it is recommended to run this report in a non-interactive background process (e.g. via the included shell script `run.sh`) rather than clicking the "Knit" button in the RStudio IDE. While the pipeline is running, you may wish to monitor the cluster workers with `qstat` and monitor the progress of targets using `tar_watch()` and/or `tar_poll()`.
 
 ```{r}
+unlink("logs", recursive = TRUE)
 tar_make_clustermq(workers = 100)
 ```
 
