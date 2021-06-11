@@ -14,19 +14,6 @@
 
 <title>Target Markdown and stantargets for Bayesian model validation pipelines</title>
 
-<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
-// be compatible with the behavior of Pandoc < 2.8).
-document.addEventListener('DOMContentLoaded', function(e) {
-  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
-  var i, h, a;
-  for (i = 0; i < hs.length; i++) {
-    h = hs[i];
-    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
-    a = h.attributes;
-    while (a.length > 0) h.removeAttribute(a[0].name);
-  }
-});
-</script>
 <script>/*! jQuery v1.11.3 | (c) 2005, 2015 jQuery Foundation, Inc. | jquery.org/license */
 !function(a,b){"object"==typeof module&&"object"==typeof module.exports?module.exports=a.document?b(a,!0):function(a){if(!a.document)throw new Error("jQuery requires a window with a document");return b(a)}:b(a)}("undefined"!=typeof window?window:this,function(a,b){var c=[],d=c.slice,e=c.concat,f=c.push,g=c.indexOf,h={},i=h.toString,j=h.hasOwnProperty,k={},l="1.11.3",m=function(a,b){return new m.fn.init(a,b)},n=/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g,o=/^-ms-/,p=/-([\da-z])/gi,q=function(a,b){return b.toUpperCase()};m.fn=m.prototype={jquery:l,constructor:m,selector:"",length:0,toArray:function(){return d.call(this)},get:function(a){return null!=a?0>a?this[a+this.length]:this[a]:d.call(this)},pushStack:function(a){var b=m.merge(this.constructor(),a);return b.prevObject=this,b.context=this.context,b},each:function(a,b){return m.each(this,a,b)},map:function(a){return this.pushStack(m.map(this,function(b,c){return a.call(b,c,b)}))},slice:function(){return this.pushStack(d.apply(this,arguments))},first:function(){return this.eq(0)},last:function(){return this.eq(-1)},eq:function(a){var b=this.length,c=+a+(0>a?b:0);return this.pushStack(c>=0&&b>c?[this[c]]:[])},end:function(){return this.prevObject||this.constructor(null)},push:f,sort:c.sort,splice:c.splice},m.extend=m.fn.extend=function(){var a,b,c,d,e,f,g=arguments[0]||{},h=1,i=arguments.length,j=!1;for("boolean"==typeof g&&(j=g,g=arguments[h]||{},h++),"object"==typeof g||m.isFunction(g)||(g={}),h===i&&(g=this,h--);i>h;h++)if(null!=(e=arguments[h]))for(d in e)a=g[d],c=e[d],g!==c&&(j&&c&&(m.isPlainObject(c)||(b=m.isArray(c)))?(b?(b=!1,f=a&&m.isArray(a)?a:[]):f=a&&m.isPlainObject(a)?a:{},g[d]=m.extend(j,f,c)):void 0!==c&&(g[d]=c));return g},m.extend({expando:"jQuery"+(l+Math.random()).replace(/\D/g,""),isReady:!0,error:function(a){throw new Error(a)},noop:function(){},isFunction:function(a){return"function"===m.type(a)},isArray:Array.isArray||function(a){return"array"===m.type(a)},isWindow:function(a){return null!=a&&a==a.window},isNumeric:function(a){return!m.isArray(a)&&a-parseFloat(a)+1>=0},isEmptyObject:function(a){var b;for(b in a)return!1;return!0},isPlainObject:function(a){var b;if(!a||"object"!==m.type(a)||a.nodeType||m.isWindow(a))return!1;try{if(a.constructor&&!j.call(a,"constructor")&&!j.call(a.constructor.prototype,"isPrototypeOf"))return!1}catch(c){return!1}if(k.ownLast)for(b in a)return j.call(a,b);for(b in a);return void 0===b||j.call(a,b)},type:function(a){return null==a?a+"":"object"==typeof a||"function"==typeof a?h[i.call(a)]||"object":typeof a},globalEval:function(b){b&&m.trim(b)&&(a.execScript||function(b){a.eval.call(a,b)})(b)},camelCase:function(a){return a.replace(o,"ms-").replace(p,q)},nodeName:function(a,b){return a.nodeName&&a.nodeName.toLowerCase()===b.toLowerCase()},each:function(a,b,c){var d,e=0,f=a.length,g=r(a);if(c){if(g){for(;f>e;e++)if(d=b.apply(a[e],c),d===!1)break}else for(e in a)if(d=b.apply(a[e],c),d===!1)break}else if(g){for(;f>e;e++)if(d=b.call(a[e],e,a[e]),d===!1)break}else for(e in a)if(d=b.call(a[e],e,a[e]),d===!1)break;return a},trim:function(a){return null==a?"":(a+"").replace(n,"")},makeArray:function(a,b){var c=b||[];return null!=a&&(r(Object(a))?m.merge(c,"string"==typeof a?[a]:a):f.call(c,a)),c},inArray:function(a,b,c){var d;if(b){if(g)return g.call(b,a,c);for(d=b.length,c=c?0>c?Math.max(0,d+c):c:0;d>c;c++)if(c in b&&b[c]===a)return c}return-1},merge:function(a,b){var c=+b.length,d=0,e=a.length;while(c>d)a[e++]=b[d++];if(c!==c)while(void 0!==b[d])a[e++]=b[d++];return a.length=e,a},grep:function(a,b,c){for(var d,e=[],f=0,g=a.length,h=!c;g>f;f++)d=!b(a[f],f),d!==h&&e.push(a[f]);return e},map:function(a,b,c){var d,f=0,g=a.length,h=r(a),i=[];if(h)for(;g>f;f++)d=b(a[f],f,c),null!=d&&i.push(d);else for(f in a)d=b(a[f],f,c),null!=d&&i.push(d);return e.apply([],i)},guid:1,proxy:function(a,b){var c,e,f;return"string"==typeof b&&(f=a[b],b=a,a=f),m.isFunction(a)?(c=d.call(arguments,2),e=function(){return a.apply(b||this,c.concat(d.call(arguments)))},e.guid=a.guid=a.guid||m.guid++,e):void 0},now:function(){return+new Date},support:k}),m.each("Boolean Number String Function Array Date RegExp Object Error".split(" "),function(a,b){h["[object "+b+"]"]=b.toLowerCase()});function r(a){var b="length"in a&&a.length,c=m.type(a);return"function"===c||m.isWindow(a)?!1:1===a.nodeType&&b?!0:"array"===c||0===b||"number"==typeof b&&b>0&&b-1 in a}var s=function(a){var b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u="sizzle"+1*new Date,v=a.document,w=0,x=0,y=ha(),z=ha(),A=ha(),B=function(a,b){return a===b&&(l=!0),0},C=1<<31,D={}.hasOwnProperty,E=[],F=E.pop,G=E.push,H=E.push,I=E.slice,J=function(a,b){for(var c=0,d=a.length;d>c;c++)if(a[c]===b)return c;return-1},K="checked|selected|async|autofocus|autoplay|controls|defer|disabled|hidden|ismap|loop|multiple|open|readonly|required|scoped",L="[\\x20\\t\\r\\n\\f]",M="(?:\\\\.|[\\w-]|[^\\x00-\\xa0])+",N=M.replace("w","w#"),O="\\["+L+"*("+M+")(?:"+L+"*([*^$|!~]?=)"+L+"*(?:'((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\"|("+N+"))|)"+L+"*\\]",P=":("+M+")(?:\\((('((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\")|((?:\\\\.|[^\\\\()[\\]]|"+O+")*)|.*)\\)|)",Q=new RegExp(L+"+","g"),R=new RegExp("^"+L+"+|((?:^|[^\\\\])(?:\\\\.)*)"+L+"+$","g"),S=new RegExp("^"+L+"*,"+L+"*"),T=new RegExp("^"+L+"*([>+~]|"+L+")"+L+"*"),U=new RegExp("="+L+"*([^\\]'\"]*?)"+L+"*\\]","g"),V=new RegExp(P),W=new RegExp("^"+N+"$"),X={ID:new RegExp("^#("+M+")"),CLASS:new RegExp("^\\.("+M+")"),TAG:new RegExp("^("+M.replace("w","w*")+")"),ATTR:new RegExp("^"+O),PSEUDO:new RegExp("^"+P),CHILD:new RegExp("^:(only|first|last|nth|nth-last)-(child|of-type)(?:\\("+L+"*(even|odd|(([+-]|)(\\d*)n|)"+L+"*(?:([+-]|)"+L+"*(\\d+)|))"+L+"*\\)|)","i"),bool:new RegExp("^(?:"+K+")$","i"),needsContext:new RegExp("^"+L+"*[>+~]|:(even|odd|eq|gt|lt|nth|first|last)(?:\\("+L+"*((?:-\\d)?\\d*)"+L+"*\\)|)(?=[^-]|$)","i")},Y=/^(?:input|select|textarea|button)$/i,Z=/^h\d$/i,$=/^[^{]+\{\s*\[native \w/,_=/^(?:#([\w-]+)|(\w+)|\.([\w-]+))$/,aa=/[+~]/,ba=/'|\\/g,ca=new RegExp("\\\\([\\da-f]{1,6}"+L+"?|("+L+")|.)","ig"),da=function(a,b,c){var d="0x"+b-65536;return d!==d||c?b:0>d?String.fromCharCode(d+65536):String.fromCharCode(d>>10|55296,1023&d|56320)},ea=function(){m()};try{H.apply(E=I.call(v.childNodes),v.childNodes),E[v.childNodes.length].nodeType}catch(fa){H={apply:E.length?function(a,b){G.apply(a,I.call(b))}:function(a,b){var c=a.length,d=0;while(a[c++]=b[d++]);a.length=c-1}}}function ga(a,b,d,e){var f,h,j,k,l,o,r,s,w,x;if((b?b.ownerDocument||b:v)!==n&&m(b),b=b||n,d=d||[],k=b.nodeType,"string"!=typeof a||!a||1!==k&&9!==k&&11!==k)return d;if(!e&&p){if(11!==k&&(f=_.exec(a)))if(j=f[1]){if(9===k){if(h=b.getElementById(j),!h||!h.parentNode)return d;if(h.id===j)return d.push(h),d}else if(b.ownerDocument&&(h=b.ownerDocument.getElementById(j))&&t(b,h)&&h.id===j)return d.push(h),d}else{if(f[2])return H.apply(d,b.getElementsByTagName(a)),d;if((j=f[3])&&c.getElementsByClassName)return H.apply(d,b.getElementsByClassName(j)),d}if(c.qsa&&(!q||!q.test(a))){if(s=r=u,w=b,x=1!==k&&a,1===k&&"object"!==b.nodeName.toLowerCase()){o=g(a),(r=b.getAttribute("id"))?s=r.replace(ba,"\\$&"):b.setAttribute("id",s),s="[id='"+s+"'] ",l=o.length;while(l--)o[l]=s+ra(o[l]);w=aa.test(a)&&pa(b.parentNode)||b,x=o.join(",")}if(x)try{return H.apply(d,w.querySelectorAll(x)),d}catch(y){}finally{r||b.removeAttribute("id")}}}return i(a.replace(R,"$1"),b,d,e)}function ha(){var a=[];function b(c,e){return a.push(c+" ")>d.cacheLength&&delete b[a.shift()],b[c+" "]=e}return b}function ia(a){return a[u]=!0,a}function ja(a){var b=n.createElement("div");try{return!!a(b)}catch(c){return!1}finally{b.parentNode&&b.parentNode.removeChild(b),b=null}}function ka(a,b){var c=a.split("|"),e=a.length;while(e--)d.attrHandle[c[e]]=b}function la(a,b){var c=b&&a,d=c&&1===a.nodeType&&1===b.nodeType&&(~b.sourceIndex||C)-(~a.sourceIndex||C);if(d)return d;if(c)while(c=c.nextSibling)if(c===b)return-1;return a?1:-1}function ma(a){return function(b){var c=b.nodeName.toLowerCase();return"input"===c&&b.type===a}}function na(a){return function(b){var c=b.nodeName.toLowerCase();return("input"===c||"button"===c)&&b.type===a}}function oa(a){return ia(function(b){return b=+b,ia(function(c,d){var e,f=a([],c.length,b),g=f.length;while(g--)c[e=f[g]]&&(c[e]=!(d[e]=c[e]))})})}function pa(a){return a&&"undefined"!=typeof a.getElementsByTagName&&a}c=ga.support={},f=ga.isXML=function(a){var b=a&&(a.ownerDocument||a).documentElement;return b?"HTML"!==b.nodeName:!1},m=ga.setDocument=function(a){var b,e,g=a?a.ownerDocument||a:v;return g!==n&&9===g.nodeType&&g.documentElement?(n=g,o=g.documentElement,e=g.defaultView,e&&e!==e.top&&(e.addEventListener?e.addEventListener("unload",ea,!1):e.attachEvent&&e.attachEvent("onunload",ea)),p=!f(g),c.attributes=ja(function(a){return a.className="i",!a.getAttribute("className")}),c.getElementsByTagName=ja(function(a){return a.appendChild(g.createComment("")),!a.getElementsByTagName("*").length}),c.getElementsByClassName=$.test(g.getElementsByClassName),c.getById=ja(function(a){return o.appendChild(a).id=u,!g.getElementsByName||!g.getElementsByName(u).length}),c.getById?(d.find.ID=function(a,b){if("undefined"!=typeof b.getElementById&&p){var c=b.getElementById(a);return c&&c.parentNode?[c]:[]}},d.filter.ID=function(a){var b=a.replace(ca,da);return function(a){return a.getAttribute("id")===b}}):(delete d.find.ID,d.filter.ID=function(a){var b=a.replace(ca,da);return function(a){var c="undefined"!=typeof a.getAttributeNode&&a.getAttributeNode("id");return c&&c.value===b}}),d.find.TAG=c.getElementsByTagName?function(a,b){return"undefined"!=typeof b.getElementsByTagName?b.getElementsByTagName(a):c.qsa?b.querySelectorAll(a):void 0}:function(a,b){var c,d=[],e=0,f=b.getElementsByTagName(a);if("*"===a){while(c=f[e++])1===c.nodeType&&d.push(c);return d}return f},d.find.CLASS=c.getElementsByClassName&&function(a,b){return p?b.getElementsByClassName(a):void 0},r=[],q=[],(c.qsa=$.test(g.querySelectorAll))&&(ja(function(a){o.appendChild(a).innerHTML="<a id='"+u+"'></a><select id='"+u+"-\f]' msallowcapture=''><option selected=''></option></select>",a.querySelectorAll("[msallowcapture^='']").length&&q.push("[*^$]="+L+"*(?:''|\"\")"),a.querySelectorAll("[selected]").length||q.push("\\["+L+"*(?:value|"+K+")"),a.querySelectorAll("[id~="+u+"-]").length||q.push("~="),a.querySelectorAll(":checked").length||q.push(":checked"),a.querySelectorAll("a#"+u+"+*").length||q.push(".#.+[+~]")}),ja(function(a){var b=g.createElement("input");b.setAttribute("type","hidden"),a.appendChild(b).setAttribute("name","D"),a.querySelectorAll("[name=d]").length&&q.push("name"+L+"*[*^$|!~]?="),a.querySelectorAll(":enabled").length||q.push(":enabled",":disabled"),a.querySelectorAll("*,:x"),q.push(",.*:")})),(c.matchesSelector=$.test(s=o.matches||o.webkitMatchesSelector||o.mozMatchesSelector||o.oMatchesSelector||o.msMatchesSelector))&&ja(function(a){c.disconnectedMatch=s.call(a,"div"),s.call(a,"[s!='']:x"),r.push("!=",P)}),q=q.length&&new RegExp(q.join("|")),r=r.length&&new RegExp(r.join("|")),b=$.test(o.compareDocumentPosition),t=b||$.test(o.contains)?function(a,b){var c=9===a.nodeType?a.documentElement:a,d=b&&b.parentNode;return a===d||!(!d||1!==d.nodeType||!(c.contains?c.contains(d):a.compareDocumentPosition&&16&a.compareDocumentPosition(d)))}:function(a,b){if(b)while(b=b.parentNode)if(b===a)return!0;return!1},B=b?function(a,b){if(a===b)return l=!0,0;var d=!a.compareDocumentPosition-!b.compareDocumentPosition;return d?d:(d=(a.ownerDocument||a)===(b.ownerDocument||b)?a.compareDocumentPosition(b):1,1&d||!c.sortDetached&&b.compareDocumentPosition(a)===d?a===g||a.ownerDocument===v&&t(v,a)?-1:b===g||b.ownerDocument===v&&t(v,b)?1:k?J(k,a)-J(k,b):0:4&d?-1:1)}:function(a,b){if(a===b)return l=!0,0;var c,d=0,e=a.parentNode,f=b.parentNode,h=[a],i=[b];if(!e||!f)return a===g?-1:b===g?1:e?-1:f?1:k?J(k,a)-J(k,b):0;if(e===f)return la(a,b);c=a;while(c=c.parentNode)h.unshift(c);c=b;while(c=c.parentNode)i.unshift(c);while(h[d]===i[d])d++;return d?la(h[d],i[d]):h[d]===v?-1:i[d]===v?1:0},g):n},ga.matches=function(a,b){return ga(a,null,null,b)},ga.matchesSelector=function(a,b){if((a.ownerDocument||a)!==n&&m(a),b=b.replace(U,"='$1']"),!(!c.matchesSelector||!p||r&&r.test(b)||q&&q.test(b)))try{var d=s.call(a,b);if(d||c.disconnectedMatch||a.document&&11!==a.document.nodeType)return d}catch(e){}return ga(b,n,null,[a]).length>0},ga.contains=function(a,b){return(a.ownerDocument||a)!==n&&m(a),t(a,b)},ga.attr=function(a,b){(a.ownerDocument||a)!==n&&m(a);var e=d.attrHandle[b.toLowerCase()],f=e&&D.call(d.attrHandle,b.toLowerCase())?e(a,b,!p):void 0;return void 0!==f?f:c.attributes||!p?a.getAttribute(b):(f=a.getAttributeNode(b))&&f.specified?f.value:null},ga.error=function(a){throw new Error("Syntax error, unrecognized expression: "+a)},ga.uniqueSort=function(a){var b,d=[],e=0,f=0;if(l=!c.detectDuplicates,k=!c.sortStable&&a.slice(0),a.sort(B),l){while(b=a[f++])b===a[f]&&(e=d.push(f));while(e--)a.splice(d[e],1)}return k=null,a},e=ga.getText=function(a){var b,c="",d=0,f=a.nodeType;if(f){if(1===f||9===f||11===f){if("string"==typeof a.textContent)return a.textContent;for(a=a.firstChild;a;a=a.nextSibling)c+=e(a)}else if(3===f||4===f)return a.nodeValue}else while(b=a[d++])c+=e(b);return c},d=ga.selectors={cacheLength:50,createPseudo:ia,match:X,attrHandle:{},find:{},relative:{">":{dir:"parentNode",first:!0}," ":{dir:"parentNode"},"+":{dir:"previousSibling",first:!0},"~":{dir:"previousSibling"}},preFilter:{ATTR:function(a){return a[1]=a[1].replace(ca,da),a[3]=(a[3]||a[4]||a[5]||"").replace(ca,da),"~="===a[2]&&(a[3]=" "+a[3]+" "),a.slice(0,4)},CHILD:function(a){return a[1]=a[1].toLowerCase(),"nth"===a[1].slice(0,3)?(a[3]||ga.error(a[0]),a[4]=+(a[4]?a[5]+(a[6]||1):2*("even"===a[3]||"odd"===a[3])),a[5]=+(a[7]+a[8]||"odd"===a[3])):a[3]&&ga.error(a[0]),a},PSEUDO:function(a){var b,c=!a[6]&&a[2];return X.CHILD.test(a[0])?null:(a[3]?a[2]=a[4]||a[5]||"":c&&V.test(c)&&(b=g(c,!0))&&(b=c.indexOf(")",c.length-b)-c.length)&&(a[0]=a[0].slice(0,b),a[2]=c.slice(0,b)),a.slice(0,3))}},filter:{TAG:function(a){var b=a.replace(ca,da).toLowerCase();return"*"===a?function(){return!0}:function(a){return a.nodeName&&a.nodeName.toLowerCase()===b}},CLASS:function(a){var b=y[a+" "];return b||(b=new RegExp("(^|"+L+")"+a+"("+L+"|$)"))&&y(a,function(a){return b.test("string"==typeof a.className&&a.className||"undefined"!=typeof a.getAttribute&&a.getAttribute("class")||"")})},ATTR:function(a,b,c){return function(d){var e=ga.attr(d,a);return null==e?"!="===b:b?(e+="","="===b?e===c:"!="===b?e!==c:"^="===b?c&&0===e.indexOf(c):"*="===b?c&&e.indexOf(c)>-1:"$="===b?c&&e.slice(-c.length)===c:"~="===b?(" "+e.replace(Q," ")+" ").indexOf(c)>-1:"|="===b?e===c||e.slice(0,c.length+1)===c+"-":!1):!0}},CHILD:function(a,b,c,d,e){var f="nth"!==a.slice(0,3),g="last"!==a.slice(-4),h="of-type"===b;return 1===d&&0===e?function(a){return!!a.parentNode}:function(b,c,i){var j,k,l,m,n,o,p=f!==g?"nextSibling":"previousSibling",q=b.parentNode,r=h&&b.nodeName.toLowerCase(),s=!i&&!h;if(q){if(f){while(p){l=b;while(l=l[p])if(h?l.nodeName.toLowerCase()===r:1===l.nodeType)return!1;o=p="only"===a&&!o&&"nextSibling"}return!0}if(o=[g?q.firstChild:q.lastChild],g&&s){k=q[u]||(q[u]={}),j=k[a]||[],n=j[0]===w&&j[1],m=j[0]===w&&j[2],l=n&&q.childNodes[n];while(l=++n&&l&&l[p]||(m=n=0)||o.pop())if(1===l.nodeType&&++m&&l===b){k[a]=[w,n,m];break}}else if(s&&(j=(b[u]||(b[u]={}))[a])&&j[0]===w)m=j[1];else while(l=++n&&l&&l[p]||(m=n=0)||o.pop())if((h?l.nodeName.toLowerCase()===r:1===l.nodeType)&&++m&&(s&&((l[u]||(l[u]={}))[a]=[w,m]),l===b))break;return m-=e,m===d||m%d===0&&m/d>=0}}},PSEUDO:function(a,b){var c,e=d.pseudos[a]||d.setFilters[a.toLowerCase()]||ga.error("unsupported pseudo: "+a);return e[u]?e(b):e.length>1?(c=[a,a,"",b],d.setFilters.hasOwnProperty(a.toLowerCase())?ia(function(a,c){var d,f=e(a,b),g=f.length;while(g--)d=J(a,f[g]),a[d]=!(c[d]=f[g])}):function(a){return e(a,0,c)}):e}},pseudos:{not:ia(function(a){var b=[],c=[],d=h(a.replace(R,"$1"));return d[u]?ia(function(a,b,c,e){var f,g=d(a,null,e,[]),h=a.length;while(h--)(f=g[h])&&(a[h]=!(b[h]=f))}):function(a,e,f){return b[0]=a,d(b,null,f,c),b[0]=null,!c.pop()}}),has:ia(function(a){return function(b){return ga(a,b).length>0}}),contains:ia(function(a){return a=a.replace(ca,da),function(b){return(b.textContent||b.innerText||e(b)).indexOf(a)>-1}}),lang:ia(function(a){return W.test(a||"")||ga.error("unsupported lang: "+a),a=a.replace(ca,da).toLowerCase(),function(b){var c;do if(c=p?b.lang:b.getAttribute("xml:lang")||b.getAttribute("lang"))return c=c.toLowerCase(),c===a||0===c.indexOf(a+"-");while((b=b.parentNode)&&1===b.nodeType);return!1}}),target:function(b){var c=a.location&&a.location.hash;return c&&c.slice(1)===b.id},root:function(a){return a===o},focus:function(a){return a===n.activeElement&&(!n.hasFocus||n.hasFocus())&&!!(a.type||a.href||~a.tabIndex)},enabled:function(a){return a.disabled===!1},disabled:function(a){return a.disabled===!0},checked:function(a){var b=a.nodeName.toLowerCase();return"input"===b&&!!a.checked||"option"===b&&!!a.selected},selected:function(a){return a.parentNode&&a.parentNode.selectedIndex,a.selected===!0},empty:function(a){for(a=a.firstChild;a;a=a.nextSibling)if(a.nodeType<6)return!1;return!0},parent:function(a){return!d.pseudos.empty(a)},header:function(a){return Z.test(a.nodeName)},input:function(a){return Y.test(a.nodeName)},button:function(a){var b=a.nodeName.toLowerCase();return"input"===b&&"button"===a.type||"button"===b},text:function(a){var b;return"input"===a.nodeName.toLowerCase()&&"text"===a.type&&(null==(b=a.getAttribute("type"))||"text"===b.toLowerCase())},first:oa(function(){return[0]}),last:oa(function(a,b){return[b-1]}),eq:oa(function(a,b,c){return[0>c?c+b:c]}),even:oa(function(a,b){for(var c=0;b>c;c+=2)a.push(c);return a}),odd:oa(function(a,b){for(var c=1;b>c;c+=2)a.push(c);return a}),lt:oa(function(a,b,c){for(var d=0>c?c+b:c;--d>=0;)a.push(d);return a}),gt:oa(function(a,b,c){for(var d=0>c?c+b:c;++d<b;)a.push(d);return a})}},d.pseudos.nth=d.pseudos.eq;for(b in{radio:!0,checkbox:!0,file:!0,password:!0,image:!0})d.pseudos[b]=ma(b);for(b in{submit:!0,reset:!0})d.pseudos[b]=na(b);function qa(){}qa.prototype=d.filters=d.pseudos,d.setFilters=new qa,g=ga.tokenize=function(a,b){var c,e,f,g,h,i,j,k=z[a+" "];if(k)return b?0:k.slice(0);h=a,i=[],j=d.preFilter;while(h){(!c||(e=S.exec(h)))&&(e&&(h=h.slice(e[0].length)||h),i.push(f=[])),c=!1,(e=T.exec(h))&&(c=e.shift(),f.push({value:c,type:e[0].replace(R," ")}),h=h.slice(c.length));for(g in d.filter)!(e=X[g].exec(h))||j[g]&&!(e=j[g](e))||(c=e.shift(),f.push({value:c,type:g,matches:e}),h=h.slice(c.length));if(!c)break}return b?h.length:h?ga.error(a):z(a,i).slice(0)};function ra(a){for(var b=0,c=a.length,d="";c>b;b++)d+=a[b].value;return d}function sa(a,b,c){var d=b.dir,e=c&&"parentNode"===d,f=x++;return b.first?function(b,c,f){while(b=b[d])if(1===b.nodeType||e)return a(b,c,f)}:function(b,c,g){var h,i,j=[w,f];if(g){while(b=b[d])if((1===b.nodeType||e)&&a(b,c,g))return!0}else while(b=b[d])if(1===b.nodeType||e){if(i=b[u]||(b[u]={}),(h=i[d])&&h[0]===w&&h[1]===f)return j[2]=h[2];if(i[d]=j,j[2]=a(b,c,g))return!0}}}function ta(a){return a.length>1?function(b,c,d){var e=a.length;while(e--)if(!a[e](b,c,d))return!1;return!0}:a[0]}function ua(a,b,c){for(var d=0,e=b.length;e>d;d++)ga(a,b[d],c);return c}function va(a,b,c,d,e){for(var f,g=[],h=0,i=a.length,j=null!=b;i>h;h++)(f=a[h])&&(!c||c(f,d,e))&&(g.push(f),j&&b.push(h));return g}function wa(a,b,c,d,e,f){return d&&!d[u]&&(d=wa(d)),e&&!e[u]&&(e=wa(e,f)),ia(function(f,g,h,i){var j,k,l,m=[],n=[],o=g.length,p=f||ua(b||"*",h.nodeType?[h]:h,[]),q=!a||!f&&b?p:va(p,m,a,h,i),r=c?e||(f?a:o||d)?[]:g:q;if(c&&c(q,r,h,i),d){j=va(r,n),d(j,[],h,i),k=j.length;while(k--)(l=j[k])&&(r[n[k]]=!(q[n[k]]=l))}if(f){if(e||a){if(e){j=[],k=r.length;while(k--)(l=r[k])&&j.push(q[k]=l);e(null,r=[],j,i)}k=r.length;while(k--)(l=r[k])&&(j=e?J(f,l):m[k])>-1&&(f[j]=!(g[j]=l))}}else r=va(r===g?r.splice(o,r.length):r),e?e(null,g,r,i):H.apply(g,r)})}function xa(a){for(var b,c,e,f=a.length,g=d.relative[a[0].type],h=g||d.relative[" "],i=g?1:0,k=sa(function(a){return a===b},h,!0),l=sa(function(a){return J(b,a)>-1},h,!0),m=[function(a,c,d){var e=!g&&(d||c!==j)||((b=c).nodeType?k(a,c,d):l(a,c,d));return b=null,e}];f>i;i++)if(c=d.relative[a[i].type])m=[sa(ta(m),c)];else{if(c=d.filter[a[i].type].apply(null,a[i].matches),c[u]){for(e=++i;f>e;e++)if(d.relative[a[e].type])break;return wa(i>1&&ta(m),i>1&&ra(a.slice(0,i-1).concat({value:" "===a[i-2].type?"*":""})).replace(R,"$1"),c,e>i&&xa(a.slice(i,e)),f>e&&xa(a=a.slice(e)),f>e&&ra(a))}m.push(c)}return ta(m)}function ya(a,b){var c=b.length>0,e=a.length>0,f=function(f,g,h,i,k){var l,m,o,p=0,q="0",r=f&&[],s=[],t=j,u=f||e&&d.find.TAG("*",k),v=w+=null==t?1:Math.random()||.1,x=u.length;for(k&&(j=g!==n&&g);q!==x&&null!=(l=u[q]);q++){if(e&&l){m=0;while(o=a[m++])if(o(l,g,h)){i.push(l);break}k&&(w=v)}c&&((l=!o&&l)&&p--,f&&r.push(l))}if(p+=q,c&&q!==p){m=0;while(o=b[m++])o(r,s,g,h);if(f){if(p>0)while(q--)r[q]||s[q]||(s[q]=F.call(i));s=va(s)}H.apply(i,s),k&&!f&&s.length>0&&p+b.length>1&&ga.uniqueSort(i)}return k&&(w=v,j=t),r};return c?ia(f):f}return h=ga.compile=function(a,b){var c,d=[],e=[],f=A[a+" "];if(!f){b||(b=g(a)),c=b.length;while(c--)f=xa(b[c]),f[u]?d.push(f):e.push(f);f=A(a,ya(e,d)),f.selector=a}return f},i=ga.select=function(a,b,e,f){var i,j,k,l,m,n="function"==typeof a&&a,o=!f&&g(a=n.selector||a);if(e=e||[],1===o.length){if(j=o[0]=o[0].slice(0),j.length>2&&"ID"===(k=j[0]).type&&c.getById&&9===b.nodeType&&p&&d.relative[j[1].type]){if(b=(d.find.ID(k.matches[0].replace(ca,da),b)||[])[0],!b)return e;n&&(b=b.parentNode),a=a.slice(j.shift().value.length)}i=X.needsContext.test(a)?0:j.length;while(i--){if(k=j[i],d.relative[l=k.type])break;if((m=d.find[l])&&(f=m(k.matches[0].replace(ca,da),aa.test(j[0].type)&&pa(b.parentNode)||b))){if(j.splice(i,1),a=f.length&&ra(j),!a)return H.apply(e,f),e;break}}}return(n||h(a,o))(f,b,!p,e,aa.test(a)&&pa(b.parentNode)||b),e},c.sortStable=u.split("").sort(B).join("")===u,c.detectDuplicates=!!l,m(),c.sortDetached=ja(function(a){return 1&a.compareDocumentPosition(n.createElement("div"))}),ja(function(a){return a.innerHTML="<a href='#'></a>","#"===a.firstChild.getAttribute("href")})||ka("type|href|height|width",function(a,b,c){return c?void 0:a.getAttribute(b,"type"===b.toLowerCase()?1:2)}),c.attributes&&ja(function(a){return a.innerHTML="<input/>",a.firstChild.setAttribute("value",""),""===a.firstChild.getAttribute("value")})||ka("value",function(a,b,c){return c||"input"!==a.nodeName.toLowerCase()?void 0:a.defaultValue}),ja(function(a){return null==a.getAttribute("disabled")})||ka(K,function(a,b,c){var d;return c?void 0:a[b]===!0?b.toLowerCase():(d=a.getAttributeNode(b))&&d.specified?d.value:null}),ga}(a);m.find=s,m.expr=s.selectors,m.expr[":"]=m.expr.pseudos,m.unique=s.uniqueSort,m.text=s.getText,m.isXMLDoc=s.isXML,m.contains=s.contains;var t=m.expr.match.needsContext,u=/^<(\w+)\s*\/?>(?:<\/\1>|)$/,v=/^.[^:#\[\.,]*$/;function w(a,b,c){if(m.isFunction(b))return m.grep(a,function(a,d){return!!b.call(a,d,a)!==c});if(b.nodeType)return m.grep(a,function(a){return a===b!==c});if("string"==typeof b){if(v.test(b))return m.filter(b,a,c);b=m.filter(b,a)}return m.grep(a,function(a){return m.inArray(a,b)>=0!==c})}m.filter=function(a,b,c){var d=b[0];return c&&(a=":not("+a+")"),1===b.length&&1===d.nodeType?m.find.matchesSelector(d,a)?[d]:[]:m.find.matches(a,m.grep(b,function(a){return 1===a.nodeType}))},m.fn.extend({find:function(a){var b,c=[],d=this,e=d.length;if("string"!=typeof a)return this.pushStack(m(a).filter(function(){for(b=0;e>b;b++)if(m.contains(d[b],this))return!0}));for(b=0;e>b;b++)m.find(a,d[b],c);return c=this.pushStack(e>1?m.unique(c):c),c.selector=this.selector?this.selector+" "+a:a,c},filter:function(a){return this.pushStack(w(this,a||[],!1))},not:function(a){return this.pushStack(w(this,a||[],!0))},is:function(a){return!!w(this,"string"==typeof a&&t.test(a)?m(a):a||[],!1).length}});var x,y=a.document,z=/^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]*))$/,A=m.fn.init=function(a,b){var c,d;if(!a)return this;if("string"==typeof a){if(c="<"===a.charAt(0)&&">"===a.charAt(a.length-1)&&a.length>=3?[null,a,null]:z.exec(a),!c||!c[1]&&b)return!b||b.jquery?(b||x).find(a):this.constructor(b).find(a);if(c[1]){if(b=b instanceof m?b[0]:b,m.merge(this,m.parseHTML(c[1],b&&b.nodeType?b.ownerDocument||b:y,!0)),u.test(c[1])&&m.isPlainObject(b))for(c in b)m.isFunction(this[c])?this[c](b[c]):this.attr(c,b[c]);return this}if(d=y.getElementById(c[2]),d&&d.parentNode){if(d.id!==c[2])return x.find(a);this.length=1,this[0]=d}return this.context=y,this.selector=a,this}return a.nodeType?(this.context=this[0]=a,this.length=1,this):m.isFunction(a)?"undefined"!=typeof x.ready?x.ready(a):a(m):(void 0!==a.selector&&(this.selector=a.selector,this.context=a.context),m.makeArray(a,this))};A.prototype=m.fn,x=m(y);var B=/^(?:parents|prev(?:Until|All))/,C={children:!0,contents:!0,next:!0,prev:!0};m.extend({dir:function(a,b,c){var d=[],e=a[b];while(e&&9!==e.nodeType&&(void 0===c||1!==e.nodeType||!m(e).is(c)))1===e.nodeType&&d.push(e),e=e[b];return d},sibling:function(a,b){for(var c=[];a;a=a.nextSibling)1===a.nodeType&&a!==b&&c.push(a);return c}}),m.fn.extend({has:function(a){var b,c=m(a,this),d=c.length;return this.filter(function(){for(b=0;d>b;b++)if(m.contains(this,c[b]))return!0})},closest:function(a,b){for(var c,d=0,e=this.length,f=[],g=t.test(a)||"string"!=typeof a?m(a,b||this.context):0;e>d;d++)for(c=this[d];c&&c!==b;c=c.parentNode)if(c.nodeType<11&&(g?g.index(c)>-1:1===c.nodeType&&m.find.matchesSelector(c,a))){f.push(c);break}return this.pushStack(f.length>1?m.unique(f):f)},index:function(a){return a?"string"==typeof a?m.inArray(this[0],m(a)):m.inArray(a.jquery?a[0]:a,this):this[0]&&this[0].parentNode?this.first().prevAll().length:-1},add:function(a,b){return this.pushStack(m.unique(m.merge(this.get(),m(a,b))))},addBack:function(a){return this.add(null==a?this.prevObject:this.prevObject.filter(a))}});function D(a,b){do a=a[b];while(a&&1!==a.nodeType);return a}m.each({parent:function(a){var b=a.parentNode;return b&&11!==b.nodeType?b:null},parents:function(a){return m.dir(a,"parentNode")},parentsUntil:function(a,b,c){return m.dir(a,"parentNode",c)},next:function(a){return D(a,"nextSibling")},prev:function(a){return D(a,"previousSibling")},nextAll:function(a){return m.dir(a,"nextSibling")},prevAll:function(a){return m.dir(a,"previousSibling")},nextUntil:function(a,b,c){return m.dir(a,"nextSibling",c)},prevUntil:function(a,b,c){return m.dir(a,"previousSibling",c)},siblings:function(a){return m.sibling((a.parentNode||{}).firstChild,a)},children:function(a){return m.sibling(a.firstChild)},contents:function(a){return m.nodeName(a,"iframe")?a.contentDocument||a.contentWindow.document:m.merge([],a.childNodes)}},function(a,b){m.fn[a]=function(c,d){var e=m.map(this,b,c);return"Until"!==a.slice(-5)&&(d=c),d&&"string"==typeof d&&(e=m.filter(d,e)),this.length>1&&(C[a]||(e=m.unique(e)),B.test(a)&&(e=e.reverse())),this.pushStack(e)}});var E=/\S+/g,F={};function G(a){var b=F[a]={};return m.each(a.match(E)||[],function(a,c){b[c]=!0}),b}m.Callbacks=function(a){a="string"==typeof a?F[a]||G(a):m.extend({},a);var b,c,d,e,f,g,h=[],i=!a.once&&[],j=function(l){for(c=a.memory&&l,d=!0,f=g||0,g=0,e=h.length,b=!0;h&&e>f;f++)if(h[f].apply(l[0],l[1])===!1&&a.stopOnFalse){c=!1;break}b=!1,h&&(i?i.length&&j(i.shift()):c?h=[]:k.disable())},k={add:function(){if(h){var d=h.length;!function f(b){m.each(b,function(b,c){var d=m.type(c);"function"===d?a.unique&&k.has(c)||h.push(c):c&&c.length&&"string"!==d&&f(c)})}(arguments),b?e=h.length:c&&(g=d,j(c))}return this},remove:function(){return h&&m.each(arguments,function(a,c){var d;while((d=m.inArray(c,h,d))>-1)h.splice(d,1),b&&(e>=d&&e--,f>=d&&f--)}),this},has:function(a){return a?m.inArray(a,h)>-1:!(!h||!h.length)},empty:function(){return h=[],e=0,this},disable:function(){return h=i=c=void 0,this},disabled:function(){return!h},lock:function(){return i=void 0,c||k.disable(),this},locked:function(){return!i},fireWith:function(a,c){return!h||d&&!i||(c=c||[],c=[a,c.slice?c.slice():c],b?i.push(c):j(c)),this},fire:function(){return k.fireWith(this,arguments),this},fired:function(){return!!d}};return k},m.extend({Deferred:function(a){var b=[["resolve","done",m.Callbacks("once memory"),"resolved"],["reject","fail",m.Callbacks("once memory"),"rejected"],["notify","progress",m.Callbacks("memory")]],c="pending",d={state:function(){return c},always:function(){return e.done(arguments).fail(arguments),this},then:function(){var a=arguments;return m.Deferred(function(c){m.each(b,function(b,f){var g=m.isFunction(a[b])&&a[b];e[f[1]](function(){var a=g&&g.apply(this,arguments);a&&m.isFunction(a.promise)?a.promise().done(c.resolve).fail(c.reject).progress(c.notify):c[f[0]+"With"](this===d?c.promise():this,g?[a]:arguments)})}),a=null}).promise()},promise:function(a){return null!=a?m.extend(a,d):d}},e={};return d.pipe=d.then,m.each(b,function(a,f){var g=f[2],h=f[3];d[f[1]]=g.add,h&&g.add(function(){c=h},b[1^a][2].disable,b[2][2].lock),e[f[0]]=function(){return e[f[0]+"With"](this===e?d:this,arguments),this},e[f[0]+"With"]=g.fireWith}),d.promise(e),a&&a.call(e,e),e},when:function(a){var b=0,c=d.call(arguments),e=c.length,f=1!==e||a&&m.isFunction(a.promise)?e:0,g=1===f?a:m.Deferred(),h=function(a,b,c){return function(e){b[a]=this,c[a]=arguments.length>1?d.call(arguments):e,c===i?g.notifyWith(b,c):--f||g.resolveWith(b,c)}},i,j,k;if(e>1)for(i=new Array(e),j=new Array(e),k=new Array(e);e>b;b++)c[b]&&m.isFunction(c[b].promise)?c[b].promise().done(h(b,k,c)).fail(g.reject).progress(h(b,j,i)):--f;return f||g.resolveWith(k,c),g.promise()}});var H;m.fn.ready=function(a){return m.ready.promise().done(a),this},m.extend({isReady:!1,readyWait:1,holdReady:function(a){a?m.readyWait++:m.ready(!0)},ready:function(a){if(a===!0?!--m.readyWait:!m.isReady){if(!y.body)return setTimeout(m.ready);m.isReady=!0,a!==!0&&--m.readyWait>0||(H.resolveWith(y,[m]),m.fn.triggerHandler&&(m(y).triggerHandler("ready"),m(y).off("ready")))}}});function I(){y.addEventListener?(y.removeEventListener("DOMContentLoaded",J,!1),a.removeEventListener("load",J,!1)):(y.detachEvent("onreadystatechange",J),a.detachEvent("onload",J))}function J(){(y.addEventListener||"load"===event.type||"complete"===y.readyState)&&(I(),m.ready())}m.ready.promise=function(b){if(!H)if(H=m.Deferred(),"complete"===y.readyState)setTimeout(m.ready);else if(y.addEventListener)y.addEventListener("DOMContentLoaded",J,!1),a.addEventListener("load",J,!1);else{y.attachEvent("onreadystatechange",J),a.attachEvent("onload",J);var c=!1;try{c=null==a.frameElement&&y.documentElement}catch(d){}c&&c.doScroll&&!function e(){if(!m.isReady){try{c.doScroll("left")}catch(a){return setTimeout(e,50)}I(),m.ready()}}()}return H.promise(b)};var K="undefined",L;for(L in m(k))break;k.ownLast="0"!==L,k.inlineBlockNeedsLayout=!1,m(function(){var a,b,c,d;c=y.getElementsByTagName("body")[0],c&&c.style&&(b=y.createElement("div"),d=y.createElement("div"),d.style.cssText="position:absolute;border:0;width:0;height:0;top:0;left:-9999px",c.appendChild(d).appendChild(b),typeof b.style.zoom!==K&&(b.style.cssText="display:inline;margin:0;border:0;padding:1px;width:1px;zoom:1",k.inlineBlockNeedsLayout=a=3===b.offsetWidth,a&&(c.style.zoom=1)),c.removeChild(d))}),function(){var a=y.createElement("div");if(null==k.deleteExpando){k.deleteExpando=!0;try{delete a.test}catch(b){k.deleteExpando=!1}}a=null}(),m.acceptData=function(a){var b=m.noData[(a.nodeName+" ").toLowerCase()],c=+a.nodeType||1;return 1!==c&&9!==c?!1:!b||b!==!0&&a.getAttribute("classid")===b};var M=/^(?:\{[\w\W]*\}|\[[\w\W]*\])$/,N=/([A-Z])/g;function O(a,b,c){if(void 0===c&&1===a.nodeType){var d="data-"+b.replace(N,"-$1").toLowerCase();if(c=a.getAttribute(d),"string"==typeof c){try{c="true"===c?!0:"false"===c?!1:"null"===c?null:+c+""===c?+c:M.test(c)?m.parseJSON(c):c}catch(e){}m.data(a,b,c)}else c=void 0}return c}function P(a){var b;for(b in a)if(("data"!==b||!m.isEmptyObject(a[b]))&&"toJSON"!==b)return!1;
 
@@ -5551,24 +5538,20 @@ pre code {
 
 <div id="TOC">
 <ul>
-<li><a href="#methods"><span class="toc-section-number">1</span> Methods</a>
-<ul>
-<li><a href="#mmrm-model"><span class="toc-section-number">1.1</span> MMRM model</a>
-<ul>
+<li><a href="#methods"><span class="toc-section-number">1</span> Methods</a><ul>
+<li><a href="#mmrm-model"><span class="toc-section-number">1.1</span> MMRM model</a><ul>
 <li><a href="#notation"><span class="toc-section-number">1.1.1</span> Notation</a></li>
 <li><a href="#specification"><span class="toc-section-number">1.1.2</span> Specification</a></li>
 <li><a href="#stan-code"><span class="toc-section-number">1.1.3</span> Stan code</a></li>
 </ul></li>
 <li><a href="#interval-based-validation"><span class="toc-section-number">1.2</span> Interval-based validation</a></li>
 </ul></li>
-<li><a href="#construct-the-pipeline"><span class="toc-section-number">2</span> Construct the pipeline</a>
-<ul>
+<li><a href="#construct-the-pipeline"><span class="toc-section-number">2</span> Construct the pipeline</a><ul>
 <li><a href="#setup"><span class="toc-section-number">2.1</span> Setup</a></li>
 <li><a href="#data-generation"><span class="toc-section-number">2.2</span> Data generation</a></li>
 <li><a href="#target-definitions"><span class="toc-section-number">2.3</span> Target definitions</a></li>
 </ul></li>
-<li><a href="#use-the-pipeline"><span class="toc-section-number">3</span> Use the pipeline</a>
-<ul>
+<li><a href="#use-the-pipeline"><span class="toc-section-number">3</span> Use the pipeline</a><ul>
 <li><a href="#inspect-the-pipeline"><span class="toc-section-number">3.1</span> Inspect the pipeline</a></li>
 <li><a href="#run-the-pipeline"><span class="toc-section-number">3.2</span> Run the pipeline</a></li>
 </ul></li>
@@ -5578,14 +5561,14 @@ pre code {
 </div>
 
 <p>The <code>targets</code> R package enhances the reproducibility, scale, and maintainability of data science projects in computationally intense fields such as machine learning, Bayesian Statistics, and statistical genomics <span class="citation">(Landau 2021b)</span>. Recent breakthroughs in the targets ecosystem make it easy to create ambitious, domain-specific, reproducible data analysis pipelines. Two highlights include Target Markdown, an R Markdown interface to transparently communicate the entire process of pipeline construction and prototyping, and <code>stantargets</code>, a new rOpenSci package that generates specialized workflows for Stan models while reducing the required volume of user-side R code <span class="citation">(Landau 2021a)</span>.</p>
-<div id="methods" class="section level1" number="1">
-<h1 number="1"><span class="header-section-number">1</span> Methods</h1>
+<div id="methods" class="section level1">
+<h1><span class="header-section-number">1</span> Methods</h1>
 <p>This Target Markdown report demonstrates both capabilities in an exercise to validate a mixed model of repeated measures (MMRM), one of the most ubiquitous longitudinal models in clinical trials. Using multiple simulated datasets from the prior predictive distribution of the model, we evaluate how well the model recovers the true parameters drawn from the data-generating process.</p>
-<div id="mmrm-model" class="section level2" number="1.1">
-<h2 number="1.1"><span class="header-section-number">1.1</span> MMRM model</h2>
+<div id="mmrm-model" class="section level2">
+<h2><span class="header-section-number">1.1</span> MMRM model</h2>
 <p>We use a mixed model of repeated measures (MMRM) for clinical trial data. The model assumes independent patients, correlated study visits within each patient, and an LKJ prior on the correlation matrix for study visits. MMRM models with unstructured covariance usually apply the inverse Wishart prior, but this prior induces known biases that could be problematic (<a href="https://arxiv.org/abs/1408.4050" class="uri">https://arxiv.org/abs/1408.4050</a>), which motivated this custom Stan model that uses LKJ instead.</p>
-<div id="notation" class="section level3" number="1.1.1">
-<h3 number="1.1.1"><span class="header-section-number">1.1.1</span> Notation</h3>
+<div id="notation" class="section level3">
+<h3><span class="header-section-number">1.1.1</span> Notation</h3>
 <ul>
 <li><span class="math inline">\(n\)</span>: number of patients.</li>
 <li><span class="math inline">\(t\)</span>: number of scheduled study visits for a given patient.</li>
@@ -5599,20 +5582,20 @@ pre code {
 <li><span class="math inline">\(\Lambda_{t \times t}\)</span>: Cholesky factor of the <span class="math inline">\(t \times t\)</span> block of the correlation matrix of the observed data.</li>
 </ul>
 </div>
-<div id="specification" class="section level3" number="1.1.2">
-<h3 number="1.1.2"><span class="header-section-number">1.1.2</span> Specification</h3>
+<div id="specification" class="section level3">
+<h3><span class="header-section-number">1.1.2</span> Specification</h3>
 <p><span class="math display">\[
 \begin{aligned}
 &amp; y \sim \text{MVN}(X_{(n \cdot t) \times p} \beta, \ I_{n \times n} \otimes \Sigma_{t \times t} ) \\
 &amp; \qquad \beta \sim \text{MVN} (0, 10^2 I_{p \times p})\\
-&amp;  \qquad \Sigma_{t \times t} = \left (I_{t \times t} \sigma \right ) \Lambda_{t \times t} \Lambda_{t \times t}&#39; \left (I_{t \times t} \sigma \right ) \\
+&amp;  \qquad \Sigma_{t \times t} = \left (I_{t \times t} \sigma \right ) \Lambda_{t \times t} \Lambda_{t \times t}' \left (I_{t \times t} \sigma \right ) \\
 &amp; \qquad \qquad \sigma_1, \ldots, \sigma_t \stackrel{\text{ind}}{\sim} \text{Cauchy}^+(0, 5) \\
-&amp; \qquad \qquad \Lambda_{t \times t}\Lambda_{t \times t}&#39; \sim \text{LKJ}(\text{shape} = 1, \text{order} = t)
+&amp; \qquad \qquad \Lambda_{t \times t}\Lambda_{t \times t}' \sim \text{LKJ}(\text{shape} = 1, \text{order} = t)
 \end{aligned} 
 \]</span></p>
 </div>
-<div id="stan-code" class="section level3" number="1.1.3">
-<h3 number="1.1.3"><span class="header-section-number">1.1.3</span> Stan code</h3>
+<div id="stan-code" class="section level3">
+<h3><span class="header-section-number">1.1.3</span> Stan code</h3>
 <pre class="r"><code>writeLines(readLines(&quot;model.stan&quot;))
 #&gt; data {
 #&gt;   int&lt;lower=0&gt; n_arms; // number of clinical trial study arms, e.g. treatment groups
@@ -5646,8 +5629,8 @@ pre code {
 #&gt; }</code></pre>
 </div>
 </div>
-<div id="interval-based-validation" class="section level2" number="1.2">
-<h2 number="1.2"><span class="header-section-number">1.2</span> Interval-based validation</h2>
+<div id="interval-based-validation" class="section level2">
+<h2><span class="header-section-number">1.2</span> Interval-based validation</h2>
 <p>The goal of this validation exercise is to verify that the fitted model recovers the parameter values used to generate the original data. This serves as evidence that the Stan code was implemented correctly. Steps:</p>
 <ul>
 <li>For independent replication <span class="math inline">\(i = 1, \ldots, r = 1000\)</span>:
@@ -5662,11 +5645,11 @@ pre code {
 <p>This technique is similar to simulation-based calibration (SBC) <span class="citation">(Cook, Gelman, and Rubin 2006; Talts et al. 2020)</span>. SBC may be more robust than the interval-based validation technique above, but the latter is easier to perform with <code>stantargets</code> and easier to communicate for high-dimensional models. (Parameter-specific rank statistic histograms can be difficult to inspect when there are many parameters.)</p>
 </div>
 </div>
-<div id="construct-the-pipeline" class="section level1" number="2">
-<h1 number="2"><span class="header-section-number">2</span> Construct the pipeline</h1>
+<div id="construct-the-pipeline" class="section level1">
+<h1><span class="header-section-number">2</span> Construct the pipeline</h1>
 <p>This section constructs the steps of the pipeline and uses Target Markdown to explain the purpose of each step along the way. In interactive mode in the RStudio IDE, you can run each inexpensive <code>{targets}</code> code chunk in the notebook interface in order to emulate the behavior of a section of the <code>targets</code> pipeline. If you run the report in a non-interactive R session, the <code>{targets}</code> code chunks write scripts to set up the pipeline and prepare it to run later on. When it comes time to actually run the pipeline, you can do so either outside this report or by calling <code>tar_make()</code>, <code>tar_make_clustermq()</code>, or <code>tar_make_future()</code> inside an ordinary <code>{r}</code> code chunk.</p>
-<div id="setup" class="section level2" number="2.1">
-<h2 number="2.1"><span class="header-section-number">2.1</span> Setup</h2>
+<div id="setup" class="section level2">
+<h2><span class="header-section-number">2.1</span> Setup</h2>
 <p>First, we load the <code>targets</code> package in the report to register the Target Markdown <code>knitr</code> language engine.</p>
 <pre class="r"><code>library(targets)</code></pre>
 <p>Next, we remove transient scripts previously generated by Target Markdown in non-interactive mode (optional).</p>
@@ -5688,8 +5671,8 @@ library(stantargets)
 <pre class="r"><code>options(clustermq.scheduler = &quot;sge&quot;, clustermq.template = &quot;sge.tmpl&quot;)
 #&gt; Established _targets.R and _targets_r/globals/clustermq.R.</code></pre>
 </div>
-<div id="data-generation" class="section level2" number="2.2">
-<h2 number="2.2"><span class="header-section-number">2.2</span> Data generation</h2>
+<div id="data-generation" class="section level2">
+<h2><span class="header-section-number">2.2</span> Data generation</h2>
 <p>The following function simulates one rep of a clinical trial data from the prior predictive distribution of an MMRM model. The function returns a Stan data list and accepts arguments <code>n_patients</code> (number of patients in the trial), <code>n_visits</code> (number of scheduled study visits, e.g. repeated measures per patient), and <code>n_arms</code> (number of study arms, e.g. treatment groups). The model coefficients <code>beta</code> come from independent <code>Normal(0, sd = 10)</code> distributions, and the covariance matrix comes from an <code>LKJ(shape = 1, order = n_visits)</code> distribution. To mitigate numerical stability issues, the covariance matrix is restricted such that each matrix element lies between -500 and 500 (via rejection sampling). The <code>.join_data</code> list at the end tells <code>stantargets</code> to append the prior predictive draws of model parameters to the MCMC output.</p>
 <pre class="r"><code>simulate_data &lt;- function(n_patients = 500, n_visits = 4, n_arms = 2) {
   structure &lt;- tibble(patient = as.character(seq_len(n_patients))) %&gt;%
@@ -5733,19 +5716,19 @@ library(stantargets)
 }
 #&gt; Established _targets.R and _targets_r/globals/data.R.</code></pre>
 </div>
-<div id="target-definitions" class="section level2" number="2.3">
-<h2 number="2.3"><span class="header-section-number">2.3</span> Target definitions</h2>
+<div id="target-definitions" class="section level2">
+<h2><span class="header-section-number">2.3</span> Target definitions</h2>
 <p>Now, we define the targets for the steps of the workflow. We use the <code>stantargets</code> R package to manage most of the work: simulate multiple datasets, analyze each dataset with the MMRM, and calculate the coverage status of each simulation. As explained at <a href="https://docs.ropensci.org/stantargets/articles/simulation.html" class="uri">https://docs.ropensci.org/stantargets/articles/simulation.html</a>, all this can be done with the <code>tar_stan_mcmc_rep_summary()</code> function. The targets created by <code>tar_stan_mcmc_rep_summary()</code> can take a long time to run, so it is recommended to suppress interactive mode.</p>
 <pre class="r"><code>tar_stan_mcmc_rep_summary(
   name = mcmc,
   stan_files = &quot;model.stan&quot;,
   data = simulate_data(), # Runs once per rep.
-  batches = 2, # Number of branch targets.
-  reps = 1, # Number of model reps per branch target.
+  batches = 100, # Number of branch targets.
+  reps = 10, # Number of model reps per branch target.
   chains = 4, # Number of MCMC chains.
   parallel_chains = 4, # How many MCMC chains to run in parallel.
-  iter_warmup = 100, # Number of MCMC warmup iterations to run.
-  iter_sampling = 100, # Number of MCMC post-warmup iterations to run.
+  iter_warmup = 2e3, # Number of MCMC warmup iterations to run.
+  iter_sampling = 2e3, # Number of MCMC post-warmup iterations to run.
   summaries = list(
     # Compute posterior intervals at levels 50% and 95%.
     # The 50% intervals should cover prior predictive parameter draws
@@ -5773,41 +5756,447 @@ library(stantargets)
 #&gt; Established _targets.R and _targets_r/targets/coverage.R.</code></pre>
 </div>
 </div>
-<div id="use-the-pipeline" class="section level1" number="3">
-<h1 number="3"><span class="header-section-number">3</span> Use the pipeline</h1>
+<div id="use-the-pipeline" class="section level1">
+<h1><span class="header-section-number">3</span> Use the pipeline</h1>
 <p>Up to this point, we have only constructed the pipeline. The <code>{targets}</code> chunks write R scripts to <code>_targets.R</code> and <code>_targets_r/</code> (in non-interactive mode) but they do not actually run the pipeline. To run the pipeline, we use <code>tar_make()</code> or a related function, either outside the report or in a subsequent ordinary <code>{r}</code> code chunk.</p>
-<div id="inspect-the-pipeline" class="section level2" number="3.1">
-<h2 number="3.1"><span class="header-section-number">3.1</span> Inspect the pipeline</h2>
+<div id="inspect-the-pipeline" class="section level2">
+<h2><span class="header-section-number">3.1</span> Inspect the pipeline</h2>
 <p>But first, it is good practice to visualize the dependency graph to verify that the workflow is correctly specified. All targets should be connected by graph edges, and they should appear in the correct order in relation to one another.</p>
 <pre class="r"><code>tar_visnetwork()</code></pre>
-<div id="htmlwidget-2da646cb9f78d05f7084" style="width:672px;height:480px;" class="visNetwork html-widget"></div>
-<script type="application/json" data-for="htmlwidget-2da646cb9f78d05f7084">{"x":{"nodes":{"name":["coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","simulate_data"],"type":["stem","stem","stem","pattern","stem","pattern","function"],"status":["uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate"],"seconds":[2.22,0.001,0.001,2.277,2.656,39.054,null],"bytes":[505,6287,97,94246,1996011,7130,null],"branches":[null,null,null,2,null,2,null],"id":["coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","simulate_data"],"label":["coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","simulate_data"],"level":[5,4,1,2,1,3,1],"color":["#354823","#354823","#354823","#354823","#354823","#354823","#354823"],"shape":["dot","dot","dot","square","dot","square","triangle"]},"edges":{"from":["mcmc_data","mcmc_file_model","mcmc_model","simulate_data","mcmc_batch","mcmc"],"to":["mcmc_model","mcmc_model","mcmc","mcmc_data","mcmc_data","coverage"],"arrows":["to","to","to","to","to","to"]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot","physics":false},"manipulation":{"enabled":false},"edges":{"smooth":{"type":"cubicBezier","forceDirection":"horizontal"}},"physics":{"stabilization":false},"layout":{"hierarchical":{"enabled":true,"direction":"LR"}}},"groups":null,"width":null,"height":null,"idselection":{"enabled":false,"style":"width: 150px; height: 26px","useLabels":true,"main":"Select by id"},"byselection":{"enabled":false,"style":"width: 150px; height: 26px","multiple":false,"hideColor":"rgba(200,200,200,0.5)","highlight":false},"main":{"text":"","style":"font-family:Georgia, Times New Roman, Times, serif;font-weight:bold;font-size:20px;text-align:center;"},"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)","highlight":{"enabled":true,"hoverNearest":false,"degree":{"from":1,"to":1},"algorithm":"hierarchical","hideColor":"rgba(200,200,200,0.5)","labelOnly":true},"collapse":{"enabled":true,"fit":false,"resetHighlight":true,"clusterOptions":null,"keepCoord":true,"labelSuffix":"(cluster)"},"legend":{"width":0.2,"useGroups":false,"position":"right","ncol":1,"stepX":100,"stepY":100,"zoom":true,"nodes":{"label":["Up to date","Stem","Pattern","Function"],"color":["#354823","#899DA4","#899DA4","#899DA4"],"shape":["dot","dot","square","triangle"]},"nodesToDataframe":true}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-5d6cfeecfae93a651480" style="width:672px;height:480px;" class="visNetwork html-widget"></div>
+<script type="application/json" data-for="htmlwidget-5d6cfeecfae93a651480">{"x":{"nodes":{"name":["mcmc_batch","mcmc_file_model","coverage","mcmc","mcmc_data","mcmc_model","simulate_data"],"type":["stem","stem","stem","stem","pattern","pattern","function"],"status":["uptodate","errored","outdated","outdated","started","outdated","uptodate"],"seconds":[0.002,3.295,null,null,null,null,null],"bytes":[96,0,null,null,null,null,null],"branches":[null,null,null,null,null,null,null],"id":["mcmc_batch","mcmc_file_model","coverage","mcmc","mcmc_data","mcmc_model","simulate_data"],"label":["mcmc_batch","mcmc_file_model","coverage","mcmc","mcmc_data","mcmc_model","simulate_data"],"level":[1,1,5,4,2,3,1],"color":["#354823","#C93312","#78B7C5","#78B7C5","#DC863B","#78B7C5","#354823"],"shape":["dot","dot","dot","dot","square","square","triangle"]},"edges":{"from":["mcmc_data","mcmc_file_model","simulate_data","mcmc_batch","mcmc","mcmc_model"],"to":["mcmc_model","mcmc_model","mcmc_data","mcmc_data","coverage","mcmc"],"arrows":["to","to","to","to","to","to"]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot","physics":false},"manipulation":{"enabled":false},"edges":{"smooth":{"type":"cubicBezier","forceDirection":"horizontal"}},"physics":{"stabilization":false},"layout":{"hierarchical":{"enabled":true,"direction":"LR"}}},"groups":null,"width":null,"height":null,"idselection":{"enabled":false,"style":"width: 150px; height: 26px","useLabels":true,"main":"Select by id"},"byselection":{"enabled":false,"style":"width: 150px; height: 26px","multiple":false,"hideColor":"rgba(200,200,200,0.5)","highlight":false},"main":{"text":"","style":"font-family:Georgia, Times New Roman, Times, serif;font-weight:bold;font-size:20px;text-align:center;"},"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)","highlight":{"enabled":true,"hoverNearest":false,"degree":{"from":1,"to":1},"algorithm":"hierarchical","hideColor":"rgba(200,200,200,0.5)","labelOnly":true},"collapse":{"enabled":true,"fit":false,"resetHighlight":true,"clusterOptions":null,"keepCoord":true,"labelSuffix":"(cluster)"},"legend":{"width":0.2,"useGroups":false,"position":"right","ncol":1,"stepX":100,"stepY":100,"zoom":true,"nodes":{"label":["Up to date","Errored","Outdated","Started","Stem","Pattern","Function"],"color":["#354823","#C93312","#78B7C5","#DC863B","#899DA4","#899DA4","#899DA4"],"shape":["dot","dot","dot","dot","dot","square","triangle"]},"nodesToDataframe":true}},"evals":[],"jsHooks":[]}</script>
 </div>
-<div id="run-the-pipeline" class="section level2" number="3.2">
-<h2 number="3.2"><span class="header-section-number">3.2</span> Run the pipeline</h2>
+<div id="run-the-pipeline" class="section level2">
+<h2><span class="header-section-number">3.2</span> Run the pipeline</h2>
 <p>Because there are so many simulations to run, the pipeline could take a long time. Below, we use the <code>tar_make_clustermq()</code> to run different targets in parallel across multiple workers on an SGE cluster. If there are any outdated targets according to the graph above, it is recommended to run this report in a non-interactive background process (e.g. via the included shell script <code>run.sh</code>) rather than clicking the “Knit” button in the RStudio IDE. While the pipeline is running, you may wish to monitor the cluster workers with <code>qstat</code> and monitor the progress of targets using <code>tar_watch()</code> and/or <code>tar_poll()</code>.</p>
-<pre class="r"><code>tar_make()
-#&gt; ✓ skip target mcmc_file_model
-#&gt; ✓ skip target mcmc_batch
-#&gt; ✓ skip branch mcmc_data_18c6824d
-#&gt; ✓ skip branch mcmc_data_fe89b1b4
-#&gt; ✓ skip branch mcmc_model_c0e651c1
-#&gt; ✓ skip branch mcmc_model_f7e6997f
-#&gt; ✓ skip target mcmc
-#&gt; ✓ skip target coverage
-#&gt; ✓ skip pipeline</code></pre>
+<pre class="r"><code>unlink(&quot;logs&quot;, recursive = TRUE)
+tar_make_clustermq(workers = 100)
+#&gt; • start target mcmc_file_model
+#&gt; ✔ skip target mcmc_batch
+#&gt; • start branch mcmc_data_18c6824d
+#&gt; • start branch mcmc_data_fe89b1b4
+#&gt; • start branch mcmc_data_dc7c13ba
+#&gt; • start branch mcmc_data_e35a8e8e
+#&gt; • start branch mcmc_data_9315d4c7
+#&gt; • start branch mcmc_data_4a530429
+#&gt; • start branch mcmc_data_021cfdec
+#&gt; • start branch mcmc_data_603f495a
+#&gt; • start branch mcmc_data_73141983
+#&gt; • start branch mcmc_data_754a52f3
+#&gt; • start branch mcmc_data_5d39c5aa
+#&gt; • start branch mcmc_data_e923f0b3
+#&gt; • start branch mcmc_data_f3a28643
+#&gt; • start branch mcmc_data_662f710d
+#&gt; • start branch mcmc_data_b1fcb9c4
+#&gt; • start branch mcmc_data_16b0c9c5
+#&gt; • start branch mcmc_data_9500703c
+#&gt; • start branch mcmc_data_55c8845f
+#&gt; • start branch mcmc_data_f8e3bbd0
+#&gt; • start branch mcmc_data_3486177e
+#&gt; • start branch mcmc_data_5a7c1b01
+#&gt; • start branch mcmc_data_0be92724
+#&gt; • start branch mcmc_data_3ebf80f0
+#&gt; • start branch mcmc_data_f2432bbf
+#&gt; • start branch mcmc_data_ac69079a
+#&gt; • start branch mcmc_data_aaa1acbb
+#&gt; • start branch mcmc_data_0480a3af
+#&gt; • start branch mcmc_data_838cf753
+#&gt; • start branch mcmc_data_662ae017
+#&gt; • start branch mcmc_data_b58e3b76
+#&gt; • start branch mcmc_data_fa4cc7ba
+#&gt; • start branch mcmc_data_afe5680a
+#&gt; • start branch mcmc_data_75b345b7
+#&gt; • start branch mcmc_data_91bcbf36
+#&gt; • start branch mcmc_data_4ee75a24
+#&gt; • start branch mcmc_data_50bed08b
+#&gt; • start branch mcmc_data_46ba868e
+#&gt; • start branch mcmc_data_e7ec179e
+#&gt; • start branch mcmc_data_b48697aa
+#&gt; • start branch mcmc_data_c1dfcc8f
+#&gt; • start branch mcmc_data_ab2e5289
+#&gt; • start branch mcmc_data_74d3b1e0
+#&gt; • start branch mcmc_data_2f9c087e
+#&gt; • start branch mcmc_data_6676bb9f
+#&gt; • start branch mcmc_data_aad32a18
+#&gt; • start branch mcmc_data_3d34c1a4
+#&gt; • start branch mcmc_data_db6f89b0
+#&gt; • start branch mcmc_data_4f88b783
+#&gt; • start branch mcmc_data_ca329337
+#&gt; • start branch mcmc_data_8ebd0f16
+#&gt; • start branch mcmc_data_3858a64c
+#&gt; • start branch mcmc_data_3bdbe1aa
+#&gt; • start branch mcmc_data_7927bc7a
+#&gt; • built branch mcmc_data_fe89b1b4
+#&gt; • start branch mcmc_data_6dd6f27c
+#&gt; • built branch mcmc_data_f3a28643
+#&gt; • start branch mcmc_data_e26a397e
+#&gt; • built branch mcmc_data_662f710d
+#&gt; • start branch mcmc_data_1c151b5f
+#&gt; • built branch mcmc_data_5d39c5aa
+#&gt; • start branch mcmc_data_a544c75a
+#&gt; • built branch mcmc_data_16b0c9c5
+#&gt; • start branch mcmc_data_1307550d
+#&gt; • start branch mcmc_data_39f081fd
+#&gt; • built branch mcmc_data_ac69079a
+#&gt; • start branch mcmc_data_9e66ed2d
+#&gt; • built branch mcmc_data_4a530429
+#&gt; • start branch mcmc_data_c93971ab
+#&gt; • built branch mcmc_data_754a52f3
+#&gt; • start branch mcmc_data_daf0c6f7
+#&gt; • built branch mcmc_data_9500703c
+#&gt; • start branch mcmc_data_d5fc9555
+#&gt; • built branch mcmc_data_e923f0b3
+#&gt; • start branch mcmc_data_89f8cd62
+#&gt; • built branch mcmc_data_3486177e
+#&gt; • start branch mcmc_data_10b49a62
+#&gt; • built branch mcmc_data_6dd6f27c
+#&gt; • start branch mcmc_data_ee2100bd
+#&gt; • built branch mcmc_data_5a7c1b01
+#&gt; • start branch mcmc_data_88986825
+#&gt; • built branch mcmc_data_0be92724
+#&gt; • start branch mcmc_data_3e8fefa9
+#&gt; • built branch mcmc_data_18c6824d
+#&gt; • start branch mcmc_data_bbc35011
+#&gt; • built branch mcmc_data_603f495a
+#&gt; • start branch mcmc_data_ee814d83
+#&gt; • built branch mcmc_data_e26a397e
+#&gt; • start branch mcmc_data_9295dac9
+#&gt; • built branch mcmc_data_55c8845f
+#&gt; • start branch mcmc_data_32568b3c
+#&gt; • built branch mcmc_data_dc7c13ba
+#&gt; • start branch mcmc_data_8627605a
+#&gt; • built branch mcmc_data_9315d4c7
+#&gt; • start branch mcmc_data_d61e4ae0
+#&gt; • built branch mcmc_data_b1fcb9c4
+#&gt; • start branch mcmc_data_f265a7fe
+#&gt; • built branch mcmc_data_afe5680a
+#&gt; • start branch mcmc_data_9fd8bc3d
+#&gt; • built branch mcmc_data_f2432bbf
+#&gt; • start branch mcmc_data_cba8ff73
+#&gt; • built branch mcmc_data_73141983
+#&gt; • start branch mcmc_data_b940f6a9
+#&gt; • built branch mcmc_data_e35a8e8e
+#&gt; • start branch mcmc_data_6135058f
+#&gt; • built branch mcmc_data_91bcbf36
+#&gt; • start branch mcmc_data_b2aeb051
+#&gt; • built branch mcmc_data_021cfdec
+#&gt; • start branch mcmc_data_38b3f0c5
+#&gt; • built branch mcmc_data_aaa1acbb
+#&gt; • start branch mcmc_data_21ac2de4
+#&gt; • built branch mcmc_data_662ae017
+#&gt; • start branch mcmc_data_12f4c5c6
+#&gt; • built branch mcmc_data_c1dfcc8f
+#&gt; • start branch mcmc_data_2deb1c1c
+#&gt; • built branch mcmc_data_ab2e5289
+#&gt; • start branch mcmc_data_e1245f78
+#&gt; • built branch mcmc_data_838cf753
+#&gt; • start branch mcmc_data_f75c8236
+#&gt; • built branch mcmc_data_3ebf80f0
+#&gt; • start branch mcmc_data_04a23ef7
+#&gt; • built branch mcmc_data_4ee75a24
+#&gt; • start branch mcmc_data_47aa785e
+#&gt; • built branch mcmc_data_6676bb9f
+#&gt; • start branch mcmc_data_bf335ba8
+#&gt; • built branch mcmc_data_b58e3b76
+#&gt; • start branch mcmc_data_88789df7
+#&gt; • built branch mcmc_data_f8e3bbd0
+#&gt; • start branch mcmc_data_62405d51
+#&gt; • built branch mcmc_data_50bed08b
+#&gt; • start branch mcmc_data_acc2d68d
+#&gt; • built branch mcmc_data_aad32a18
+#&gt; • start branch mcmc_data_cc0b04c1
+#&gt; • built branch mcmc_data_4f88b783
+#&gt; • start branch mcmc_data_0487b1ec
+#&gt; • built branch mcmc_data_e7ec179e
+#&gt; • start branch mcmc_data_4f37c3f4
+#&gt; • built branch mcmc_data_1c151b5f
+#&gt; • start branch mcmc_data_9032ddc8
+#&gt; • built branch mcmc_data_a544c75a
+#&gt; • start branch mcmc_data_cb7f26c1
+#&gt; • built branch mcmc_data_1307550d
+#&gt; • start branch mcmc_data_30c4edfe
+#&gt; • built branch mcmc_data_0480a3af
+#&gt; • start branch mcmc_data_d5d6c4a5
+#&gt; • built branch mcmc_data_9e66ed2d
+#&gt; • start branch mcmc_data_5cf99f48
+#&gt; • built branch mcmc_data_c93971ab
+#&gt; • built branch mcmc_data_daf0c6f7
+#&gt; • built branch mcmc_data_d5fc9555
+#&gt; • built branch mcmc_data_89f8cd62
+#&gt; • built branch mcmc_data_10b49a62
+#&gt; • built branch mcmc_data_ee2100bd
+#&gt; • built branch mcmc_data_88986825
+#&gt; • built branch mcmc_data_3e8fefa9
+#&gt; • built branch mcmc_data_bbc35011
+#&gt; • built branch mcmc_data_ee814d83
+#&gt; • built branch mcmc_data_9295dac9
+#&gt; • built branch mcmc_data_32568b3c
+#&gt; • built branch mcmc_data_8627605a
+#&gt; • built branch mcmc_data_d61e4ae0
+#&gt; • built branch mcmc_data_f265a7fe
+#&gt; • built branch mcmc_data_9fd8bc3d
+#&gt; • built branch mcmc_data_cba8ff73
+#&gt; • built branch mcmc_data_b940f6a9
+#&gt; • built branch mcmc_data_6135058f
+#&gt; • built branch mcmc_data_b2aeb051
+#&gt; • built branch mcmc_data_38b3f0c5
+#&gt; • built branch mcmc_data_21ac2de4
+#&gt; • built branch mcmc_data_12f4c5c6
+#&gt; • built branch mcmc_data_2deb1c1c
+#&gt; • built branch mcmc_data_e1245f78
+#&gt; • built branch mcmc_data_f75c8236
+#&gt; • built branch mcmc_data_04a23ef7
+#&gt; • built branch mcmc_data_47aa785e
+#&gt; • built branch mcmc_data_bf335ba8
+#&gt; • built branch mcmc_data_88789df7
+#&gt; • built branch mcmc_data_2f9c087e
+#&gt; • built branch mcmc_data_acc2d68d
+#&gt; • built branch mcmc_data_cc0b04c1
+#&gt; • built branch mcmc_data_62405d51
+#&gt; • built branch mcmc_data_0487b1ec
+#&gt; • built branch mcmc_data_3d34c1a4
+#&gt; • built branch mcmc_data_74d3b1e0
+#&gt; • built branch mcmc_data_db6f89b0
+#&gt; • built branch mcmc_data_46ba868e
+#&gt; • built branch mcmc_data_4f37c3f4
+#&gt; • built branch mcmc_data_9032ddc8
+#&gt; • built branch mcmc_data_cb7f26c1
+#&gt; • built branch mcmc_data_b48697aa
+#&gt; • built branch mcmc_data_30c4edfe
+#&gt; • built branch mcmc_data_5cf99f48
+#&gt; • built branch mcmc_data_d5d6c4a5
+#&gt; • built branch mcmc_data_75b345b7
+#&gt; • built branch mcmc_data_8ebd0f16
+#&gt; • built branch mcmc_data_ca329337
+#&gt; • built branch mcmc_data_3bdbe1aa
+#&gt; • built branch mcmc_data_fa4cc7ba
+#&gt; • built branch mcmc_data_7927bc7a
+#&gt; • built branch mcmc_data_3858a64c
+#&gt; • built branch mcmc_data_39f081fd
+#&gt; • built pattern mcmc_data
+#&gt; • built target mcmc_file_model
+#&gt; • start branch mcmc_model_c0e651c1
+#&gt; • start branch mcmc_model_f7e6997f
+#&gt; • start branch mcmc_model_be96d094
+#&gt; • start branch mcmc_model_de3daafe
+#&gt; • start branch mcmc_model_e8af3e59
+#&gt; • start branch mcmc_model_4561392d
+#&gt; • start branch mcmc_model_b880d938
+#&gt; • start branch mcmc_model_feaeb0cd
+#&gt; • start branch mcmc_model_07a4a3b4
+#&gt; • start branch mcmc_model_6fa6cc36
+#&gt; • start branch mcmc_model_4f09387c
+#&gt; • start branch mcmc_model_7bf89232
+#&gt; • start branch mcmc_model_7eacc34d
+#&gt; • start branch mcmc_model_f2f3c2ef
+#&gt; • start branch mcmc_model_7aca3daf
+#&gt; • start branch mcmc_model_71c12c22
+#&gt; • start branch mcmc_model_833c4495
+#&gt; • start branch mcmc_model_cfed47a6
+#&gt; • start branch mcmc_model_66e37ca5
+#&gt; • start branch mcmc_model_84f8dba6
+#&gt; • start branch mcmc_model_8a384a19
+#&gt; • start branch mcmc_model_d17282f4
+#&gt; • start branch mcmc_model_1bb9ffbf
+#&gt; • start branch mcmc_model_fbe1db47
+#&gt; • start branch mcmc_model_ebe93763
+#&gt; • start branch mcmc_model_dd6307b5
+#&gt; • start branch mcmc_model_a9e2a73d
+#&gt; • start branch mcmc_model_cd38ebc1
+#&gt; • start branch mcmc_model_f922b1cb
+#&gt; • start branch mcmc_model_3aaa7991
+#&gt; • start branch mcmc_model_85ec1b4c
+#&gt; • start branch mcmc_model_4e514383
+#&gt; • start branch mcmc_model_d4180ff1
+#&gt; • start branch mcmc_model_cdfabc8a
+#&gt; • start branch mcmc_model_defd2781
+#&gt; • start branch mcmc_model_0f33b6b8
+#&gt; • start branch mcmc_model_85b49f2c
+#&gt; • start branch mcmc_model_44382af0
+#&gt; • start branch mcmc_model_d3bc457a
+#&gt; • start branch mcmc_model_654f8444
+#&gt; • start branch mcmc_model_66b2975c
+#&gt; • start branch mcmc_model_9c999c78
+#&gt; • start branch mcmc_model_fc9048b8
+#&gt; • start branch mcmc_model_8fc7b675
+#&gt; • start branch mcmc_model_57511978
+#&gt; • start branch mcmc_model_cabf6fa0
+#&gt; • start branch mcmc_model_b8dbfbfd
+#&gt; • start branch mcmc_model_733ee94a
+#&gt; • start branch mcmc_model_67e90f02
+#&gt; • start branch mcmc_model_d6ab7c7d
+#&gt; • start branch mcmc_model_220c88b7
+#&gt; • start branch mcmc_model_535b306a
+#&gt; • start branch mcmc_model_b98acaac
+#&gt; • start branch mcmc_model_33cc0173
+#&gt; • start branch mcmc_model_a52bdb61
+#&gt; • start branch mcmc_model_bfcab06d
+#&gt; • start branch mcmc_model_6c5ee4e0
+#&gt; • start branch mcmc_model_c835059b
+#&gt; • start branch mcmc_model_53b5f4fe
+#&gt; • start branch mcmc_model_0154f2e8
+#&gt; • start branch mcmc_model_0d2c9d47
+#&gt; • start branch mcmc_model_5c478008
+#&gt; • start branch mcmc_model_d5dc4067
+#&gt; • start branch mcmc_model_fe8467a2
+#&gt; • start branch mcmc_model_c3d577e4
+#&gt; • start branch mcmc_model_c03dfd0a
+#&gt; • start branch mcmc_model_8252a25a
+#&gt; • start branch mcmc_model_9c6c781a
+#&gt; • start branch mcmc_model_b1ea3ccc
+#&gt; • start branch mcmc_model_83540740
+#&gt; • start branch mcmc_model_2369d064
+#&gt; • start branch mcmc_model_ae150573
+#&gt; • start branch mcmc_model_f531d0b1
+#&gt; • start branch mcmc_model_0a824133
+#&gt; • start branch mcmc_model_dda4c06d
+#&gt; • start branch mcmc_model_4365f29f
+#&gt; • start branch mcmc_model_f8ba1d0a
+#&gt; • start branch mcmc_model_3cd80108
+#&gt; • start branch mcmc_model_adbcebab
+#&gt; • start branch mcmc_model_7a522d65
+#&gt; • start branch mcmc_model_7eeee661
+#&gt; • start branch mcmc_model_5d632b60
+#&gt; • start branch mcmc_model_7556a446
+#&gt; • start branch mcmc_model_26b995d0
+#&gt; • start branch mcmc_model_3d04796f
+#&gt; • start branch mcmc_model_fcbd0889
+#&gt; • start branch mcmc_model_3c3cf5ae
+#&gt; • start branch mcmc_model_3cb4cd7b
+#&gt; • start branch mcmc_model_009af40f
+#&gt; • start branch mcmc_model_5fd6087a
+#&gt; • start branch mcmc_model_2d1acbbf
+#&gt; • start branch mcmc_model_56ca0eec
+#&gt; • start branch mcmc_model_d36885b6
+#&gt; • start branch mcmc_model_0bf12874
+#&gt; • start branch mcmc_model_f40d332b
+#&gt; • start branch mcmc_model_48a2aeda
+#&gt; • start branch mcmc_model_1c871cf6
+#&gt; • start branch mcmc_model_c142d23a
+#&gt; • start branch mcmc_model_59c8959a
+#&gt; • start branch mcmc_model_e23499bb
+#&gt; • built branch mcmc_model_66e37ca5
+#&gt; • built branch mcmc_model_66b2975c
+#&gt; • built branch mcmc_model_33cc0173
+#&gt; • built branch mcmc_model_defd2781
+#&gt; • built branch mcmc_model_07a4a3b4
+#&gt; • built branch mcmc_model_71c12c22
+#&gt; • built branch mcmc_model_cdfabc8a
+#&gt; • built branch mcmc_model_de3daafe
+#&gt; • built branch mcmc_model_7eacc34d
+#&gt; • built branch mcmc_model_f7e6997f
+#&gt; • built branch mcmc_model_b880d938
+#&gt; • built branch mcmc_model_53b5f4fe
+#&gt; • built branch mcmc_model_57511978
+#&gt; • built branch mcmc_model_fbe1db47
+#&gt; • built branch mcmc_model_220c88b7
+#&gt; • built branch mcmc_model_535b306a
+#&gt; • built branch mcmc_model_dd6307b5
+#&gt; • built branch mcmc_model_b8dbfbfd
+#&gt; • built branch mcmc_model_67e90f02
+#&gt; • built branch mcmc_model_7bf89232
+#&gt; • built branch mcmc_model_44382af0
+#&gt; • built branch mcmc_model_fe8467a2
+#&gt; • built branch mcmc_model_c835059b
+#&gt; • built branch mcmc_model_1bb9ffbf
+#&gt; • built branch mcmc_model_c0e651c1
+#&gt; • built branch mcmc_model_cd38ebc1
+#&gt; • built branch mcmc_model_8a384a19
+#&gt; • built branch mcmc_model_7556a446
+#&gt; • built branch mcmc_model_5d632b60
+#&gt; • built branch mcmc_model_bfcab06d
+#&gt; • built branch mcmc_model_9c6c781a
+#&gt; • built branch mcmc_model_feaeb0cd
+#&gt; • built branch mcmc_model_dda4c06d
+#&gt; • built branch mcmc_model_a52bdb61
+#&gt; • built branch mcmc_model_5c478008
+#&gt; • built branch mcmc_model_7eeee661
+#&gt; • built branch mcmc_model_b1ea3ccc
+#&gt; • built branch mcmc_model_833c4495
+#&gt; • built branch mcmc_model_d4180ff1
+#&gt; • built branch mcmc_model_cfed47a6
+#&gt; • built branch mcmc_model_733ee94a
+#&gt; • built branch mcmc_model_a9e2a73d
+#&gt; • built branch mcmc_model_0bf12874
+#&gt; • built branch mcmc_model_c142d23a
+#&gt; • built branch mcmc_model_c03dfd0a
+#&gt; • built branch mcmc_model_c3d577e4
+#&gt; • built branch mcmc_model_8fc7b675
+#&gt; • built branch mcmc_model_0d2c9d47
+#&gt; • built branch mcmc_model_d5dc4067
+#&gt; • built branch mcmc_model_b98acaac
+#&gt; • built branch mcmc_model_84f8dba6
+#&gt; • built branch mcmc_model_d17282f4
+#&gt; • built branch mcmc_model_d6ab7c7d
+#&gt; • built branch mcmc_model_7aca3daf
+#&gt; • built branch mcmc_model_0154f2e8
+#&gt; • built branch mcmc_model_4f09387c
+#&gt; • built branch mcmc_model_5fd6087a
+#&gt; • built branch mcmc_model_3cd80108
+#&gt; • built branch mcmc_model_f2f3c2ef
+#&gt; • built branch mcmc_model_85b49f2c
+#&gt; • built branch mcmc_model_f922b1cb
+#&gt; • built branch mcmc_model_4e514383
+#&gt; • built branch mcmc_model_4561392d
+#&gt; • built branch mcmc_model_ebe93763
+#&gt; • built branch mcmc_model_fcbd0889
+#&gt; • built branch mcmc_model_6fa6cc36
+#&gt; • built branch mcmc_model_4365f29f
+#&gt; • built branch mcmc_model_8252a25a
+#&gt; • built branch mcmc_model_2369d064
+#&gt; • built branch mcmc_model_1c871cf6
+#&gt; • built branch mcmc_model_26b995d0
+#&gt; • built branch mcmc_model_654f8444
+#&gt; • built branch mcmc_model_f40d332b
+#&gt; • built branch mcmc_model_e23499bb
+#&gt; • built branch mcmc_model_3d04796f
+#&gt; • built branch mcmc_model_9c999c78
+#&gt; • built branch mcmc_model_0f33b6b8
+#&gt; • built branch mcmc_model_adbcebab
+#&gt; • built branch mcmc_model_f8ba1d0a
+#&gt; • built branch mcmc_model_ae150573
+#&gt; • built branch mcmc_model_d3bc457a
+#&gt; • built branch mcmc_model_3aaa7991
+#&gt; • built branch mcmc_model_fc9048b8
+#&gt; • built branch mcmc_model_7a522d65
+#&gt; • built branch mcmc_model_6c5ee4e0
+#&gt; • built branch mcmc_model_e8af3e59
+#&gt; • built branch mcmc_model_59c8959a
+#&gt; • built branch mcmc_model_48a2aeda
+#&gt; • built branch mcmc_model_be96d094
+#&gt; • built branch mcmc_model_2d1acbbf
+#&gt; • built branch mcmc_model_d36885b6
+#&gt; • built branch mcmc_model_56ca0eec
+#&gt; • built branch mcmc_model_0a824133
+#&gt; • built branch mcmc_model_3cb4cd7b
+#&gt; • built branch mcmc_model_cabf6fa0
+#&gt; • built branch mcmc_model_85ec1b4c
+#&gt; • built branch mcmc_model_009af40f
+#&gt; • built branch mcmc_model_f531d0b1
+#&gt; • built branch mcmc_model_3c3cf5ae
+#&gt; • built branch mcmc_model_83540740
+#&gt; • built pattern mcmc_model
+#&gt; • start target mcmc
+#&gt; • built target mcmc
+#&gt; • start target coverage
+#&gt; • built target coverage
+#&gt; Master: [16596.2s 1.1% CPU]; Worker: [avg 0.5% CPU, max 430.4 Mb]
+#&gt; • end pipeline
+#&gt; Warning message:
+#&gt; 7 targets produced warnings. Run tar_meta(fields = warnings) for the messages.</code></pre>
 </div>
 </div>
-<div id="results" class="section level1" number="4">
-<h1 number="4"><span class="header-section-number">4</span> Results</h1>
+<div id="results" class="section level1">
+<h1><span class="header-section-number">4</span> Results</h1>
 <p>Finally, we report coverage statistics and convergence diagnostics. If the model is implemented correctly, <code>coverage_50</code> should not differ systematically from 0.5, <code>coverage_95</code> should not differ systematically from 0.95, and <code>max_rhat</code> should be close to 1.</p>
 <pre class="r"><code>library(gt)
 gt(tar_read(coverage))</code></pre>
+<div id="pzvcokvqto" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#fyvajcogwx .gt_table {
+#pzvcokvqto .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -5832,7 +6221,7 @@ gt(tar_read(coverage))</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#fyvajcogwx .gt_heading {
+#pzvcokvqto .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -5844,7 +6233,7 @@ gt(tar_read(coverage))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#fyvajcogwx .gt_title {
+#pzvcokvqto .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -5854,7 +6243,7 @@ gt(tar_read(coverage))</code></pre>
   border-bottom-width: 0;
 }
 
-#fyvajcogwx .gt_subtitle {
+#pzvcokvqto .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -5864,13 +6253,13 @@ gt(tar_read(coverage))</code></pre>
   border-top-width: 0;
 }
 
-#fyvajcogwx .gt_bottom_border {
+#pzvcokvqto .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#fyvajcogwx .gt_col_headings {
+#pzvcokvqto .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -5885,7 +6274,7 @@ gt(tar_read(coverage))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#fyvajcogwx .gt_col_heading {
+#pzvcokvqto .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -5905,7 +6294,7 @@ gt(tar_read(coverage))</code></pre>
   overflow-x: hidden;
 }
 
-#fyvajcogwx .gt_column_spanner_outer {
+#pzvcokvqto .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -5917,15 +6306,15 @@ gt(tar_read(coverage))</code></pre>
   padding-right: 4px;
 }
 
-#fyvajcogwx .gt_column_spanner_outer:first-child {
+#pzvcokvqto .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#fyvajcogwx .gt_column_spanner_outer:last-child {
+#pzvcokvqto .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#fyvajcogwx .gt_column_spanner {
+#pzvcokvqto .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -5937,7 +6326,7 @@ gt(tar_read(coverage))</code></pre>
   width: 100%;
 }
 
-#fyvajcogwx .gt_group_heading {
+#pzvcokvqto .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -5959,7 +6348,7 @@ gt(tar_read(coverage))</code></pre>
   vertical-align: middle;
 }
 
-#fyvajcogwx .gt_empty_group_heading {
+#pzvcokvqto .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -5974,15 +6363,15 @@ gt(tar_read(coverage))</code></pre>
   vertical-align: middle;
 }
 
-#fyvajcogwx .gt_from_md > :first-child {
+#pzvcokvqto .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#fyvajcogwx .gt_from_md > :last-child {
+#pzvcokvqto .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#fyvajcogwx .gt_row {
+#pzvcokvqto .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -6001,7 +6390,7 @@ gt(tar_read(coverage))</code></pre>
   overflow-x: hidden;
 }
 
-#fyvajcogwx .gt_stub {
+#pzvcokvqto .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -6013,7 +6402,7 @@ gt(tar_read(coverage))</code></pre>
   padding-left: 12px;
 }
 
-#fyvajcogwx .gt_summary_row {
+#pzvcokvqto .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -6023,7 +6412,7 @@ gt(tar_read(coverage))</code></pre>
   padding-right: 5px;
 }
 
-#fyvajcogwx .gt_first_summary_row {
+#pzvcokvqto .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -6033,7 +6422,7 @@ gt(tar_read(coverage))</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#fyvajcogwx .gt_grand_summary_row {
+#pzvcokvqto .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -6043,7 +6432,7 @@ gt(tar_read(coverage))</code></pre>
   padding-right: 5px;
 }
 
-#fyvajcogwx .gt_first_grand_summary_row {
+#pzvcokvqto .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -6053,11 +6442,11 @@ gt(tar_read(coverage))</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#fyvajcogwx .gt_striped {
+#pzvcokvqto .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#fyvajcogwx .gt_table_body {
+#pzvcokvqto .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -6066,7 +6455,7 @@ gt(tar_read(coverage))</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#fyvajcogwx .gt_footnotes {
+#pzvcokvqto .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -6080,13 +6469,13 @@ gt(tar_read(coverage))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#fyvajcogwx .gt_footnote {
+#pzvcokvqto .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#fyvajcogwx .gt_sourcenotes {
+#pzvcokvqto .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -6100,46 +6489,47 @@ gt(tar_read(coverage))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#fyvajcogwx .gt_sourcenote {
+#pzvcokvqto .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#fyvajcogwx .gt_left {
+#pzvcokvqto .gt_left {
   text-align: left;
 }
 
-#fyvajcogwx .gt_center {
+#pzvcokvqto .gt_center {
   text-align: center;
 }
 
-#fyvajcogwx .gt_right {
+#pzvcokvqto .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#fyvajcogwx .gt_font_normal {
+#pzvcokvqto .gt_font_normal {
   font-weight: normal;
 }
 
-#fyvajcogwx .gt_font_bold {
+#pzvcokvqto .gt_font_bold {
   font-weight: bold;
 }
 
-#fyvajcogwx .gt_font_italic {
+#pzvcokvqto .gt_font_italic {
   font-style: italic;
 }
 
-#fyvajcogwx .gt_super {
+#pzvcokvqto .gt_super {
   font-size: 65%;
 }
 
-#fyvajcogwx .gt_footnote_marks {
+#pzvcokvqto .gt_footnote_marks {
   font-style: italic;
+  font-weight: normal;
   font-size: 65%;
 }
 </style>
-<div id="fyvajcogwx" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
@@ -6150,163 +6540,118 @@ gt(tar_read(coverage))</code></pre>
     </tr>
   </thead>
   <tbody class="gt_table_body">
-    <tr>
-      <td class="gt_row gt_left">beta[1]</td>
-      <td class="gt_row gt_right">0.5</td>
-      <td class="gt_row gt_right">1.0</td>
-      <td class="gt_row gt_right">1.6300</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">beta[10]</td>
-      <td class="gt_row gt_right">0.5</td>
-      <td class="gt_row gt_right">1.0</td>
-      <td class="gt_row gt_right">1.9132</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">beta[2]</td>
-      <td class="gt_row gt_right">0.0</td>
-      <td class="gt_row gt_right">1.0</td>
-      <td class="gt_row gt_right">1.0712</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">beta[3]</td>
-      <td class="gt_row gt_right">0.5</td>
-      <td class="gt_row gt_right">1.0</td>
-      <td class="gt_row gt_right">1.2043</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">beta[4]</td>
-      <td class="gt_row gt_right">1.0</td>
-      <td class="gt_row gt_right">1.0</td>
-      <td class="gt_row gt_right">1.5875</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">beta[5]</td>
-      <td class="gt_row gt_right">0.5</td>
-      <td class="gt_row gt_right">1.0</td>
-      <td class="gt_row gt_right">1.4810</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">beta[6]</td>
-      <td class="gt_row gt_right">1.0</td>
-      <td class="gt_row gt_right">1.0</td>
-      <td class="gt_row gt_right">1.5794</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">beta[7]</td>
-      <td class="gt_row gt_right">0.5</td>
-      <td class="gt_row gt_right">1.0</td>
-      <td class="gt_row gt_right">2.0063</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">beta[8]</td>
-      <td class="gt_row gt_right">1.0</td>
-      <td class="gt_row gt_right">1.0</td>
-      <td class="gt_row gt_right">1.8684</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">beta[9]</td>
-      <td class="gt_row gt_right">0.5</td>
-      <td class="gt_row gt_right">1.0</td>
-      <td class="gt_row gt_right">1.7279</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">lambda[2,1]</td>
-      <td class="gt_row gt_right">0.0</td>
-      <td class="gt_row gt_right">1.0</td>
-      <td class="gt_row gt_right">1.4637</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">lambda[2,2]</td>
-      <td class="gt_row gt_right">0.5</td>
-      <td class="gt_row gt_right">1.0</td>
-      <td class="gt_row gt_right">1.4072</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">lambda[3,1]</td>
-      <td class="gt_row gt_right">0.0</td>
-      <td class="gt_row gt_right">0.5</td>
-      <td class="gt_row gt_right">1.5995</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">lambda[3,2]</td>
-      <td class="gt_row gt_right">0.5</td>
-      <td class="gt_row gt_right">1.0</td>
-      <td class="gt_row gt_right">1.4186</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">lambda[3,3]</td>
-      <td class="gt_row gt_right">1.0</td>
-      <td class="gt_row gt_right">1.0</td>
-      <td class="gt_row gt_right">1.5477</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">lambda[4,1]</td>
-      <td class="gt_row gt_right">1.0</td>
-      <td class="gt_row gt_right">1.0</td>
-      <td class="gt_row gt_right">1.7611</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">lambda[4,2]</td>
-      <td class="gt_row gt_right">0.0</td>
-      <td class="gt_row gt_right">0.5</td>
-      <td class="gt_row gt_right">1.5290</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">lambda[4,3]</td>
-      <td class="gt_row gt_right">0.5</td>
-      <td class="gt_row gt_right">0.5</td>
-      <td class="gt_row gt_right">1.7367</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">lambda[4,4]</td>
-      <td class="gt_row gt_right">1.0</td>
-      <td class="gt_row gt_right">1.0</td>
-      <td class="gt_row gt_right">1.6099</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">sigma[1]</td>
-      <td class="gt_row gt_right">0.0</td>
-      <td class="gt_row gt_right">0.0</td>
-      <td class="gt_row gt_right">1.8688</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">sigma[2]</td>
-      <td class="gt_row gt_right">1.0</td>
-      <td class="gt_row gt_right">1.0</td>
-      <td class="gt_row gt_right">1.4995</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">sigma[3]</td>
-      <td class="gt_row gt_right">0.5</td>
-      <td class="gt_row gt_right">1.0</td>
-      <td class="gt_row gt_right">1.5966</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">sigma[4]</td>
-      <td class="gt_row gt_right">0.0</td>
-      <td class="gt_row gt_right">0.5</td>
-      <td class="gt_row gt_right">1.7967</td>
-    </tr>
+    <tr><td class="gt_row gt_left">beta[1]</td>
+<td class="gt_row gt_right">0.491</td>
+<td class="gt_row gt_right">0.932</td>
+<td class="gt_row gt_right">3.4162</td></tr>
+    <tr><td class="gt_row gt_left">beta[10]</td>
+<td class="gt_row gt_right">0.493</td>
+<td class="gt_row gt_right">0.951</td>
+<td class="gt_row gt_right">3.8711</td></tr>
+    <tr><td class="gt_row gt_left">beta[2]</td>
+<td class="gt_row gt_right">0.464</td>
+<td class="gt_row gt_right">0.945</td>
+<td class="gt_row gt_right">1.5728</td></tr>
+    <tr><td class="gt_row gt_left">beta[3]</td>
+<td class="gt_row gt_right">0.520</td>
+<td class="gt_row gt_right">0.952</td>
+<td class="gt_row gt_right">1.5971</td></tr>
+    <tr><td class="gt_row gt_left">beta[4]</td>
+<td class="gt_row gt_right">0.499</td>
+<td class="gt_row gt_right">0.941</td>
+<td class="gt_row gt_right">3.4566</td></tr>
+    <tr><td class="gt_row gt_left">beta[5]</td>
+<td class="gt_row gt_right">0.500</td>
+<td class="gt_row gt_right">0.946</td>
+<td class="gt_row gt_right">3.5345</td></tr>
+    <tr><td class="gt_row gt_left">beta[6]</td>
+<td class="gt_row gt_right">0.485</td>
+<td class="gt_row gt_right">0.943</td>
+<td class="gt_row gt_right">3.4648</td></tr>
+    <tr><td class="gt_row gt_left">beta[7]</td>
+<td class="gt_row gt_right">0.509</td>
+<td class="gt_row gt_right">0.943</td>
+<td class="gt_row gt_right">3.2432</td></tr>
+    <tr><td class="gt_row gt_left">beta[8]</td>
+<td class="gt_row gt_right">0.491</td>
+<td class="gt_row gt_right">0.941</td>
+<td class="gt_row gt_right">3.3269</td></tr>
+    <tr><td class="gt_row gt_left">beta[9]</td>
+<td class="gt_row gt_right">0.489</td>
+<td class="gt_row gt_right">0.950</td>
+<td class="gt_row gt_right">3.1325</td></tr>
+    <tr><td class="gt_row gt_left">lambda[2,1]</td>
+<td class="gt_row gt_right">0.254</td>
+<td class="gt_row gt_right">0.476</td>
+<td class="gt_row gt_right">3.4253</td></tr>
+    <tr><td class="gt_row gt_left">lambda[2,2]</td>
+<td class="gt_row gt_right">0.485</td>
+<td class="gt_row gt_right">0.944</td>
+<td class="gt_row gt_right">3.5778</td></tr>
+    <tr><td class="gt_row gt_left">lambda[3,1]</td>
+<td class="gt_row gt_right">0.256</td>
+<td class="gt_row gt_right">0.495</td>
+<td class="gt_row gt_right">4.1413</td></tr>
+    <tr><td class="gt_row gt_left">lambda[3,2]</td>
+<td class="gt_row gt_right">0.246</td>
+<td class="gt_row gt_right">0.487</td>
+<td class="gt_row gt_right">2.5769</td></tr>
+    <tr><td class="gt_row gt_left">lambda[3,3]</td>
+<td class="gt_row gt_right">0.518</td>
+<td class="gt_row gt_right">0.926</td>
+<td class="gt_row gt_right">3.2721</td></tr>
+    <tr><td class="gt_row gt_left">lambda[4,1]</td>
+<td class="gt_row gt_right">0.248</td>
+<td class="gt_row gt_right">0.506</td>
+<td class="gt_row gt_right">4.2181</td></tr>
+    <tr><td class="gt_row gt_left">lambda[4,2]</td>
+<td class="gt_row gt_right">0.254</td>
+<td class="gt_row gt_right">0.504</td>
+<td class="gt_row gt_right">3.3777</td></tr>
+    <tr><td class="gt_row gt_left">lambda[4,3]</td>
+<td class="gt_row gt_right">0.244</td>
+<td class="gt_row gt_right">0.482</td>
+<td class="gt_row gt_right">3.2566</td></tr>
+    <tr><td class="gt_row gt_left">lambda[4,4]</td>
+<td class="gt_row gt_right">0.494</td>
+<td class="gt_row gt_right">0.957</td>
+<td class="gt_row gt_right">3.1844</td></tr>
+    <tr><td class="gt_row gt_left">sigma[1]</td>
+<td class="gt_row gt_right">0.249</td>
+<td class="gt_row gt_right">0.463</td>
+<td class="gt_row gt_right">3.6496</td></tr>
+    <tr><td class="gt_row gt_left">sigma[2]</td>
+<td class="gt_row gt_right">0.223</td>
+<td class="gt_row gt_right">0.469</td>
+<td class="gt_row gt_right">3.7227</td></tr>
+    <tr><td class="gt_row gt_left">sigma[3]</td>
+<td class="gt_row gt_right">0.237</td>
+<td class="gt_row gt_right">0.457</td>
+<td class="gt_row gt_right">3.6940</td></tr>
+    <tr><td class="gt_row gt_left">sigma[4]</td>
+<td class="gt_row gt_right">0.245</td>
+<td class="gt_row gt_right">0.447</td>
+<td class="gt_row gt_right">3.3678</td></tr>
   </tbody>
   
   
-</table></div>
+</table>
 </div>
-<div id="references" class="section level1 unnumbered" number>
-<h1 class="unnumbered" number>References</h1>
-<div id="refs" class="references hanging-indent">
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1>References</h1>
+<div id="refs" class="references">
 <div id="ref-cook2006">
-<p>Cook, Samantha R., Andrew Gelman, and Donald B. Rubin. 2006. “Validation of Software for Bayesian Models Using Posterior Quantiles.” <em>Journal of Computational and Graphical Statistics</em> 15 (3): 675–92. <a href="http://www.jstor.org/stable/27594203">http://www.jstor.org/stable/27594203</a>.</p>
+<p>Cook, Samantha R., Andrew Gelman, and Donald B. Rubin. 2006. “Validation of Software for Bayesian Models Using Posterior Quantiles.” <em>Journal of Computational and Graphical Statistics</em> 15 (3). [American Statistical Association, Taylor &amp; Francis, Ltd., Institute of Mathematical Statistics, Interface Foundation of America]:675–92. <a href="http://www.jstor.org/stable/27594203" class="uri">http://www.jstor.org/stable/27594203</a>.</p>
 </div>
 <div id="ref-stantargets">
-<p>Landau, William Michael. 2021a. “The Stantargets R Package: A Workflow Framework for Efficient Reproducible Stan-Powered Bayesian Data Analysis Pipelines.” <em>Journal of Open Source Software</em> 6 (60): 3193. <a href="https://doi.org/10.21105/joss.03193">https://doi.org/10.21105/joss.03193</a>.</p>
+<p>Landau, William Michael. 2021a. “The Stantargets R Package: A Workflow Framework for Efficient Reproducible Stan-Powered Bayesian Data Analysis Pipelines.” <em>Journal of Open Source Software</em> 6 (60). The Open Journal:3193. <a href="https://doi.org/10.21105/joss.03193" class="uri">https://doi.org/10.21105/joss.03193</a>.</p>
 </div>
 <div id="ref-targets">
-<p>———. 2021b. “The Targets R Package: A Dynamic Make-Like Function-Oriented Pipeline Toolkit for Reproducibility and High-Performance Computing.” <em>Journal of Open Source Software</em> 6 (57): 2959. <a href="https://doi.org/10.21105/joss.02959">https://doi.org/10.21105/joss.02959</a>.</p>
+<p>———. 2021b. “The Targets R Package: A Dynamic Make-Like Function-Oriented Pipeline Toolkit for Reproducibility and High-Performance Computing.” <em>Journal of Open Source Software</em> 6 (57). The Open Journal:2959. <a href="https://doi.org/10.21105/joss.02959" class="uri">https://doi.org/10.21105/joss.02959</a>.</p>
 </div>
 <div id="ref-talts2020">
-<p>Talts, Sean, Michael Betancourt, Daniel Simpson, Aki Vehtari, and Andrew Gelman. 2020. “Validating Bayesian Inference Algorithms with Simulation-Based Calibration.” <a href="http://arxiv.org/abs/1804.06788">http://arxiv.org/abs/1804.06788</a>.</p>
+<p>Talts, Sean, Michael Betancourt, Daniel Simpson, Aki Vehtari, and Andrew Gelman. 2020. “Validating Bayesian Inference Algorithms with Simulation-Based Calibration.”</p>
 </div>
 </div>
 </div>
