@@ -6,5 +6,6 @@
 _targets
 _targets.R
 _targets_r
+logs
 model
 nohup.out
