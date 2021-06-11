@@ -100,6 +100,13 @@
       "Repository": "CRAN",
       "Hash": "b181d4eb2904da0897a742a559964173"
     },
+    "abind": {
+      "Package": "abind",
+      "Version": "1.4-5",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "4f57884290cc75ab22f4af9e9d4ca862"
+    },
     "arrayhelpers": {
       "Package": "arrayhelpers",
       "Version": "1.1-0",
@@ -225,6 +232,19 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "385cd5623e6f8f27dc79437398dceed1"
+    },
+    "cmdstanr": {
+      "Package": "cmdstanr",
+      "Version": "0.4.0.9000",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "Remotes": "stan-dev/posterior",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "cmdstanr",
+      "RemoteUsername": "stan-dev",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "74ed5400f75969653215454a6f7baf5e2694d5ec",
+      "Hash": "7f7c16c4728b4ab9f5b10307b593c0c2"
     },
     "coda": {
       "Package": "coda",
@@ -744,6 +764,18 @@
       "Repository": "CRAN",
       "Hash": "ec0e5ab4e5f851f6ef32cd1d1984957f"
     },
+    "posterior": {
+      "Package": "posterior",
+      "Version": "0.1.6",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "posterior",
+      "RemoteUsername": "stan-dev",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "6cf8d24e8dd97640ec976d0cba56b4fcf69b2d0b",
+      "Hash": "5f9b5d8f91bbb41b3776ee3ce0f1b4f3"
+    },
     "prettyunits": {
       "Package": "prettyunits",
       "Version": "1.1.1",
@@ -940,6 +972,19 @@
       "Repository": "CRAN",
       "Hash": "947e4e02a79effa5d512473e10f41797"
     },
+    "stantargets": {
+      "Package": "stantargets",
+      "Version": "0.0.2.9000",
+      "Source": "GitHub",
+      "Remotes": "stan-dev/cmdstanr, stan-dev/posterior",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "stantargets",
+      "RemoteUsername": "ropensci",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "4f53500b49275ff3219b2ca8ca01f11a89f893bf",
+      "Hash": "b958873c679686c6b7babfdf3b4d61a2"
+    },
     "stringfish": {
       "Package": "stringfish",
       "Version": "0.15.1",
@@ -975,6 +1020,18 @@
       "Repository": "CRAN",
       "Hash": "b227d13e29222b4574486cfcbde077fa"
     },
+    "tarchetypes": {
+      "Package": "tarchetypes",
+      "Version": "0.2.0.9000",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "tarchetypes",
+      "RemoteUsername": "ropensci",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "cd5f7e43bb68082e8849e1ab1d8d08a114c1d019",
+      "Hash": "be73d6cc04ce9cd4b069c8ce700fac5c"
+    },
     "targets": {
       "Package": "targets",
       "Version": "0.5.0.9000",
@@ -986,6 +1043,13 @@
       "RemoteRef": "HEAD",
       "RemoteSha": "aba62c794764357db61ad7fabb4721854fbc67ad",
       "Hash": "ab22213e0465e941d313128094d9bd0c"
+    },
+    "tensorA": {
+      "Package": "tensorA",
+      "Version": "0.36.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "fd792ceac77f96b647fa8d6e1788969a"
     },
     "tibble": {
       "Package": "tibble",
