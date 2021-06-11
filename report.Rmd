@@ -169,8 +169,8 @@ tar_stan_mcmc_rep_summary(
   reps = 10, # Number of model reps per branch target.
   chains = 4, # Number of MCMC chains.
   parallel_chains = 4, # How many MCMC chains to run in parallel.
-  iter_warmup = 100, # Number of MCMC warmup iterations to run.
-  iter_sampling = 100, # Number of MCMC post-warmup iterations to run.
+  iter_warmup = 2e3, # Number of MCMC warmup iterations to run.
+  iter_sampling = 2e3, # Number of MCMC post-warmup iterations to run.
   summaries = list(
     # Compute posterior intervals at levels 50% and 95%.
     # The 50% intervals should cover prior predictive parameter draws
