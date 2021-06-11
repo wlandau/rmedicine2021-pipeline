@@ -5780,8 +5780,8 @@ library(stantargets)
 <h2 number="3.1"><span class="header-section-number">3.1</span> Inspect the pipeline</h2>
 <p>But first, it is good practice to visualize the dependency graph to verify that the workflow is correctly specified. All targets should be connected by graph edges, and they should appear in the correct order in relation to one another.</p>
 <pre class="r"><code>tar_visnetwork()</code></pre>
-<div id="htmlwidget-d93db65d3e53ba0806bc" style="width:672px;height:480px;" class="visNetwork html-widget"></div>
-<script type="application/json" data-for="htmlwidget-d93db65d3e53ba0806bc">{"x":{"nodes":{"name":["coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","simulate_data"],"type":["stem","stem","stem","pattern","stem","pattern","function"],"status":["outdated","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate"],"seconds":[2.159,0.001,0.001,2.277,2.656,39.054,null],"bytes":[512,6287,97,94246,1996011,7130,null],"branches":[null,null,null,2,null,2,null],"id":["coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","simulate_data"],"label":["coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","simulate_data"],"level":[5,4,1,2,1,3,1],"color":["#78B7C5","#354823","#354823","#354823","#354823","#354823","#354823"],"shape":["dot","dot","dot","square","dot","square","triangle"]},"edges":{"from":["mcmc_data","mcmc_file_model","mcmc_model","simulate_data","mcmc_batch","mcmc"],"to":["mcmc_model","mcmc_model","mcmc","mcmc_data","mcmc_data","coverage"],"arrows":["to","to","to","to","to","to"]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot","physics":false},"manipulation":{"enabled":false},"edges":{"smooth":{"type":"cubicBezier","forceDirection":"horizontal"}},"physics":{"stabilization":false},"layout":{"hierarchical":{"enabled":true,"direction":"LR"}}},"groups":null,"width":null,"height":null,"idselection":{"enabled":false,"style":"width: 150px; height: 26px","useLabels":true,"main":"Select by id"},"byselection":{"enabled":false,"style":"width: 150px; height: 26px","multiple":false,"hideColor":"rgba(200,200,200,0.5)","highlight":false},"main":{"text":"","style":"font-family:Georgia, Times New Roman, Times, serif;font-weight:bold;font-size:20px;text-align:center;"},"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)","highlight":{"enabled":true,"hoverNearest":false,"degree":{"from":1,"to":1},"algorithm":"hierarchical","hideColor":"rgba(200,200,200,0.5)","labelOnly":true},"collapse":{"enabled":true,"fit":false,"resetHighlight":true,"clusterOptions":null,"keepCoord":true,"labelSuffix":"(cluster)"},"legend":{"width":0.2,"useGroups":false,"position":"right","ncol":1,"stepX":100,"stepY":100,"zoom":true,"nodes":{"label":["Outdated","Up to date","Stem","Pattern","Function"],"color":["#78B7C5","#354823","#899DA4","#899DA4","#899DA4"],"shape":["dot","dot","dot","square","triangle"]},"nodesToDataframe":true}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-2da646cb9f78d05f7084" style="width:672px;height:480px;" class="visNetwork html-widget"></div>
+<script type="application/json" data-for="htmlwidget-2da646cb9f78d05f7084">{"x":{"nodes":{"name":["coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","simulate_data"],"type":["stem","stem","stem","pattern","stem","pattern","function"],"status":["uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate"],"seconds":[2.22,0.001,0.001,2.277,2.656,39.054,null],"bytes":[505,6287,97,94246,1996011,7130,null],"branches":[null,null,null,2,null,2,null],"id":["coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","simulate_data"],"label":["coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","simulate_data"],"level":[5,4,1,2,1,3,1],"color":["#354823","#354823","#354823","#354823","#354823","#354823","#354823"],"shape":["dot","dot","dot","square","dot","square","triangle"]},"edges":{"from":["mcmc_data","mcmc_file_model","mcmc_model","simulate_data","mcmc_batch","mcmc"],"to":["mcmc_model","mcmc_model","mcmc","mcmc_data","mcmc_data","coverage"],"arrows":["to","to","to","to","to","to"]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot","physics":false},"manipulation":{"enabled":false},"edges":{"smooth":{"type":"cubicBezier","forceDirection":"horizontal"}},"physics":{"stabilization":false},"layout":{"hierarchical":{"enabled":true,"direction":"LR"}}},"groups":null,"width":null,"height":null,"idselection":{"enabled":false,"style":"width: 150px; height: 26px","useLabels":true,"main":"Select by id"},"byselection":{"enabled":false,"style":"width: 150px; height: 26px","multiple":false,"hideColor":"rgba(200,200,200,0.5)","highlight":false},"main":{"text":"","style":"font-family:Georgia, Times New Roman, Times, serif;font-weight:bold;font-size:20px;text-align:center;"},"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)","highlight":{"enabled":true,"hoverNearest":false,"degree":{"from":1,"to":1},"algorithm":"hierarchical","hideColor":"rgba(200,200,200,0.5)","labelOnly":true},"collapse":{"enabled":true,"fit":false,"resetHighlight":true,"clusterOptions":null,"keepCoord":true,"labelSuffix":"(cluster)"},"legend":{"width":0.2,"useGroups":false,"position":"right","ncol":1,"stepX":100,"stepY":100,"zoom":true,"nodes":{"label":["Up to date","Stem","Pattern","Function"],"color":["#354823","#899DA4","#899DA4","#899DA4"],"shape":["dot","dot","square","triangle"]},"nodesToDataframe":true}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div id="run-the-pipeline" class="section level2" number="3.2">
 <h2 number="3.2"><span class="header-section-number">3.2</span> Run the pipeline</h2>
@@ -5794,9 +5794,8 @@ library(stantargets)
 #&gt; ✓ skip branch mcmc_model_c0e651c1
 #&gt; ✓ skip branch mcmc_model_f7e6997f
 #&gt; ✓ skip target mcmc
-#&gt; • start target coverage
-#&gt; • built target coverage
-#&gt; • end pipeline</code></pre>
+#&gt; ✓ skip target coverage
+#&gt; ✓ skip pipeline</code></pre>
 </div>
 </div>
 <div id="results" class="section level1" number="4">
@@ -5808,7 +5807,7 @@ gt(tar_read(coverage))</code></pre>
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#zzjvboczep .gt_table {
+#fyvajcogwx .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -5833,7 +5832,7 @@ gt(tar_read(coverage))</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#zzjvboczep .gt_heading {
+#fyvajcogwx .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -5845,7 +5844,7 @@ gt(tar_read(coverage))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#zzjvboczep .gt_title {
+#fyvajcogwx .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -5855,7 +5854,7 @@ gt(tar_read(coverage))</code></pre>
   border-bottom-width: 0;
 }
 
-#zzjvboczep .gt_subtitle {
+#fyvajcogwx .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -5865,13 +5864,13 @@ gt(tar_read(coverage))</code></pre>
   border-top-width: 0;
 }
 
-#zzjvboczep .gt_bottom_border {
+#fyvajcogwx .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#zzjvboczep .gt_col_headings {
+#fyvajcogwx .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -5886,7 +5885,7 @@ gt(tar_read(coverage))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#zzjvboczep .gt_col_heading {
+#fyvajcogwx .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -5906,7 +5905,7 @@ gt(tar_read(coverage))</code></pre>
   overflow-x: hidden;
 }
 
-#zzjvboczep .gt_column_spanner_outer {
+#fyvajcogwx .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -5918,15 +5917,15 @@ gt(tar_read(coverage))</code></pre>
   padding-right: 4px;
 }
 
-#zzjvboczep .gt_column_spanner_outer:first-child {
+#fyvajcogwx .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#zzjvboczep .gt_column_spanner_outer:last-child {
+#fyvajcogwx .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#zzjvboczep .gt_column_spanner {
+#fyvajcogwx .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -5938,7 +5937,7 @@ gt(tar_read(coverage))</code></pre>
   width: 100%;
 }
 
-#zzjvboczep .gt_group_heading {
+#fyvajcogwx .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -5960,7 +5959,7 @@ gt(tar_read(coverage))</code></pre>
   vertical-align: middle;
 }
 
-#zzjvboczep .gt_empty_group_heading {
+#fyvajcogwx .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -5975,15 +5974,15 @@ gt(tar_read(coverage))</code></pre>
   vertical-align: middle;
 }
 
-#zzjvboczep .gt_from_md > :first-child {
+#fyvajcogwx .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#zzjvboczep .gt_from_md > :last-child {
+#fyvajcogwx .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#zzjvboczep .gt_row {
+#fyvajcogwx .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -6002,7 +6001,7 @@ gt(tar_read(coverage))</code></pre>
   overflow-x: hidden;
 }
 
-#zzjvboczep .gt_stub {
+#fyvajcogwx .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -6014,7 +6013,7 @@ gt(tar_read(coverage))</code></pre>
   padding-left: 12px;
 }
 
-#zzjvboczep .gt_summary_row {
+#fyvajcogwx .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -6024,7 +6023,7 @@ gt(tar_read(coverage))</code></pre>
   padding-right: 5px;
 }
 
-#zzjvboczep .gt_first_summary_row {
+#fyvajcogwx .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -6034,7 +6033,7 @@ gt(tar_read(coverage))</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#zzjvboczep .gt_grand_summary_row {
+#fyvajcogwx .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -6044,7 +6043,7 @@ gt(tar_read(coverage))</code></pre>
   padding-right: 5px;
 }
 
-#zzjvboczep .gt_first_grand_summary_row {
+#fyvajcogwx .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -6054,11 +6053,11 @@ gt(tar_read(coverage))</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#zzjvboczep .gt_striped {
+#fyvajcogwx .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#zzjvboczep .gt_table_body {
+#fyvajcogwx .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -6067,7 +6066,7 @@ gt(tar_read(coverage))</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#zzjvboczep .gt_footnotes {
+#fyvajcogwx .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -6081,13 +6080,13 @@ gt(tar_read(coverage))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#zzjvboczep .gt_footnote {
+#fyvajcogwx .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#zzjvboczep .gt_sourcenotes {
+#fyvajcogwx .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -6101,46 +6100,46 @@ gt(tar_read(coverage))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#zzjvboczep .gt_sourcenote {
+#fyvajcogwx .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#zzjvboczep .gt_left {
+#fyvajcogwx .gt_left {
   text-align: left;
 }
 
-#zzjvboczep .gt_center {
+#fyvajcogwx .gt_center {
   text-align: center;
 }
 
-#zzjvboczep .gt_right {
+#fyvajcogwx .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#zzjvboczep .gt_font_normal {
+#fyvajcogwx .gt_font_normal {
   font-weight: normal;
 }
 
-#zzjvboczep .gt_font_bold {
+#fyvajcogwx .gt_font_bold {
   font-weight: bold;
 }
 
-#zzjvboczep .gt_font_italic {
+#fyvajcogwx .gt_font_italic {
   font-style: italic;
 }
 
-#zzjvboczep .gt_super {
+#fyvajcogwx .gt_super {
   font-size: 65%;
 }
 
-#zzjvboczep .gt_footnote_marks {
+#fyvajcogwx .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
-<div id="zzjvboczep" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<div id="fyvajcogwx" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
