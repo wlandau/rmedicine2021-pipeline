@@ -1,5 +1,5 @@
 #!/bin/bash
 rm -rf .RData logs
 module load R
-nohup Rscript -e 'renv::restore(); rmarkdown::render("report.Rmd")' &
+nohup Rscript -e 'renv::restore(); rmarkdown::render("index.Rmd")' &
 rm -f .RData
