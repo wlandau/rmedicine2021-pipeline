@@ -12,7 +12,7 @@
 <meta name="author" content="Will Landau" />
 
 
-<title># Target Markdown and stantargets for Bayesian model validation pipelines</title>
+<title>Target Markdown and stantargets for Bayesian model validation pipelines</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -361,7 +361,7 @@ pre code {
 
 
 
-<h1 class="title toc-ignore"># Target Markdown and stantargets for Bayesian model validation pipelines</h1>
+<h1 class="title toc-ignore">Target Markdown and stantargets for Bayesian model validation pipelines</h1>
 <h4 class="author">Will Landau</h4>
 
 </div>
@@ -378,15 +378,23 @@ pre code {
 </ul></li>
 <li><a href="#interval-based-validation"><span class="toc-section-number">1.2</span> Interval-based validation</a></li>
 </ul></li>
-<li><a href="#pipeline"><span class="toc-section-number">2</span> Pipeline</a>
+<li><a href="#construct-the-pipeline"><span class="toc-section-number">2</span> Construct the pipeline</a>
 <ul>
 <li><a href="#setup"><span class="toc-section-number">2.1</span> Setup</a></li>
 <li><a href="#data-generation"><span class="toc-section-number">2.2</span> Data generation</a></li>
+<li><a href="#target-definitions"><span class="toc-section-number">2.3</span> Target definitions</a></li>
 </ul></li>
+<li><a href="#use-the-pipeline"><span class="toc-section-number">3</span> Use the pipeline</a>
+<ul>
+<li><a href="#inspect-the-pipeline"><span class="toc-section-number">3.1</span> Inspect the pipeline</a></li>
+<li><a href="#run-the-pipeline"><span class="toc-section-number">3.2</span> Run the pipeline</a></li>
+</ul></li>
+<li><a href="#results"><span class="toc-section-number">4</span> Results</a></li>
+<li><a href="#references">References</a></li>
 </ul>
 </div>
 
-<p>The <code>targets</code> R package enhances the reproducibility, scale, and maintainability of data science projects in computationally intense fields such as machine learning, Bayesian Statistics, and statistical genomics. Recent breakthroughs in the targets ecosystem make it easy to create ambitious, domain-specific, reproducible data analysis pipelines. Two highlights include Target Markdown, an R Markdown interface to transparently communicate the entire process of pipeline construction and prototyping, and <code>stantargets</code>, a new rOpenSci package that generates specialized workflows for Stan models while reducing the required volume of user-side R code.</p>
+<p>The <code>targets</code> R package enhances the reproducibility, scale, and maintainability of data science projects in computationally intense fields such as machine learning, Bayesian Statistics, and statistical genomics <span class="citation">(Landau 2021b)</span>. Recent breakthroughs in the targets ecosystem make it easy to create ambitious, domain-specific, reproducible data analysis pipelines. Two highlights include Target Markdown, an R Markdown interface to transparently communicate the entire process of pipeline construction and prototyping, and <code>stantargets</code>, a new rOpenSci package that generates specialized workflows for Stan models while reducing the required volume of user-side R code <span class="citation">(Landau 2021a)</span>.</p>
 <div id="methods" class="section level1" number="1">
 <h1 number="1"><span class="header-section-number">1</span> Methods</h1>
 <p>This Target Markdown report demonstrates both capabilities in an exercise to validate a mixed model of repeated measures (MMRM), one of the most ubiquitous longitudinal models in clinical trials. Using multiple simulated datasets from the prior predictive distribution of the model, we evaluate how well the model recovers the true parameters drawn from the data-generating process.</p>
@@ -416,8 +424,8 @@ pre code {
 &amp; \qquad \beta \sim \text{MVN} (0, 10^2 I_{p \times p})\\
 &amp;  \qquad \Sigma_{t \times t} = \left (I_{t \times t} \sigma \right ) \Lambda_{t \times t} \Lambda_{t \times t}&#39; \left (I_{t \times t} \sigma \right ) \\
 &amp; \qquad \qquad \sigma_1, \ldots, \sigma_t \stackrel{\text{ind}}{\sim} \text{Cauchy}^+(0, 5) \\
-&amp; \qquad \qquad \Lambda_{t \times t}\Lambda_{t \times t}&#39; \sim \text{LKJ}(\eta = 1, K = t)
-\end{aligned}
+&amp; \qquad \qquad \Lambda_{t \times t}\Lambda_{t \times t}&#39; \sim \text{LKJ}(\text{shape} = 1, \text{order} = t)
+\end{aligned} 
 \]</span></p>
 </div>
 <div id="stan-code" class="section level3" number="1.1.3">
@@ -429,6 +437,8 @@ pre code {
 #&gt;   int&lt;lower=0&gt; n_observations; // number of observed data points (n_patients * n_visits)
 #&gt;   int&lt;lower=0&gt; n_patients; // number of patients/patients in the clinical trial
 #&gt;   int&lt;lower=0&gt; n_visits; // number of scheduled site visits / repeated measures per patient
+#&gt;   int&lt;lower=0&gt; s_beta; // prior standard deviation of the model coefficients.
+#&gt;   int&lt;lower=0&gt; s_sigma; // prior half-Cauchy scale for the visit-specific variances of the response.
 #&gt;   vector[n_observations] y; // observed clinical endpoint
 #&gt;   matrix[n_observations, n_beta] x; // model matrix
 #&gt; }
@@ -447,8 +457,8 @@ pre code {
 #&gt;     // Each patient is multivariate normal with the same unstructured covariance:
 #&gt;     y[first_visit:last_visit] ~ multi_normal_cholesky(mu[first_visit:last_visit], diag_pre_multiply(sigma, lambda));
 #&gt;   }
-#&gt;   beta ~ normal(0, 10); // independent fixed effects
-#&gt;   sigma ~ cauchy(0, 5); // diffuse prior on the visit-specific standard deviations
+#&gt;   beta ~ normal(0, s_beta); // independent fixed effects
+#&gt;   sigma ~ cauchy(0, s_sigma); // diffuse prior on the visit-specific standard deviations
 #&gt;   lambda ~ lkj_corr_cholesky(1); // LKJ prior on the correlations among visits
 #&gt; }</code></pre>
 </div>
@@ -457,38 +467,47 @@ pre code {
 <h2 number="1.2"><span class="header-section-number">1.2</span> Interval-based validation</h2>
 <p>The goal of this validation exercise is to verify that the fitted model recovers the parameter values used to generate the original data. This serves as evidence that the Stan code was implemented correctly. Steps:</p>
 <ul>
-<li>For independent replication <span class="math inline">\(i = 1, ..., 1000\)</span>:
+<li>For independent replication <span class="math inline">\(i = 1, \ldots, r = 1000\)</span>:
 <ol style="list-style-type: decimal">
 <li>Draw a set of “true” parameters parameters from the joint prior.</li>
 <li>Draw a dataset from the likelihood given the parameter draws from (1).</li>
 <li>Fit the Stan model to the data.</li>
-<li>For each parameter (index <span class="math inline">\(p\)</span>) let <span class="math inline">\(c_{ip}\)</span> = 1 if the <span class="math inline">\(100(1 - \alpha)\)</span>% posterior interval covers the prior predictive draw from (1). Otherwise, <span class="math inline">\(c_{ip}\)</span> = 0.</li>
+<li>Let <span class="math inline">\(x \in (0, 1)\)</span> be a target coverage level. (In this particular workflow, we choose values 0.5 and 0.95 for <span class="math inline">\(x\)</span>.) For each scalar model parameter <span class="math inline">\(\theta_j\)</span>, let <span class="math inline">\(c_{ij}\)</span> = 1 if the <span class="math inline">\(100 \cdot x\)</span>% posterior interval covers the prior predictive draw of <span class="math inline">\(\theta_j\)</span> from (1). Otherwise, <span class="math inline">\(c_{ij}\)</span> = 0.</li>
 </ol></li>
-<li>For each parameter <span class="math inline">\(p\)</span>, calculate coverage: <span class="math inline">\(C_p = \frac{1}{n} \sum_{i = i}^n c_{ip}\)</span>. If <span class="math inline">\(C_p\)</span> is systematically different from <span class="math inline">\(1 - \alpha\)</span>, then there are problems with the model or the software.</li>
+<li>For each parameter <span class="math inline">\(j\)</span>, calculate coverage: <span class="math inline">\(C_j = \frac{1}{n} \sum_{i = 1}^r c_{ij}\)</span>. If <span class="math inline">\(C_j\)</span> is systematically different from <span class="math inline">\(x\)</span>%, then there are problems with the model, the implementation, or the validation workflow.</li>
 </ul>
-<p>Simulation-based calibration (SBC) is a similar technique. SBC may be more robust than the interval-based validation technique above, but the latter is easier to perform with <code>stantargets</code> and easier to communicate for high-dimensional models. (Parameter-specific rank statistic histograms can be difficult to inspect when there are many parameters.)</p>
+<p>This technique is similar to simulation-based calibration (SBC) <span class="citation">(Cook, Gelman, and Rubin 2006; Talts et al. 2020)</span>. SBC may be more robust than the interval-based validation technique above, but the latter is easier to perform with <code>stantargets</code> and easier to communicate for high-dimensional models. (Parameter-specific rank statistic histograms can be difficult to inspect when there are many parameters.)</p>
 </div>
 </div>
-<div id="pipeline" class="section level1" number="2">
-<h1 number="2"><span class="header-section-number">2</span> Pipeline</h1>
+<div id="construct-the-pipeline" class="section level1" number="2">
+<h1 number="2"><span class="header-section-number">2</span> Construct the pipeline</h1>
+<p>This section constructs the steps of the pipeline and uses Target Markdown to explain the purpose of each step along the way. In interactive mode in the RStudio IDE, you can run each inexpensive <code>{targets}</code> code chunk in the notebook interface in order to emulate the behavior of a section of the <code>targets</code> pipeline. If you run the report in a non-interactive R session, the <code>{targets}</code> code chunks write scripts to set up the pipeline and prepare it to run later on. When it comes time to actually run the pipeline, you can do so either outside this report or by calling <code>tar_make()</code>, <code>tar_make_clustermq()</code>, or <code>tar_make_future()</code> inside an ordinary <code>{r}</code> code chunk.</p>
 <div id="setup" class="section level2" number="2.1">
 <h2 number="2.1"><span class="header-section-number">2.1</span> Setup</h2>
-<p>First, we load the <code>targets</code> package to register the Target Markdown <code>knitr</code> language engine.</p>
+<p>First, we load the <code>targets</code> package in the report to register the Target Markdown <code>knitr</code> language engine.</p>
 <pre class="r"><code>library(targets)</code></pre>
 <p>Next, we remove transient scripts previously generated by Target Markdown in non-interactive mode (optional).</p>
 <pre class="r"><code>tar_unscript()</code></pre>
-<p>In our first Target Markdown code chunk, we declare global settings to register packages and high-performance computing settings.</p>
+<p>In our first Target Markdown code chunk, we load the packages required to define the targets in the pipeline: in this case, <code>targets</code> and <code>stantargets</code>.</p>
+<pre class="r"><code>library(targets)
+library(stantargets)
+#&gt; Established _targets.R and _targets_r/globals/packages.R.</code></pre>
+<p>Next, we register the packages required to <em>run</em> the pipeline, as well as and global settings to control the storage and retrieval of data.</p>
 <pre class="r"><code>tar_option_set(
   packages = c(&quot;tidyverse&quot;, &quot;trialr&quot;),
-  storage = &quot;remote&quot;,
-  retrieval = &quot;remote&quot;
+  storage = &quot;worker&quot;,
+  retrieval = &quot;worker&quot;,
+  memory = &quot;transient&quot;,
+  garbage_collection = TRUE
 )
-options(clustermq.scheduler = &quot;sge&quot;, clustermq.template = &quot;sge.tmpl&quot;)
 #&gt; Established _targets.R and _targets_r/globals/settings.R.</code></pre>
+<p>We also register a Sun Grid Engine (SGE) cluster with the <code>clustermq</code> package to enable distributed computing via <code>tar_make_clustermq()</code>.</p>
+<pre class="r"><code>options(clustermq.scheduler = &quot;sge&quot;, clustermq.template = &quot;sge.tmpl&quot;)
+#&gt; Established _targets.R and _targets_r/globals/clustermq.R.</code></pre>
 </div>
 <div id="data-generation" class="section level2" number="2.2">
 <h2 number="2.2"><span class="header-section-number">2.2</span> Data generation</h2>
-<p>The following function simulates one rep of a clinical trial data from the prior predictive distribution of an MMRM model. The function returns a Stan data list and accepts arguments <code>n_patients</code> (number of patients in the trial), <code>n_visits</code> (number of scheduled study visits, e.g. repeated measures per patient), and <code>n_arms</code> (number of study arms, e.g. treatment groups). The model coefficients <code>beta</code> come from independent <code>Normal(0, sd = 10)</code> distributions, and the covariance matrix comes from an <code>LKJ(shape = 1, order = n_visits)</code> distribution. To mitigate numerical stability issues, the covariance matrix is restricted such that each matrix element lies between -500 and 500 (via rejection sampling).</p>
+<p>The following function simulates one rep of a clinical trial data from the prior predictive distribution of an MMRM model. The function returns a Stan data list and accepts arguments <code>n_patients</code> (number of patients in the trial), <code>n_visits</code> (number of scheduled study visits, e.g. repeated measures per patient), and <code>n_arms</code> (number of study arms, e.g. treatment groups). The model coefficients <code>beta</code> come from independent <code>Normal(0, sd = 10)</code> distributions, and the covariance matrix comes from an <code>LKJ(shape = 1, order = n_visits)</code> distribution. To mitigate numerical stability issues, the covariance matrix is restricted such that each matrix element lies between -500 and 500 (via rejection sampling). The <code>.join_data</code> list at the end tells <code>stantargets</code> to append the prior predictive draws of model parameters to the MCMC output.</p>
 <pre class="r"><code>simulate_data &lt;- function(n_patients = 500, n_visits = 4, n_arms = 2) {
   structure &lt;- tibble(patient = as.character(seq_len(n_patients))) %&gt;%
     mutate(arm = as.character(rep(seq_len(n_arms), each = n_patients / n_arms))) %&gt;%
@@ -519,6 +538,8 @@ options(clustermq.scheduler = &quot;sge&quot;, clustermq.template = &quot;sge.tm
     n_observations = n_patients * n_visits,
     n_patients = n_patients,
     n_visits = n_visits,
+    s_beta = 10,
+    s_sigma = 5,
     .join_data = list(
       beta = beta,
       sigma = sigma,
@@ -527,6 +548,78 @@ options(clustermq.scheduler = &quot;sge&quot;, clustermq.template = &quot;sge.tm
   )
 }
 #&gt; Established _targets.R and _targets_r/globals/data.R.</code></pre>
+</div>
+<div id="target-definitions" class="section level2" number="2.3">
+<h2 number="2.3"><span class="header-section-number">2.3</span> Target definitions</h2>
+<p>Now, we define the targets for the steps of the workflow. We use the <code>stantargets</code> R package to manage most of the work: simulate multiple datasets, analyze each dataset with the MMRM, and calculate the coverage status of each simulation. As explained at <a href="https://docs.ropensci.org/stantargets/articles/simulation.html" class="uri">https://docs.ropensci.org/stantargets/articles/simulation.html</a>, all this can be done with the <code>tar_stan_mcmc_rep_summary()</code> function. The targets created by <code>tar_stan_mcmc_rep_summary()</code> can take a long time to run, so it is recommended to suppress interactive mode.</p>
+<pre class="r"><code>tar_stan_mcmc_rep_summary(
+  name = mcmc,
+  stan_files = &quot;model.stan&quot;,
+  data = simulate_data(), # Runs once per rep.
+  batches = 100, # Number of branch targets.
+  reps = 10, # Number of model reps per branch target.
+  summaries = list(
+    # Compute posterior intervals at levels 50% and 95%.
+    # The 50% intervals should cover prior predictive parameter draws
+    # 50% of the time. The 95% intervals are similar.
+    ~posterior::quantile2(.x, probs = c(0.025, 0.25, 0.75, 0.975)),
+    # We use Gelman-Rubin potential scale reduction factors to
+    # assess convergence:
+    rhat = ~posterior::rhat(.x)
+  )
+)
+#&gt; Established _targets.R and _targets_r/targets/mcmc.R.</code></pre>
+<p>Our last target calculates coverage levels and convergence diagnostics across all simulations. Because this is a single target and easy to define, we can set the <code>tar_simple</code> chunk option to <code>TRUE</code>. That way, the chunk label becomes the target name, and the chunk code becomes the target command.</p>
+<pre class="r"><code>tar_target(coverage, {
+  mcmc %&gt;%
+    filter(!is.na(rhat)) %&gt;%
+    group_by(variable) %&gt;%
+    summarize(
+      coverage_50 = mean(q25 &lt; .join_data &amp; .join_data &lt; q75),
+      coverage_95 = mean(q2.5 &lt; .join_data &amp; .join_data &lt; q97.5),
+      max_rhat = max(rhat),
+      .groups = &quot;drop&quot;
+    )
+})
+#&gt; Defined target coverage automatically from chunk code.
+#&gt; Established _targets.R and _targets_r/targets/coverage.R.</code></pre>
+</div>
+</div>
+<div id="use-the-pipeline" class="section level1" number="3">
+<h1 number="3"><span class="header-section-number">3</span> Use the pipeline</h1>
+<p>Up to this point, we have only constructed the pipeline. The <code>{targets}</code> chunks write R scripts to <code>_targets.R</code> and <code>_targets_r/</code> (in non-interactive mode) but they do not actually run the pipeline. To run the pipeline, we use <code>tar_make()</code> or a related function, either outside the report or in a subsequent ordinary <code>{r}</code> code chunk.</p>
+<div id="inspect-the-pipeline" class="section level2" number="3.1">
+<h2 number="3.1"><span class="header-section-number">3.1</span> Inspect the pipeline</h2>
+<p>But first, it is good practice to visualize the dependency graph to verify that the workflow is correctly specified. All targets should be connected by graph edges, and they should appear in the correct order in relation to one another.</p>
+<pre class="r"><code>tar_visnetwork()</code></pre>
+</div>
+<div id="run-the-pipeline" class="section level2" number="3.2">
+<h2 number="3.2"><span class="header-section-number">3.2</span> Run the pipeline</h2>
+<p>Because there are so many simulations to run, the pipeline could take a long time. Below, we use the <code>tar_make_clustermq()</code> to run different targets in parallel across multiple workers on an SGE cluster. If there are any oudated targets according to the graph above, it is recommended to run this report in a non-interactive background process (e.g. via the included shell script <code>run.sh</code>) rather than clicking the “Knit” button in the RStudio IDE.</p>
+<pre class="r"><code>tar_make_clustermq(workers = 100)</code></pre>
+</div>
+</div>
+<div id="results" class="section level1" number="4">
+<h1 number="4"><span class="header-section-number">4</span> Results</h1>
+<p>Finally, we report coverage statistics and convergence diagnostics. If the model is implemented correctly, <code>coverage_50</code> should not differ systematically from 0.5, <code>coverage_95</code> should not differ systematically from 0.95, and <code>max_rhat</code> should be close to 1.</p>
+<pre class="r"><code>library(gt)
+gt(tar_read(coverage))</code></pre>
+</div>
+<div id="references" class="section level1 unnumbered" number>
+<h1 class="unnumbered" number>References</h1>
+<div id="refs" class="references hanging-indent">
+<div id="ref-cook2006">
+<p>Cook, Samantha R., Andrew Gelman, and Donald B. Rubin. 2006. “Validation of Software for Bayesian Models Using Posterior Quantiles.” <em>Journal of Computational and Graphical Statistics</em> 15 (3): 675–92. <a href="http://www.jstor.org/stable/27594203">http://www.jstor.org/stable/27594203</a>.</p>
+</div>
+<div id="ref-stantargets">
+<p>Landau, William Michael. 2021a. “The Stantargets R Package: A Workflow Framework for Efficient Reproducible Stan-Powered Bayesian Data Analysis Pipelines.” <em>Journal of Open Source Software</em> 6 (60): 3193. <a href="https://doi.org/10.21105/joss.03193">https://doi.org/10.21105/joss.03193</a>.</p>
+</div>
+<div id="ref-targets">
+<p>———. 2021b. “The Targets R Package: A Dynamic Make-Like Function-Oriented Pipeline Toolkit for Reproducibility and High-Performance Computing.” <em>Journal of Open Source Software</em> 6 (57): 2959. <a href="https://doi.org/10.21105/joss.02959">https://doi.org/10.21105/joss.02959</a>.</p>
+</div>
+<div id="ref-talts2020">
+<p>Talts, Sean, Michael Betancourt, Daniel Simpson, Aki Vehtari, and Andrew Gelman. 2020. “Validating Bayesian Inference Algorithms with Simulation-Based Calibration.” <a href="http://arxiv.org/abs/1804.06788">http://arxiv.org/abs/1804.06788</a>.</p>
+</div>
 </div>
 </div>
 
