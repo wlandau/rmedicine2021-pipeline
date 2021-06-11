@@ -1,7 +1,9 @@
+*~
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
-model
 _targets.R
 _targets_r
+model
+nohup.out
