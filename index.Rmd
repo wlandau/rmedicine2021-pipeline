@@ -1,7 +1,7 @@
 ---
 title: "Target Markdown and stantargets for Bayesian model validation pipelines"
 author: "Will Landau"
-bibliography: report.bib
+bibliography: index.bib
 output:
   html_document:
     toc: true
@@ -16,11 +16,11 @@ The `targets` R package enhances the reproducibility, scale, and maintainability
 
 # Methods
 
-This Target Markdown report demonstrates both capabilities in an exercise to validate a mixed model of repeated measures (MMRM), one of the most ubiquitous longitudinal models in clinical trials. Using multiple simulated datasets from the prior predictive distribution of the model, we evaluate how well the model recovers the true parameters drawn from the data-generating process.
+This Target Markdown report demonstrates both capabilities in an exercise to validate a mixed model of repeated measures (MMRM), a ubiquitous longitudinal model in clinical trials [@Mallinckrodt]. Using multiple simulated datasets from the prior predictive distribution of the model, we evaluate how well the model recovers the true parameters drawn from the data-generating process.
  
 ## MMRM model
 
-We use a mixed model of repeated measures (MMRM) for clinical trial data. The model assumes independent patients, correlated study visits within each patient, and an LKJ prior on the correlation matrix for study visits. MMRM models with unstructured covariance usually apply the inverse Wishart prior, but this prior induces known biases that could be problematic (<https://arxiv.org/abs/1408.4050>), which motivated this custom Stan model that uses LKJ instead. 
+We use a mixed model of repeated measures (MMRM). This particular version of the model assumes independent patients, correlated study visits within each patient, and an LKJ prior on the correlation matrix for study visits.
 
 ### Notation
 
@@ -111,7 +111,7 @@ options(clustermq.scheduler = "sge", clustermq.template = "sge.tmpl")
 
 ## Data generation
 
-The following function simulates one rep of a clinical trial data from the prior predictive distribution of an MMRM model. The function returns a Stan data list and accepts arguments `n_patients` (number of patients in the trial), `n_visits` (number of scheduled study visits, e.g. repeated measures per patient), and `n_arms` (number of study arms, e.g. treatment groups). The model coefficients `beta` come from independent `Normal(0, sd = 10)` distributions, and the covariance matrix comes from an `LKJ(shape = 1, order = n_visits)` distribution. To mitigate numerical stability issues, the covariance matrix is restricted such that each matrix element lies between -500 and 500 (via rejection sampling). The `.join_data` list at the end tells `stantargets` to append the prior predictive draws of model parameters to the MCMC output.
+The following function simulates one rep of a clinical trial data from the prior predictive distribution of an MMRM model. The function returns a Stan data list and accepts arguments `n_patients` (number of patients in the trial), `n_visits` (number of scheduled study visits, e.g. repeated measures per patient), and `n_arms` (number of study arms, e.g. treatment groups). To mitigate numerical stability issues, the covariance matrix is restricted such that each matrix element lies between -500 and 500 (via rejection sampling). The `.join_data` list at the end tells `stantargets` to append the prior predictive draws of model parameters to the MCMC output.
 
 ```{targets data, tar_globals = TRUE}
 simulate_data <- function(n_patients = 500, n_visits = 4, n_arms = 2) {
@@ -122,7 +122,7 @@ simulate_data <- function(n_patients = 500, n_visits = 4, n_arms = 2) {
     mutate(group = paste0(arm, visit))
   x <- model.matrix(~ covariate1 + covariate2 + group, data = structure) %>%
     as.matrix()
-  beta <- rnorm(ncol(x), 10)
+  beta <- rnorm(n = ncol(x), mean = 0, sd = 2)
   covariance <- NULL
   while (is.null(covariance) || max(abs(covariance)) > 100) {
     rho <- rlkjcorr(n = 1, K = n_visits, eta = 1)
@@ -145,8 +145,8 @@ simulate_data <- function(n_patients = 500, n_visits = 4, n_arms = 2) {
     n_observations = n_patients * n_visits,
     n_patients = n_patients,
     n_visits = n_visits,
-    s_beta = 10,
-    s_sigma = 5,
+    s_beta = 2,
+    s_sigma = 1,
     .join_data = list(
       beta = beta,
       sigma = sigma,
@@ -175,7 +175,9 @@ tar_stan_mcmc_rep_summary(
     # Compute posterior intervals at levels 50% and 95%.
     # The 50% intervals should cover prior predictive parameter draws
     # 50% of the time. The 95% intervals are similar.
-    ~posterior::quantile2(.x, probs = c(0.025, 0.25, 0.75, 0.975)),
+    # We also calculate posterior medians so we can compare them
+    # directly to the prior predictive draws.
+    ~posterior::quantile2(.x, probs = c(0.025, 0.25, 0.5, 0.75, 0.975)),
     # We use Gelman-Rubin potential scale reduction factors to
     # assess convergence:
     rhat = ~posterior::rhat(.x)
@@ -183,7 +185,16 @@ tar_stan_mcmc_rep_summary(
 )
 ```
 
-Our last target calculates coverage levels and convergence diagnostics across all simulations. Because this is a single target and easy to define, we can set the `tar_simple` chunk option to `TRUE`. That way, the chunk label becomes the target name, and the chunk code becomes the target command.
+After we fit the model, we assess convergence using Gelman-Rubin potential scale reduction factors. Values far above 1 indicate convergence issues. The vast majority of Gelman factors are close to 1, so any convergence issues seem unlikely to affect coverage results.
+
+```{targets convergence, tar_simple = TRUE}
+ggplot(filter(mcmc, !is.na(rhat))) +
+  geom_histogram(aes(x = rhat), bins = 30) +
+  xlab("Gelman-Rubin potential scale reduction factor") +
+  theme_gray(16)
+```
+
+Our last target calculates coverage levels across all simulations. Because this is a single target and easy to define, we can set the `tar_simple` chunk option to `TRUE`. That way, the chunk label becomes the target name, and the chunk code becomes the target command.
 
 ```{targets coverage, tar_simple = TRUE}
 mcmc %>%
@@ -192,7 +203,6 @@ mcmc %>%
   summarize(
     coverage_50 = mean(q25 < .join_data & .join_data < q75),
     coverage_95 = mean(q2.5 < .join_data & .join_data < q97.5),
-    max_rhat = round(max(rhat), 4),
     .groups = "drop"
   )
 ```
