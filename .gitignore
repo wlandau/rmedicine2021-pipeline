@@ -3,6 +3,7 @@
 .Rhistory
 .RData
 .Ruserdata
+_targets
 _targets.R
 _targets_r
 model

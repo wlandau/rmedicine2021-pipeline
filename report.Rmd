@@ -126,6 +126,7 @@ simulate_data <- function(n_patients = 500, n_visits = 4, n_arms = 2) {
   covariance <- NULL
   while (is.null(covariance) || max(abs(covariance)) > 100) {
     rho <- rlkjcorr(n = 1, K = n_visits, eta = 1)
+    lambda <- t(chol(rho))
     sigma <- rcauchy(n = n_visits, location = 0, scale = 1)
     covariance <- diag(sigma) %*% rho %*% diag(sigma)
   }
@@ -149,7 +150,7 @@ simulate_data <- function(n_patients = 500, n_visits = 4, n_arms = 2) {
     .join_data = list(
       beta = beta,
       sigma = sigma,
-      rho = rho
+      lambda = lambda
     )
   )
 }
@@ -164,12 +165,12 @@ tar_stan_mcmc_rep_summary(
   name = mcmc,
   stan_files = "model.stan",
   data = simulate_data(), # Runs once per rep.
-  batches = 100, # Number of branch targets.
-  reps = 10, # Number of model reps per branch target.
+  batches = 2, # Number of branch targets.
+  reps = 1, # Number of model reps per branch target.
   chains = 4, # Number of MCMC chains.
   parallel_chains = 4, # How many MCMC chains to run in parallel.
-  iter_warmup = 2e3, # Number of MCMC warmup iterations to run.
-  iter_sampling = 2e3, # Number of MCMC post-warmup iterations to run.
+  iter_warmup = 100, # Number of MCMC warmup iterations to run.
+  iter_sampling = 100, # Number of MCMC post-warmup iterations to run.
   summaries = list(
     # Compute posterior intervals at levels 50% and 95%.
     # The 50% intervals should cover prior predictive parameter draws
@@ -186,12 +187,12 @@ Our last target calculates coverage levels and convergence diagnostics across al
 
 ```{targets coverage, tar_simple = TRUE}
 mcmc %>%
-  filter(!is.na(rhat)) %>%
+  filter(!is.na(rhat), variable != "lp__") %>%
   group_by(variable) %>%
   summarize(
     coverage_50 = mean(q25 < .join_data & .join_data < q75),
     coverage_95 = mean(q2.5 < .join_data & .join_data < q97.5),
-    max_rhat = max(rhat),
+    max_rhat = round(max(rhat), 4),
     .groups = "drop"
   )
 ```
@@ -204,7 +205,7 @@ Up to this point, we have only constructed the pipeline. The `{targets}` chunks 
 
 But first, it is good practice to visualize the dependency graph to verify that the workflow is correctly specified. All targets should be connected by graph edges, and they should appear in the correct order in relation to one another.
 
-```{r}
+```{r graph}
 tar_visnetwork()
 ```
 
@@ -212,9 +213,8 @@ tar_visnetwork()
 
 Because there are so many simulations to run, the pipeline could take a long time. Below, we use the `tar_make_clustermq()` to run different targets in parallel across multiple workers on an SGE cluster. If there are any outdated targets according to the graph above, it is recommended to run this report in a non-interactive background process (e.g. via the included shell script `run.sh`) rather than clicking the "Knit" button in the RStudio IDE. While the pipeline is running, you may wish to monitor the cluster workers with `qstat` and monitor the progress of targets using `tar_watch()` and/or `tar_poll()`.
 
-```{r}
-unlink("logs", recursive = TRUE)
-tar_make_clustermq(workers = 100)
+```{r pipeline}
+tar_make()
 ```
 
 # Results
