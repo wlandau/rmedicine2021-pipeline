@@ -1,0 +1,9 @@
+#$ -N {{ job_name }}
+#$ -t 1-{{ n_jobs }}
+#$ -j y
+#$ -o logs/
+#$ -cwd
+#$ -V
+#$ -pe smp 4
+module load R
+CMQ_AUTH={{ auth }} R --no-save --no-restore -e 'clustermq:::worker("{{ master }}")' # Leave alone.
