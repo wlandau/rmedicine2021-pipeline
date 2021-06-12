@@ -16,11 +16,11 @@ The `targets` R package enhances the reproducibility, scale, and maintainability
 
 # Methods
 
-This Target Markdown report demonstrates both capabilities in an exercise to validate a mixed model of repeated measures (MMRM), a ubiquitous longitudinal model in clinical trials [@Mallinckrodt]. Using multiple simulated datasets from the prior predictive distribution of the model, we evaluate how well the model recovers the true parameters drawn from the data-generating process.
+This Target Markdown report demonstrates both capabilities in an exercise to validate a Bayesian longitudinal linear model common to clinical trial data analysis. Using multiple simulated datasets from the prior predictive distribution of the model, we evaluate how well the model recovers the true parameters drawn from the data-generating process.
  
-## MMRM model
+## The model
 
-We use a mixed model of repeated measures (MMRM). This particular version of the model assumes independent patients, correlated study visits within each patient, and an LKJ prior on the correlation matrix for study visits.
+This particular model assumes independent patients, correlated study visits within each patient, and an LKJ prior on the correlation matrix for study visits.^[Inverse-Wishart is more common than LKJ because of conjugacy but induces a problematic prior relationship among covariance components [@alvarez2016bayesian].]
 
 ### Notation
 
@@ -29,6 +29,7 @@ We use a mixed model of repeated measures (MMRM). This particular version of the
 * $p$: number of model coefficients in the parameter vector $\beta$.
 * $y$: vector of length $n \cdot t$ with observed responses for the clinical endpoint.
 * $X_{(n \cdot t) \times p}$: model matrix with $n \cdot t$ rows and $p$ columns.
+* $\beta$: a vector of $p$ model coefficients.
 * $I_{x \times x}$: the identity matrix with $x$ rows and $x$ columns.
 * $\otimes$: Kronecker product.
 * $\Sigma_{t \times t}$: $t \times t$ block of the covariance matrix of the observed data.
@@ -111,10 +112,10 @@ options(clustermq.scheduler = "sge", clustermq.template = "sge.tmpl")
 
 ## Data generation
 
-The following function simulates one rep of a clinical trial data from the prior predictive distribution of an MMRM model. The function returns a Stan data list and accepts arguments `n_patients` (number of patients in the trial), `n_visits` (number of scheduled study visits, e.g. repeated measures per patient), and `n_arms` (number of study arms, e.g. treatment groups). To mitigate numerical stability issues, the covariance matrix is restricted such that each matrix element lies between -500 and 500 (via rejection sampling). The `.join_data` list at the end tells `stantargets` to append the prior predictive draws of model parameters to the MCMC output.
+The following function simulates one rep of a clinical trial data from the prior predictive distribution of the model. The function returns a Stan data list and accepts arguments `n_patients` (number of patients in the trial), `n_visits` (number of scheduled study visits, e.g. repeated measures per patient), and `n_arms` (number of study arms, e.g. treatment groups). To mitigate numerical stability issues, the covariance matrix is restricted such that each matrix element lies between -500 and 500 (via rejection sampling). The `.join_data` list at the end tells `stantargets` to append the prior predictive draws of model parameters to the MCMC output.
 
 ```{targets data, tar_globals = TRUE}
-simulate_data <- function(n_patients = 500, n_visits = 4, n_arms = 2) {
+simulate_data <- function(n_patients = 50, n_visits = 3, n_arms = 2) {
   structure <- tibble(patient = as.character(seq_len(n_patients))) %>%
     mutate(arm = as.character(rep(seq_len(n_arms), each = n_patients / n_arms))) %>%
     mutate(covariate1 = rnorm(n()), covariate2 = rnorm(n())) %>%
@@ -158,7 +159,7 @@ simulate_data <- function(n_patients = 500, n_visits = 4, n_arms = 2) {
 
 ## Target definitions
 
-Now, we define the targets for the steps of the workflow. We use the `stantargets` R package to manage most of the work: simulate multiple datasets, analyze each dataset with the MMRM, and calculate the coverage status of each simulation. As explained at <https://docs.ropensci.org/stantargets/articles/simulation.html>, all this can be done with the `tar_stan_mcmc_rep_summary()` function. The targets created by `tar_stan_mcmc_rep_summary()` can take a long time to run, so it is recommended to suppress interactive mode.
+Now, we define the targets for the steps of the workflow. We use the `stantargets` R package to manage most of the work: simulate multiple datasets, analyze each dataset with the model, and calculate the coverage status of each simulation. As explained at <https://docs.ropensci.org/stantargets/articles/simulation.html>, all this can be done with the `tar_stan_mcmc_rep_summary()` function. The targets created by `tar_stan_mcmc_rep_summary()` can take a long time to run, so it is recommended to suppress interactive mode.
 
 ```{targets mcmc, tar_interactive = FALSE}
 tar_stan_mcmc_rep_summary(
