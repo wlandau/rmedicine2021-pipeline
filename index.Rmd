@@ -128,7 +128,7 @@ simulate_data <- function(n_patients = 50, n_visits = 3, n_arms = 2) {
   while (is.null(sigma) || max(sigma) > 10) {
     rho <- rlkjcorr(n = 1, K = n_visits, eta = 1)
     lambda <- t(chol(rho))
-    sigma <- rhcauchy(n = n_visits, location = 0, scale = 1)
+    sigma <- rhcauchy(n = n_visits, sigma = 1)
     covariance <- diag(sigma) %*% rho %*% diag(sigma)
   }
   data <- structure %>%
