@@ -16,7 +16,7 @@ The `targets` R package enhances the reproducibility, scale, and maintainability
 
 # Methods
 
-This Target Markdown report demonstrates both capabilities in an exercise to validate a Bayesian longitudinal linear model common to clinical trial data analysis. Using multiple simulated datasets from the prior predictive distribution of the model, we evaluate how well the model recovers the true parameters drawn from the data-generating process.
+This Target Markdown report demonstrates both capabilities in a workflow to validate a Bayesian longitudinal linear model common to clinical trial data analysis. Using multiple simulated datasets from the prior predictive distribution of the model, we evaluate how well the model recovers the true parameters drawn from the data-generating process.
  
 ## The model
 
