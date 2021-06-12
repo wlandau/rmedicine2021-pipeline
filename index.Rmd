@@ -226,7 +226,7 @@ Because there are so many simulations to run, the pipeline could take a long tim
 
 ```{r pipeline}
 unlink("logs", recursive = TRUE)
-tar_make_clustermq(workers = 100)
+tar_make_clustermq(workers = 100, reporter = "silent")
 ```
 
 # Results
