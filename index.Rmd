@@ -231,7 +231,13 @@ tar_make_clustermq(workers = 100, reporter = "silent")
 
 # Results
 
-Finally, we report coverage statistics and convergence diagnostics. If the model is implemented correctly, `coverage_50` should not differ systematically from 0.5, `coverage_95` should not differ systematically from 0.95, and `max_rhat` should be close to 1.
+First, we examine convergence diagnostics. The Gelman-Rubin potential scale reduction factors should be close to 1.
+
+```{r}
+tar_read(convergence)
+```
+
+Finally, we report coverage statistics. If the model is implemented correctly, `coverage_50` should not differ systematically from 0.5, and `coverage_95` should not differ systematically from 0.95.
 
 ```{r}
 library(gt)
