@@ -159,7 +159,7 @@ simulate_data <- function(n_patients = 50, n_visits = 3, n_arms = 2) {
 
 ## Target definitions
 
-Now, we define the targets for the steps of the workflow. We use the `stantargets` R package to manage most of the work: simulate 10000 datasets, analyze each dataset with the model, and calculate the coverage status of each simulation. We divide these 10000 replications among 100 batches for computational efficiency. As explained at <https://docs.ropensci.org/stantargets/articles/simulation.html>, all this can be done with the `tar_stan_mcmc_rep_summary()` function. The targets created by `tar_stan_mcmc_rep_summary()` can take a long time to run, so it is recommended to suppress interactive mode.
+Now, we define the targets for the steps of the workflow. We use the `stantargets` R package to manage most of the work: simulate 1000 datasets, analyze each dataset with the model, and calculate the coverage status of each simulation. We divide these 1000 replications among 100 batches for computational efficiency. As explained at <https://docs.ropensci.org/stantargets/articles/simulation.html>, all this can be done with the `tar_stan_mcmc_rep_summary()` function. The targets created by `tar_stan_mcmc_rep_summary()` can take a long time to run, so it is recommended to suppress interactive mode.
 
 ```{targets mcmc, tar_interactive = FALSE}
 tar_stan_mcmc_rep_summary(
@@ -167,7 +167,7 @@ tar_stan_mcmc_rep_summary(
   stan_files = "model.stan",
   data = simulate_data(), # Runs once per rep.
   batches = 100, # Number of branch targets.
-  reps = 100, # Number of model reps per branch target.
+  reps = 10, # Number of model reps per branch target.
   chains = 4, # Number of MCMC chains.
   parallel_chains = 4, # How many MCMC chains to run in parallel.
   iter_warmup = 2e3, # Number of MCMC warmup iterations to run.
