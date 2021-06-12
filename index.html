@@ -5539,7 +5539,7 @@ pre code {
 <div id="TOC">
 <ul>
 <li><a href="#methods"><span class="toc-section-number">1</span> Methods</a><ul>
-<li><a href="#mmrm-model"><span class="toc-section-number">1.1</span> MMRM model</a><ul>
+<li><a href="#the-model"><span class="toc-section-number">1.1</span> The model</a><ul>
 <li><a href="#notation"><span class="toc-section-number">1.1.1</span> Notation</a></li>
 <li><a href="#specification"><span class="toc-section-number">1.1.2</span> Specification</a></li>
 <li><a href="#stan-code"><span class="toc-section-number">1.1.3</span> Stan code</a></li>
@@ -5563,10 +5563,10 @@ pre code {
 <p>The <code>targets</code> R package enhances the reproducibility, scale, and maintainability of data science projects in computationally intense fields such as machine learning, Bayesian Statistics, and statistical genomics <span class="citation">(Landau 2021b)</span>. Recent breakthroughs in the targets ecosystem make it easy to create ambitious, domain-specific, reproducible data analysis pipelines. Two highlights include Target Markdown, an R Markdown interface to transparently communicate the entire process of pipeline construction and prototyping, and <code>stantargets</code>, a new rOpenSci package that generates specialized workflows for Stan models while reducing the required volume of user-side R code <span class="citation">(Landau 2021a)</span>.</p>
 <div id="methods" class="section level1">
 <h1><span class="header-section-number">1</span> Methods</h1>
-<p>This Target Markdown report demonstrates both capabilities in an exercise to validate a mixed model of repeated measures (MMRM), one of the most ubiquitous longitudinal models in clinical trials. Using multiple simulated datasets from the prior predictive distribution of the model, we evaluate how well the model recovers the true parameters drawn from the data-generating process.</p>
-<div id="mmrm-model" class="section level2">
-<h2><span class="header-section-number">1.1</span> MMRM model</h2>
-<p>We use a mixed model of repeated measures (MMRM) for clinical trial data. The model assumes independent patients, correlated study visits within each patient, and an LKJ prior on the correlation matrix for study visits. MMRM models with unstructured covariance usually apply the inverse Wishart prior, but this prior induces known biases that could be problematic (<a href="https://arxiv.org/abs/1408.4050" class="uri">https://arxiv.org/abs/1408.4050</a>), which motivated this custom Stan model that uses LKJ instead.</p>
+<p>This Target Markdown report demonstrates both capabilities in an exercise to validate a Bayesian longitudinal linear model common to clinical trial data analysis. Using multiple simulated datasets from the prior predictive distribution of the model, we evaluate how well the model recovers the true parameters drawn from the data-generating process.</p>
+<div id="the-model" class="section level2">
+<h2><span class="header-section-number">1.1</span> The model</h2>
+<p>This particular model assumes independent patients, correlated study visits within each patient, and an LKJ prior on the correlation matrix for study visits.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
 <div id="notation" class="section level3">
 <h3><span class="header-section-number">1.1.1</span> Notation</h3>
 <ul>
@@ -5575,6 +5575,7 @@ pre code {
 <li><span class="math inline">\(p\)</span>: number of model coefficients in the parameter vector <span class="math inline">\(\beta\)</span>.</li>
 <li><span class="math inline">\(y\)</span>: vector of length <span class="math inline">\(n \cdot t\)</span> with observed responses for the clinical endpoint.</li>
 <li><span class="math inline">\(X_{(n \cdot t) \times p}\)</span>: model matrix with <span class="math inline">\(n \cdot t\)</span> rows and <span class="math inline">\(p\)</span> columns.</li>
+<li><span class="math inline">\(\beta\)</span>: a vector of <span class="math inline">\(p\)</span> model coefficients.</li>
 <li><span class="math inline">\(I_{x \times x}\)</span>: the identity matrix with <span class="math inline">\(x\)</span> rows and <span class="math inline">\(x\)</span> columns.</li>
 <li><span class="math inline">\(\otimes\)</span>: Kronecker product.</li>
 <li><span class="math inline">\(\Sigma_{t \times t}\)</span>: <span class="math inline">\(t \times t\)</span> block of the covariance matrix of the observed data.</li>
@@ -5673,8 +5674,8 @@ library(stantargets)
 </div>
 <div id="data-generation" class="section level2">
 <h2><span class="header-section-number">2.2</span> Data generation</h2>
-<p>The following function simulates one rep of a clinical trial data from the prior predictive distribution of an MMRM model. The function returns a Stan data list and accepts arguments <code>n_patients</code> (number of patients in the trial), <code>n_visits</code> (number of scheduled study visits, e.g. repeated measures per patient), and <code>n_arms</code> (number of study arms, e.g. treatment groups). The model coefficients <code>beta</code> come from independent <code>Normal(0, sd = 10)</code> distributions, and the covariance matrix comes from an <code>LKJ(shape = 1, order = n_visits)</code> distribution. To mitigate numerical stability issues, the covariance matrix is restricted such that each matrix element lies between -500 and 500 (via rejection sampling). The <code>.join_data</code> list at the end tells <code>stantargets</code> to append the prior predictive draws of model parameters to the MCMC output.</p>
-<pre class="r"><code>simulate_data &lt;- function(n_patients = 500, n_visits = 4, n_arms = 2) {
+<p>The following function simulates one rep of a clinical trial data from the prior predictive distribution of the model. The function returns a Stan data list and accepts arguments <code>n_patients</code> (number of patients in the trial), <code>n_visits</code> (number of scheduled study visits, e.g. repeated measures per patient), and <code>n_arms</code> (number of study arms, e.g. treatment groups). To mitigate numerical stability issues, the covariance matrix is restricted such that each matrix element lies between -500 and 500 (via rejection sampling). The <code>.join_data</code> list at the end tells <code>stantargets</code> to append the prior predictive draws of model parameters to the MCMC output.</p>
+<pre class="r"><code>simulate_data &lt;- function(n_patients = 50, n_visits = 3, n_arms = 2) {
   structure &lt;- tibble(patient = as.character(seq_len(n_patients))) %&gt;%
     mutate(arm = as.character(rep(seq_len(n_arms), each = n_patients / n_arms))) %&gt;%
     mutate(covariate1 = rnorm(n()), covariate2 = rnorm(n())) %&gt;%
@@ -5682,7 +5683,7 @@ library(stantargets)
     mutate(group = paste0(arm, visit))
   x &lt;- model.matrix(~ covariate1 + covariate2 + group, data = structure) %&gt;%
     as.matrix()
-  beta &lt;- rnorm(ncol(x), 10)
+  beta &lt;- rnorm(n = ncol(x), mean = 0, sd = 2)
   covariance &lt;- NULL
   while (is.null(covariance) || max(abs(covariance)) &gt; 100) {
     rho &lt;- rlkjcorr(n = 1, K = n_visits, eta = 1)
@@ -5705,8 +5706,8 @@ library(stantargets)
     n_observations = n_patients * n_visits,
     n_patients = n_patients,
     n_visits = n_visits,
-    s_beta = 10,
-    s_sigma = 5,
+    s_beta = 2,
+    s_sigma = 1,
     .join_data = list(
       beta = beta,
       sigma = sigma,
@@ -5718,7 +5719,7 @@ library(stantargets)
 </div>
 <div id="target-definitions" class="section level2">
 <h2><span class="header-section-number">2.3</span> Target definitions</h2>
-<p>Now, we define the targets for the steps of the workflow. We use the <code>stantargets</code> R package to manage most of the work: simulate multiple datasets, analyze each dataset with the MMRM, and calculate the coverage status of each simulation. As explained at <a href="https://docs.ropensci.org/stantargets/articles/simulation.html" class="uri">https://docs.ropensci.org/stantargets/articles/simulation.html</a>, all this can be done with the <code>tar_stan_mcmc_rep_summary()</code> function. The targets created by <code>tar_stan_mcmc_rep_summary()</code> can take a long time to run, so it is recommended to suppress interactive mode.</p>
+<p>Now, we define the targets for the steps of the workflow. We use the <code>stantargets</code> R package to manage most of the work: simulate multiple datasets, analyze each dataset with the model, and calculate the coverage status of each simulation. As explained at <a href="https://docs.ropensci.org/stantargets/articles/simulation.html" class="uri">https://docs.ropensci.org/stantargets/articles/simulation.html</a>, all this can be done with the <code>tar_stan_mcmc_rep_summary()</code> function. The targets created by <code>tar_stan_mcmc_rep_summary()</code> can take a long time to run, so it is recommended to suppress interactive mode.</p>
 <pre class="r"><code>tar_stan_mcmc_rep_summary(
   name = mcmc,
   stan_files = &quot;model.stan&quot;,
@@ -5733,14 +5734,25 @@ library(stantargets)
     # Compute posterior intervals at levels 50% and 95%.
     # The 50% intervals should cover prior predictive parameter draws
     # 50% of the time. The 95% intervals are similar.
-    ~posterior::quantile2(.x, probs = c(0.025, 0.25, 0.75, 0.975)),
+    # We also calculate posterior medians so we can compare them
+    # directly to the prior predictive draws.
+    ~posterior::quantile2(.x, probs = c(0.025, 0.25, 0.5, 0.75, 0.975)),
     # We use Gelman-Rubin potential scale reduction factors to
     # assess convergence:
     rhat = ~posterior::rhat(.x)
   )
 )
 #&gt; Established _targets.R and _targets_r/targets/mcmc.R.</code></pre>
-<p>Our last target calculates coverage levels and convergence diagnostics across all simulations. Because this is a single target and easy to define, we can set the <code>tar_simple</code> chunk option to <code>TRUE</code>. That way, the chunk label becomes the target name, and the chunk code becomes the target command.</p>
+<p>After we fit the model, we assess convergence using Gelman-Rubin potential scale reduction factors. Values far above 1 indicate convergence issues. The vast majority of Gelman factors are close to 1, so any convergence issues seem unlikely to affect coverage results.</p>
+<pre class="r"><code>tar_target(convergence, {
+  ggplot(filter(mcmc, !is.na(rhat))) +
+    geom_histogram(aes(x = rhat), bins = 30) +
+    xlab(&quot;Gelman-Rubin potential scale reduction factor&quot;) +
+    theme_gray(16)
+})
+#&gt; Defined target convergence automatically from chunk code.
+#&gt; Established _targets.R and _targets_r/targets/convergence.R.</code></pre>
+<p>Our last target calculates coverage levels across all simulations. Because this is a single target and easy to define, we can set the <code>tar_simple</code> chunk option to <code>TRUE</code>. That way, the chunk label becomes the target name, and the chunk code becomes the target command.</p>
 <pre class="r"><code>tar_target(coverage, {
   mcmc %&gt;%
     filter(!is.na(rhat), variable != &quot;lp__&quot;) %&gt;%
@@ -5748,7 +5760,6 @@ library(stantargets)
     summarize(
       coverage_50 = mean(q25 &lt; .join_data &amp; .join_data &lt; q75),
       coverage_95 = mean(q2.5 &lt; .join_data &amp; .join_data &lt; q97.5),
-      max_rhat = round(max(rhat), 4),
       .groups = &quot;drop&quot;
     )
 })
@@ -5763,8 +5774,8 @@ library(stantargets)
 <h2><span class="header-section-number">3.1</span> Inspect the pipeline</h2>
 <p>But first, it is good practice to visualize the dependency graph to verify that the workflow is correctly specified. All targets should be connected by graph edges, and they should appear in the correct order in relation to one another.</p>
 <pre class="r"><code>tar_visnetwork()</code></pre>
-<div id="htmlwidget-5d6cfeecfae93a651480" style="width:672px;height:480px;" class="visNetwork html-widget"></div>
-<script type="application/json" data-for="htmlwidget-5d6cfeecfae93a651480">{"x":{"nodes":{"name":["mcmc_batch","mcmc_file_model","coverage","mcmc","mcmc_data","mcmc_model","simulate_data"],"type":["stem","stem","stem","stem","pattern","pattern","function"],"status":["uptodate","errored","outdated","outdated","started","outdated","uptodate"],"seconds":[0.002,3.295,null,null,null,null,null],"bytes":[96,0,null,null,null,null,null],"branches":[null,null,null,null,null,null,null],"id":["mcmc_batch","mcmc_file_model","coverage","mcmc","mcmc_data","mcmc_model","simulate_data"],"label":["mcmc_batch","mcmc_file_model","coverage","mcmc","mcmc_data","mcmc_model","simulate_data"],"level":[1,1,5,4,2,3,1],"color":["#354823","#C93312","#78B7C5","#78B7C5","#DC863B","#78B7C5","#354823"],"shape":["dot","dot","dot","dot","square","square","triangle"]},"edges":{"from":["mcmc_data","mcmc_file_model","simulate_data","mcmc_batch","mcmc","mcmc_model"],"to":["mcmc_model","mcmc_model","mcmc_data","mcmc_data","coverage","mcmc"],"arrows":["to","to","to","to","to","to"]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot","physics":false},"manipulation":{"enabled":false},"edges":{"smooth":{"type":"cubicBezier","forceDirection":"horizontal"}},"physics":{"stabilization":false},"layout":{"hierarchical":{"enabled":true,"direction":"LR"}}},"groups":null,"width":null,"height":null,"idselection":{"enabled":false,"style":"width: 150px; height: 26px","useLabels":true,"main":"Select by id"},"byselection":{"enabled":false,"style":"width: 150px; height: 26px","multiple":false,"hideColor":"rgba(200,200,200,0.5)","highlight":false},"main":{"text":"","style":"font-family:Georgia, Times New Roman, Times, serif;font-weight:bold;font-size:20px;text-align:center;"},"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)","highlight":{"enabled":true,"hoverNearest":false,"degree":{"from":1,"to":1},"algorithm":"hierarchical","hideColor":"rgba(200,200,200,0.5)","labelOnly":true},"collapse":{"enabled":true,"fit":false,"resetHighlight":true,"clusterOptions":null,"keepCoord":true,"labelSuffix":"(cluster)"},"legend":{"width":0.2,"useGroups":false,"position":"right","ncol":1,"stepX":100,"stepY":100,"zoom":true,"nodes":{"label":["Up to date","Errored","Outdated","Started","Stem","Pattern","Function"],"color":["#354823","#C93312","#78B7C5","#DC863B","#899DA4","#899DA4","#899DA4"],"shape":["dot","dot","dot","dot","dot","square","triangle"]},"nodesToDataframe":true}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-965e1682f6a154712713" style="width:672px;height:480px;" class="visNetwork html-widget"></div>
+<script type="application/json" data-for="htmlwidget-965e1682f6a154712713">{"x":{"nodes":{"name":["coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","convergence","simulate_data"],"type":["stem","stem","stem","pattern","stem","pattern","stem","function"],"status":["outdated","outdated","uptodate","outdated","outdated","started","outdated","outdated"],"seconds":[0.013,10.2,0.002,123.219,44.396,701080.008,null,null],"bytes":[728,1984837,96,53097055,1633627,2379548,null,null],"branches":[null,null,null,100,null,100,null,null],"id":["coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","convergence","simulate_data"],"label":["coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","convergence","simulate_data"],"level":[5,4,1,2,1,3,5,1],"color":["#78B7C5","#78B7C5","#354823","#78B7C5","#78B7C5","#DC863B","#78B7C5","#78B7C5"],"shape":["dot","dot","dot","square","dot","square","dot","triangle"]},"edges":{"from":["mcmc","mcmc_data","mcmc_file_model","simulate_data","mcmc_batch","mcmc","mcmc_model"],"to":["convergence","mcmc_model","mcmc_model","mcmc_data","mcmc_data","coverage","mcmc"],"arrows":["to","to","to","to","to","to","to"]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot","physics":false},"manipulation":{"enabled":false},"edges":{"smooth":{"type":"cubicBezier","forceDirection":"horizontal"}},"physics":{"stabilization":false},"layout":{"hierarchical":{"enabled":true,"direction":"LR"}}},"groups":null,"width":null,"height":null,"idselection":{"enabled":false,"style":"width: 150px; height: 26px","useLabels":true,"main":"Select by id"},"byselection":{"enabled":false,"style":"width: 150px; height: 26px","multiple":false,"hideColor":"rgba(200,200,200,0.5)","highlight":false},"main":{"text":"","style":"font-family:Georgia, Times New Roman, Times, serif;font-weight:bold;font-size:20px;text-align:center;"},"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)","highlight":{"enabled":true,"hoverNearest":false,"degree":{"from":1,"to":1},"algorithm":"hierarchical","hideColor":"rgba(200,200,200,0.5)","labelOnly":true},"collapse":{"enabled":true,"fit":false,"resetHighlight":true,"clusterOptions":null,"keepCoord":true,"labelSuffix":"(cluster)"},"legend":{"width":0.2,"useGroups":false,"position":"right","ncol":1,"stepX":100,"stepY":100,"zoom":true,"nodes":{"label":["Outdated","Up to date","Started","Stem","Pattern","Function"],"color":["#78B7C5","#354823","#DC863B","#899DA4","#899DA4","#899DA4"],"shape":["dot","dot","dot","dot","square","triangle"]},"nodesToDataframe":true}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div id="run-the-pipeline" class="section level2">
 <h2><span class="header-section-number">3.2</span> Run the pipeline</h2>
@@ -5783,196 +5794,196 @@ tar_make_clustermq(workers = 100)
 #&gt; • start branch mcmc_data_603f495a
 #&gt; • start branch mcmc_data_73141983
 #&gt; • start branch mcmc_data_754a52f3
+#&gt; • built branch mcmc_data_dc7c13ba
 #&gt; • start branch mcmc_data_5d39c5aa
+#&gt; • built branch mcmc_data_5d39c5aa
 #&gt; • start branch mcmc_data_e923f0b3
+#&gt; • built branch mcmc_data_021cfdec
 #&gt; • start branch mcmc_data_f3a28643
 #&gt; • start branch mcmc_data_662f710d
-#&gt; • start branch mcmc_data_b1fcb9c4
-#&gt; • start branch mcmc_data_16b0c9c5
-#&gt; • start branch mcmc_data_9500703c
-#&gt; • start branch mcmc_data_55c8845f
-#&gt; • start branch mcmc_data_f8e3bbd0
-#&gt; • start branch mcmc_data_3486177e
-#&gt; • start branch mcmc_data_5a7c1b01
-#&gt; • start branch mcmc_data_0be92724
-#&gt; • start branch mcmc_data_3ebf80f0
-#&gt; • start branch mcmc_data_f2432bbf
-#&gt; • start branch mcmc_data_ac69079a
-#&gt; • start branch mcmc_data_aaa1acbb
-#&gt; • start branch mcmc_data_0480a3af
-#&gt; • start branch mcmc_data_838cf753
-#&gt; • start branch mcmc_data_662ae017
-#&gt; • start branch mcmc_data_b58e3b76
-#&gt; • start branch mcmc_data_fa4cc7ba
-#&gt; • start branch mcmc_data_afe5680a
-#&gt; • start branch mcmc_data_75b345b7
-#&gt; • start branch mcmc_data_91bcbf36
-#&gt; • start branch mcmc_data_4ee75a24
-#&gt; • start branch mcmc_data_50bed08b
-#&gt; • start branch mcmc_data_46ba868e
-#&gt; • start branch mcmc_data_e7ec179e
-#&gt; • start branch mcmc_data_b48697aa
-#&gt; • start branch mcmc_data_c1dfcc8f
-#&gt; • start branch mcmc_data_ab2e5289
-#&gt; • start branch mcmc_data_74d3b1e0
-#&gt; • start branch mcmc_data_2f9c087e
-#&gt; • start branch mcmc_data_6676bb9f
-#&gt; • start branch mcmc_data_aad32a18
-#&gt; • start branch mcmc_data_3d34c1a4
-#&gt; • start branch mcmc_data_db6f89b0
-#&gt; • start branch mcmc_data_4f88b783
-#&gt; • start branch mcmc_data_ca329337
-#&gt; • start branch mcmc_data_8ebd0f16
-#&gt; • start branch mcmc_data_3858a64c
-#&gt; • start branch mcmc_data_3bdbe1aa
-#&gt; • start branch mcmc_data_7927bc7a
-#&gt; • built branch mcmc_data_fe89b1b4
-#&gt; • start branch mcmc_data_6dd6f27c
-#&gt; • built branch mcmc_data_f3a28643
-#&gt; • start branch mcmc_data_e26a397e
-#&gt; • built branch mcmc_data_662f710d
-#&gt; • start branch mcmc_data_1c151b5f
-#&gt; • built branch mcmc_data_5d39c5aa
-#&gt; • start branch mcmc_data_a544c75a
-#&gt; • built branch mcmc_data_16b0c9c5
-#&gt; • start branch mcmc_data_1307550d
-#&gt; • start branch mcmc_data_39f081fd
-#&gt; • built branch mcmc_data_ac69079a
-#&gt; • start branch mcmc_data_9e66ed2d
-#&gt; • built branch mcmc_data_4a530429
-#&gt; • start branch mcmc_data_c93971ab
-#&gt; • built branch mcmc_data_754a52f3
-#&gt; • start branch mcmc_data_daf0c6f7
-#&gt; • built branch mcmc_data_9500703c
-#&gt; • start branch mcmc_data_d5fc9555
 #&gt; • built branch mcmc_data_e923f0b3
-#&gt; • start branch mcmc_data_89f8cd62
-#&gt; • built branch mcmc_data_3486177e
-#&gt; • start branch mcmc_data_10b49a62
-#&gt; • built branch mcmc_data_6dd6f27c
-#&gt; • start branch mcmc_data_ee2100bd
-#&gt; • built branch mcmc_data_5a7c1b01
-#&gt; • start branch mcmc_data_88986825
-#&gt; • built branch mcmc_data_0be92724
-#&gt; • start branch mcmc_data_3e8fefa9
-#&gt; • built branch mcmc_data_18c6824d
-#&gt; • start branch mcmc_data_bbc35011
-#&gt; • built branch mcmc_data_603f495a
-#&gt; • start branch mcmc_data_ee814d83
-#&gt; • built branch mcmc_data_e26a397e
-#&gt; • start branch mcmc_data_9295dac9
-#&gt; • built branch mcmc_data_55c8845f
-#&gt; • start branch mcmc_data_32568b3c
-#&gt; • built branch mcmc_data_dc7c13ba
-#&gt; • start branch mcmc_data_8627605a
+#&gt; • start branch mcmc_data_b1fcb9c4
 #&gt; • built branch mcmc_data_9315d4c7
-#&gt; • start branch mcmc_data_d61e4ae0
+#&gt; • start branch mcmc_data_16b0c9c5
+#&gt; • built branch mcmc_data_fe89b1b4
+#&gt; • start branch mcmc_data_9500703c
+#&gt; • built branch mcmc_data_18c6824d
+#&gt; • start branch mcmc_data_55c8845f
+#&gt; • built branch mcmc_data_f3a28643
+#&gt; • start branch mcmc_data_f8e3bbd0
 #&gt; • built branch mcmc_data_b1fcb9c4
-#&gt; • start branch mcmc_data_f265a7fe
-#&gt; • built branch mcmc_data_afe5680a
-#&gt; • start branch mcmc_data_9fd8bc3d
-#&gt; • built branch mcmc_data_f2432bbf
-#&gt; • start branch mcmc_data_cba8ff73
-#&gt; • built branch mcmc_data_73141983
-#&gt; • start branch mcmc_data_b940f6a9
-#&gt; • built branch mcmc_data_e35a8e8e
-#&gt; • start branch mcmc_data_6135058f
-#&gt; • built branch mcmc_data_91bcbf36
-#&gt; • start branch mcmc_data_b2aeb051
-#&gt; • built branch mcmc_data_021cfdec
-#&gt; • start branch mcmc_data_38b3f0c5
-#&gt; • built branch mcmc_data_aaa1acbb
-#&gt; • start branch mcmc_data_21ac2de4
-#&gt; • built branch mcmc_data_662ae017
-#&gt; • start branch mcmc_data_12f4c5c6
-#&gt; • built branch mcmc_data_c1dfcc8f
-#&gt; • start branch mcmc_data_2deb1c1c
-#&gt; • built branch mcmc_data_ab2e5289
-#&gt; • start branch mcmc_data_e1245f78
-#&gt; • built branch mcmc_data_838cf753
-#&gt; • start branch mcmc_data_f75c8236
-#&gt; • built branch mcmc_data_3ebf80f0
-#&gt; • start branch mcmc_data_04a23ef7
-#&gt; • built branch mcmc_data_4ee75a24
-#&gt; • start branch mcmc_data_47aa785e
-#&gt; • built branch mcmc_data_6676bb9f
-#&gt; • start branch mcmc_data_bf335ba8
-#&gt; • built branch mcmc_data_b58e3b76
-#&gt; • start branch mcmc_data_88789df7
+#&gt; • start branch mcmc_data_3486177e
+#&gt; • built branch mcmc_data_16b0c9c5
+#&gt; • start branch mcmc_data_5a7c1b01
+#&gt; • built branch mcmc_data_9500703c
+#&gt; • start branch mcmc_data_0be92724
+#&gt; • built branch mcmc_data_55c8845f
+#&gt; • start branch mcmc_data_3ebf80f0
+#&gt; • built branch mcmc_data_603f495a
+#&gt; • start branch mcmc_data_f2432bbf
 #&gt; • built branch mcmc_data_f8e3bbd0
-#&gt; • start branch mcmc_data_62405d51
-#&gt; • built branch mcmc_data_50bed08b
-#&gt; • start branch mcmc_data_acc2d68d
-#&gt; • built branch mcmc_data_aad32a18
-#&gt; • start branch mcmc_data_cc0b04c1
-#&gt; • built branch mcmc_data_4f88b783
-#&gt; • start branch mcmc_data_0487b1ec
-#&gt; • built branch mcmc_data_e7ec179e
-#&gt; • start branch mcmc_data_4f37c3f4
-#&gt; • built branch mcmc_data_1c151b5f
-#&gt; • start branch mcmc_data_9032ddc8
-#&gt; • built branch mcmc_data_a544c75a
-#&gt; • start branch mcmc_data_cb7f26c1
-#&gt; • built branch mcmc_data_1307550d
-#&gt; • start branch mcmc_data_30c4edfe
+#&gt; • start branch mcmc_data_ac69079a
+#&gt; • built branch mcmc_data_3486177e
+#&gt; • start branch mcmc_data_aaa1acbb
+#&gt; • built branch mcmc_data_e35a8e8e
+#&gt; • start branch mcmc_data_0480a3af
+#&gt; • built branch mcmc_data_5a7c1b01
+#&gt; • start branch mcmc_data_838cf753
+#&gt; • built branch mcmc_data_0be92724
+#&gt; • start branch mcmc_data_662ae017
+#&gt; • built branch mcmc_data_3ebf80f0
+#&gt; • start branch mcmc_data_b58e3b76
+#&gt; • built branch mcmc_data_f2432bbf
+#&gt; • start branch mcmc_data_fa4cc7ba
+#&gt; • built branch mcmc_data_ac69079a
+#&gt; • start branch mcmc_data_afe5680a
+#&gt; • built branch mcmc_data_aaa1acbb
+#&gt; • start branch mcmc_data_75b345b7
 #&gt; • built branch mcmc_data_0480a3af
-#&gt; • start branch mcmc_data_d5d6c4a5
-#&gt; • built branch mcmc_data_9e66ed2d
-#&gt; • start branch mcmc_data_5cf99f48
-#&gt; • built branch mcmc_data_c93971ab
-#&gt; • built branch mcmc_data_daf0c6f7
-#&gt; • built branch mcmc_data_d5fc9555
-#&gt; • built branch mcmc_data_89f8cd62
-#&gt; • built branch mcmc_data_10b49a62
-#&gt; • built branch mcmc_data_ee2100bd
-#&gt; • built branch mcmc_data_88986825
-#&gt; • built branch mcmc_data_3e8fefa9
-#&gt; • built branch mcmc_data_bbc35011
-#&gt; • built branch mcmc_data_ee814d83
-#&gt; • built branch mcmc_data_9295dac9
-#&gt; • built branch mcmc_data_32568b3c
-#&gt; • built branch mcmc_data_8627605a
-#&gt; • built branch mcmc_data_d61e4ae0
-#&gt; • built branch mcmc_data_f265a7fe
-#&gt; • built branch mcmc_data_9fd8bc3d
-#&gt; • built branch mcmc_data_cba8ff73
-#&gt; • built branch mcmc_data_b940f6a9
-#&gt; • built branch mcmc_data_6135058f
-#&gt; • built branch mcmc_data_b2aeb051
-#&gt; • built branch mcmc_data_38b3f0c5
-#&gt; • built branch mcmc_data_21ac2de4
-#&gt; • built branch mcmc_data_12f4c5c6
-#&gt; • built branch mcmc_data_2deb1c1c
-#&gt; • built branch mcmc_data_e1245f78
-#&gt; • built branch mcmc_data_f75c8236
-#&gt; • built branch mcmc_data_04a23ef7
-#&gt; • built branch mcmc_data_47aa785e
-#&gt; • built branch mcmc_data_bf335ba8
-#&gt; • built branch mcmc_data_88789df7
+#&gt; • start branch mcmc_data_91bcbf36
+#&gt; • built branch mcmc_data_838cf753
+#&gt; • start branch mcmc_data_4ee75a24
+#&gt; • built branch mcmc_data_662ae017
+#&gt; • start branch mcmc_data_50bed08b
+#&gt; • built branch mcmc_data_b58e3b76
+#&gt; • start branch mcmc_data_46ba868e
+#&gt; • built branch mcmc_data_4a530429
+#&gt; • start branch mcmc_data_e7ec179e
+#&gt; • built branch mcmc_data_73141983
+#&gt; • start branch mcmc_data_b48697aa
+#&gt; • built branch mcmc_data_fa4cc7ba
+#&gt; • start branch mcmc_data_c1dfcc8f
+#&gt; • built branch mcmc_data_afe5680a
+#&gt; • start branch mcmc_data_ab2e5289
+#&gt; • built branch mcmc_data_75b345b7
+#&gt; • start branch mcmc_data_74d3b1e0
+#&gt; • built branch mcmc_data_91bcbf36
+#&gt; • start branch mcmc_data_2f9c087e
+#&gt; • built branch mcmc_data_4ee75a24
+#&gt; • start branch mcmc_data_6676bb9f
+#&gt; • built branch mcmc_data_50bed08b
+#&gt; • start branch mcmc_data_aad32a18
+#&gt; • built branch mcmc_data_46ba868e
+#&gt; • start branch mcmc_data_3d34c1a4
+#&gt; • built branch mcmc_data_e7ec179e
+#&gt; • start branch mcmc_data_db6f89b0
+#&gt; • built branch mcmc_data_b48697aa
+#&gt; • start branch mcmc_data_4f88b783
+#&gt; • built branch mcmc_data_c1dfcc8f
+#&gt; • start branch mcmc_data_ca329337
+#&gt; • built branch mcmc_data_ab2e5289
+#&gt; • start branch mcmc_data_8ebd0f16
+#&gt; • built branch mcmc_data_74d3b1e0
+#&gt; • start branch mcmc_data_3858a64c
 #&gt; • built branch mcmc_data_2f9c087e
+#&gt; • start branch mcmc_data_3bdbe1aa
+#&gt; • built branch mcmc_data_6676bb9f
+#&gt; • start branch mcmc_data_7927bc7a
+#&gt; • built branch mcmc_data_aad32a18
+#&gt; • start branch mcmc_data_6dd6f27c
+#&gt; • built branch mcmc_data_3d34c1a4
+#&gt; • start branch mcmc_data_e26a397e
+#&gt; • built branch mcmc_data_db6f89b0
+#&gt; • start branch mcmc_data_1c151b5f
+#&gt; • built branch mcmc_data_4f88b783
+#&gt; • start branch mcmc_data_a544c75a
+#&gt; • built branch mcmc_data_ca329337
+#&gt; • start branch mcmc_data_1307550d
+#&gt; • built branch mcmc_data_8ebd0f16
+#&gt; • start branch mcmc_data_39f081fd
+#&gt; • built branch mcmc_data_3858a64c
+#&gt; • start branch mcmc_data_9e66ed2d
+#&gt; • built branch mcmc_data_3bdbe1aa
+#&gt; • start branch mcmc_data_c93971ab
+#&gt; • built branch mcmc_data_7927bc7a
+#&gt; • start branch mcmc_data_daf0c6f7
+#&gt; • built branch mcmc_data_6dd6f27c
+#&gt; • start branch mcmc_data_d5fc9555
+#&gt; • built branch mcmc_data_e26a397e
+#&gt; • start branch mcmc_data_89f8cd62
+#&gt; • built branch mcmc_data_1c151b5f
+#&gt; • start branch mcmc_data_10b49a62
+#&gt; • built branch mcmc_data_a544c75a
+#&gt; • start branch mcmc_data_ee2100bd
+#&gt; • built branch mcmc_data_754a52f3
+#&gt; • start branch mcmc_data_88986825
+#&gt; • built branch mcmc_data_1307550d
+#&gt; • start branch mcmc_data_3e8fefa9
+#&gt; • built branch mcmc_data_39f081fd
+#&gt; • start branch mcmc_data_bbc35011
+#&gt; • built branch mcmc_data_9e66ed2d
+#&gt; • start branch mcmc_data_ee814d83
+#&gt; • built branch mcmc_data_c93971ab
+#&gt; • start branch mcmc_data_9295dac9
+#&gt; • built branch mcmc_data_daf0c6f7
+#&gt; • start branch mcmc_data_32568b3c
+#&gt; • built branch mcmc_data_d5fc9555
+#&gt; • start branch mcmc_data_8627605a
+#&gt; • built branch mcmc_data_89f8cd62
+#&gt; • start branch mcmc_data_d61e4ae0
+#&gt; • built branch mcmc_data_10b49a62
+#&gt; • start branch mcmc_data_f265a7fe
+#&gt; • built branch mcmc_data_ee2100bd
+#&gt; • start branch mcmc_data_9fd8bc3d
+#&gt; • built branch mcmc_data_88986825
+#&gt; • start branch mcmc_data_cba8ff73
+#&gt; • built branch mcmc_data_662f710d
+#&gt; • start branch mcmc_data_b940f6a9
+#&gt; • built branch mcmc_data_3e8fefa9
+#&gt; • start branch mcmc_data_6135058f
+#&gt; • built branch mcmc_data_bbc35011
+#&gt; • start branch mcmc_data_b2aeb051
+#&gt; • built branch mcmc_data_ee814d83
+#&gt; • start branch mcmc_data_38b3f0c5
+#&gt; • built branch mcmc_data_9295dac9
+#&gt; • start branch mcmc_data_21ac2de4
+#&gt; • built branch mcmc_data_32568b3c
+#&gt; • start branch mcmc_data_12f4c5c6
+#&gt; • built branch mcmc_data_8627605a
+#&gt; • start branch mcmc_data_2deb1c1c
+#&gt; • built branch mcmc_data_d61e4ae0
+#&gt; • start branch mcmc_data_e1245f78
+#&gt; • built branch mcmc_data_f265a7fe
+#&gt; • start branch mcmc_data_f75c8236
+#&gt; • built branch mcmc_data_9fd8bc3d
+#&gt; • start branch mcmc_data_04a23ef7
+#&gt; • built branch mcmc_data_cba8ff73
+#&gt; • start branch mcmc_data_47aa785e
+#&gt; • built branch mcmc_data_b940f6a9
+#&gt; • start branch mcmc_data_bf335ba8
+#&gt; • built branch mcmc_data_6135058f
+#&gt; • start branch mcmc_data_88789df7
+#&gt; • built branch mcmc_data_b2aeb051
+#&gt; • start branch mcmc_data_62405d51
+#&gt; • built branch mcmc_data_38b3f0c5
+#&gt; • start branch mcmc_data_acc2d68d
+#&gt; • built branch mcmc_data_21ac2de4
+#&gt; • start branch mcmc_data_cc0b04c1
+#&gt; • built branch mcmc_data_12f4c5c6
+#&gt; • start branch mcmc_data_0487b1ec
+#&gt; • built branch mcmc_data_2deb1c1c
+#&gt; • start branch mcmc_data_4f37c3f4
+#&gt; • built branch mcmc_data_e1245f78
+#&gt; • start branch mcmc_data_9032ddc8
+#&gt; • built branch mcmc_data_f75c8236
+#&gt; • start branch mcmc_data_cb7f26c1
+#&gt; • built branch mcmc_data_04a23ef7
+#&gt; • start branch mcmc_data_30c4edfe
+#&gt; • built branch mcmc_data_47aa785e
+#&gt; • start branch mcmc_data_d5d6c4a5
+#&gt; • built branch mcmc_data_bf335ba8
+#&gt; • start branch mcmc_data_5cf99f48
+#&gt; • built branch mcmc_data_88789df7
+#&gt; • built branch mcmc_data_62405d51
 #&gt; • built branch mcmc_data_acc2d68d
 #&gt; • built branch mcmc_data_cc0b04c1
-#&gt; • built branch mcmc_data_62405d51
 #&gt; • built branch mcmc_data_0487b1ec
-#&gt; • built branch mcmc_data_3d34c1a4
-#&gt; • built branch mcmc_data_74d3b1e0
-#&gt; • built branch mcmc_data_db6f89b0
-#&gt; • built branch mcmc_data_46ba868e
 #&gt; • built branch mcmc_data_4f37c3f4
 #&gt; • built branch mcmc_data_9032ddc8
 #&gt; • built branch mcmc_data_cb7f26c1
-#&gt; • built branch mcmc_data_b48697aa
 #&gt; • built branch mcmc_data_30c4edfe
-#&gt; • built branch mcmc_data_5cf99f48
 #&gt; • built branch mcmc_data_d5d6c4a5
-#&gt; • built branch mcmc_data_75b345b7
-#&gt; • built branch mcmc_data_8ebd0f16
-#&gt; • built branch mcmc_data_ca329337
-#&gt; • built branch mcmc_data_3bdbe1aa
-#&gt; • built branch mcmc_data_fa4cc7ba
-#&gt; • built branch mcmc_data_7927bc7a
-#&gt; • built branch mcmc_data_3858a64c
-#&gt; • built branch mcmc_data_39f081fd
+#&gt; • built branch mcmc_data_5cf99f48
 #&gt; • built pattern mcmc_data
 #&gt; • built target mcmc_file_model
 #&gt; • start branch mcmc_model_c0e651c1
@@ -5994,196 +6005,196 @@ tar_make_clustermq(workers = 100)
 #&gt; • start branch mcmc_model_833c4495
 #&gt; • start branch mcmc_model_cfed47a6
 #&gt; • start branch mcmc_model_66e37ca5
+#&gt; • built branch mcmc_model_f7e6997f
 #&gt; • start branch mcmc_model_84f8dba6
+#&gt; • built branch mcmc_model_feaeb0cd
 #&gt; • start branch mcmc_model_8a384a19
+#&gt; • built branch mcmc_model_c0e651c1
 #&gt; • start branch mcmc_model_d17282f4
+#&gt; • built branch mcmc_model_de3daafe
 #&gt; • start branch mcmc_model_1bb9ffbf
+#&gt; • built branch mcmc_model_b880d938
 #&gt; • start branch mcmc_model_fbe1db47
 #&gt; • start branch mcmc_model_ebe93763
+#&gt; • built branch mcmc_model_7eacc34d
 #&gt; • start branch mcmc_model_dd6307b5
+#&gt; • built branch mcmc_model_66e37ca5
 #&gt; • start branch mcmc_model_a9e2a73d
+#&gt; • built branch mcmc_model_cfed47a6
 #&gt; • start branch mcmc_model_cd38ebc1
+#&gt; • built branch mcmc_model_07a4a3b4
 #&gt; • start branch mcmc_model_f922b1cb
+#&gt; • built branch mcmc_model_833c4495
 #&gt; • start branch mcmc_model_3aaa7991
 #&gt; • start branch mcmc_model_85ec1b4c
+#&gt; • built branch mcmc_model_be96d094
 #&gt; • start branch mcmc_model_4e514383
+#&gt; • built branch mcmc_model_4561392d
 #&gt; • start branch mcmc_model_d4180ff1
 #&gt; • start branch mcmc_model_cdfabc8a
+#&gt; • built branch mcmc_model_f2f3c2ef
 #&gt; • start branch mcmc_model_defd2781
+#&gt; • built branch mcmc_model_d17282f4
 #&gt; • start branch mcmc_model_0f33b6b8
+#&gt; • built branch mcmc_model_6fa6cc36
 #&gt; • start branch mcmc_model_85b49f2c
+#&gt; • built branch mcmc_model_ebe93763
 #&gt; • start branch mcmc_model_44382af0
 #&gt; • start branch mcmc_model_d3bc457a
+#&gt; • built branch mcmc_model_4e514383
 #&gt; • start branch mcmc_model_654f8444
+#&gt; • built branch mcmc_model_fbe1db47
 #&gt; • start branch mcmc_model_66b2975c
+#&gt; • built branch mcmc_model_71c12c22
 #&gt; • start branch mcmc_model_9c999c78
+#&gt; • built branch mcmc_model_d4180ff1
 #&gt; • start branch mcmc_model_fc9048b8
+#&gt; • built branch mcmc_model_7bf89232
 #&gt; • start branch mcmc_model_8fc7b675
+#&gt; • built branch mcmc_model_e8af3e59
 #&gt; • start branch mcmc_model_57511978
+#&gt; • built branch mcmc_model_8a384a19
 #&gt; • start branch mcmc_model_cabf6fa0
+#&gt; • built branch mcmc_model_1bb9ffbf
 #&gt; • start branch mcmc_model_b8dbfbfd
 #&gt; • start branch mcmc_model_733ee94a
+#&gt; • built branch mcmc_model_cd38ebc1
 #&gt; • start branch mcmc_model_67e90f02
+#&gt; • built branch mcmc_model_d3bc457a
 #&gt; • start branch mcmc_model_d6ab7c7d
 #&gt; • start branch mcmc_model_220c88b7
-#&gt; • start branch mcmc_model_535b306a
-#&gt; • start branch mcmc_model_b98acaac
-#&gt; • start branch mcmc_model_33cc0173
-#&gt; • start branch mcmc_model_a52bdb61
-#&gt; • start branch mcmc_model_bfcab06d
-#&gt; • start branch mcmc_model_6c5ee4e0
-#&gt; • start branch mcmc_model_c835059b
-#&gt; • start branch mcmc_model_53b5f4fe
-#&gt; • start branch mcmc_model_0154f2e8
-#&gt; • start branch mcmc_model_0d2c9d47
-#&gt; • start branch mcmc_model_5c478008
-#&gt; • start branch mcmc_model_d5dc4067
-#&gt; • start branch mcmc_model_fe8467a2
-#&gt; • start branch mcmc_model_c3d577e4
-#&gt; • start branch mcmc_model_c03dfd0a
-#&gt; • start branch mcmc_model_8252a25a
-#&gt; • start branch mcmc_model_9c6c781a
-#&gt; • start branch mcmc_model_b1ea3ccc
-#&gt; • start branch mcmc_model_83540740
-#&gt; • start branch mcmc_model_2369d064
-#&gt; • start branch mcmc_model_ae150573
-#&gt; • start branch mcmc_model_f531d0b1
-#&gt; • start branch mcmc_model_0a824133
-#&gt; • start branch mcmc_model_dda4c06d
-#&gt; • start branch mcmc_model_4365f29f
-#&gt; • start branch mcmc_model_f8ba1d0a
-#&gt; • start branch mcmc_model_3cd80108
-#&gt; • start branch mcmc_model_adbcebab
-#&gt; • start branch mcmc_model_7a522d65
-#&gt; • start branch mcmc_model_7eeee661
-#&gt; • start branch mcmc_model_5d632b60
-#&gt; • start branch mcmc_model_7556a446
-#&gt; • start branch mcmc_model_26b995d0
-#&gt; • start branch mcmc_model_3d04796f
-#&gt; • start branch mcmc_model_fcbd0889
-#&gt; • start branch mcmc_model_3c3cf5ae
-#&gt; • start branch mcmc_model_3cb4cd7b
-#&gt; • start branch mcmc_model_009af40f
-#&gt; • start branch mcmc_model_5fd6087a
-#&gt; • start branch mcmc_model_2d1acbbf
-#&gt; • start branch mcmc_model_56ca0eec
-#&gt; • start branch mcmc_model_d36885b6
-#&gt; • start branch mcmc_model_0bf12874
-#&gt; • start branch mcmc_model_f40d332b
-#&gt; • start branch mcmc_model_48a2aeda
-#&gt; • start branch mcmc_model_1c871cf6
-#&gt; • start branch mcmc_model_c142d23a
-#&gt; • start branch mcmc_model_59c8959a
-#&gt; • start branch mcmc_model_e23499bb
-#&gt; • built branch mcmc_model_66e37ca5
-#&gt; • built branch mcmc_model_66b2975c
-#&gt; • built branch mcmc_model_33cc0173
-#&gt; • built branch mcmc_model_defd2781
-#&gt; • built branch mcmc_model_07a4a3b4
-#&gt; • built branch mcmc_model_71c12c22
-#&gt; • built branch mcmc_model_cdfabc8a
-#&gt; • built branch mcmc_model_de3daafe
-#&gt; • built branch mcmc_model_7eacc34d
-#&gt; • built branch mcmc_model_f7e6997f
-#&gt; • built branch mcmc_model_b880d938
-#&gt; • built branch mcmc_model_53b5f4fe
-#&gt; • built branch mcmc_model_57511978
-#&gt; • built branch mcmc_model_fbe1db47
-#&gt; • built branch mcmc_model_220c88b7
-#&gt; • built branch mcmc_model_535b306a
-#&gt; • built branch mcmc_model_dd6307b5
-#&gt; • built branch mcmc_model_b8dbfbfd
-#&gt; • built branch mcmc_model_67e90f02
-#&gt; • built branch mcmc_model_7bf89232
-#&gt; • built branch mcmc_model_44382af0
-#&gt; • built branch mcmc_model_fe8467a2
-#&gt; • built branch mcmc_model_c835059b
-#&gt; • built branch mcmc_model_1bb9ffbf
-#&gt; • built branch mcmc_model_c0e651c1
-#&gt; • built branch mcmc_model_cd38ebc1
-#&gt; • built branch mcmc_model_8a384a19
-#&gt; • built branch mcmc_model_7556a446
-#&gt; • built branch mcmc_model_5d632b60
-#&gt; • built branch mcmc_model_bfcab06d
-#&gt; • built branch mcmc_model_9c6c781a
-#&gt; • built branch mcmc_model_feaeb0cd
-#&gt; • built branch mcmc_model_dda4c06d
-#&gt; • built branch mcmc_model_a52bdb61
-#&gt; • built branch mcmc_model_5c478008
-#&gt; • built branch mcmc_model_7eeee661
-#&gt; • built branch mcmc_model_b1ea3ccc
-#&gt; • built branch mcmc_model_833c4495
-#&gt; • built branch mcmc_model_d4180ff1
-#&gt; • built branch mcmc_model_cfed47a6
-#&gt; • built branch mcmc_model_733ee94a
-#&gt; • built branch mcmc_model_a9e2a73d
-#&gt; • built branch mcmc_model_0bf12874
-#&gt; • built branch mcmc_model_c142d23a
-#&gt; • built branch mcmc_model_c03dfd0a
-#&gt; • built branch mcmc_model_c3d577e4
-#&gt; • built branch mcmc_model_8fc7b675
-#&gt; • built branch mcmc_model_0d2c9d47
-#&gt; • built branch mcmc_model_d5dc4067
-#&gt; • built branch mcmc_model_b98acaac
-#&gt; • built branch mcmc_model_84f8dba6
-#&gt; • built branch mcmc_model_d17282f4
-#&gt; • built branch mcmc_model_d6ab7c7d
-#&gt; • built branch mcmc_model_7aca3daf
-#&gt; • built branch mcmc_model_0154f2e8
 #&gt; • built branch mcmc_model_4f09387c
-#&gt; • built branch mcmc_model_5fd6087a
-#&gt; • built branch mcmc_model_3cd80108
-#&gt; • built branch mcmc_model_f2f3c2ef
-#&gt; • built branch mcmc_model_85b49f2c
-#&gt; • built branch mcmc_model_f922b1cb
-#&gt; • built branch mcmc_model_4e514383
-#&gt; • built branch mcmc_model_4561392d
-#&gt; • built branch mcmc_model_ebe93763
-#&gt; • built branch mcmc_model_fcbd0889
-#&gt; • built branch mcmc_model_6fa6cc36
-#&gt; • built branch mcmc_model_4365f29f
-#&gt; • built branch mcmc_model_8252a25a
-#&gt; • built branch mcmc_model_2369d064
-#&gt; • built branch mcmc_model_1c871cf6
-#&gt; • built branch mcmc_model_26b995d0
-#&gt; • built branch mcmc_model_654f8444
-#&gt; • built branch mcmc_model_f40d332b
-#&gt; • built branch mcmc_model_e23499bb
-#&gt; • built branch mcmc_model_3d04796f
-#&gt; • built branch mcmc_model_9c999c78
-#&gt; • built branch mcmc_model_0f33b6b8
-#&gt; • built branch mcmc_model_adbcebab
-#&gt; • built branch mcmc_model_f8ba1d0a
-#&gt; • built branch mcmc_model_ae150573
-#&gt; • built branch mcmc_model_d3bc457a
-#&gt; • built branch mcmc_model_3aaa7991
+#&gt; • start branch mcmc_model_535b306a
 #&gt; • built branch mcmc_model_fc9048b8
-#&gt; • built branch mcmc_model_7a522d65
+#&gt; • start branch mcmc_model_b98acaac
+#&gt; • built branch mcmc_model_66b2975c
+#&gt; • start branch mcmc_model_33cc0173
+#&gt; • built branch mcmc_model_44382af0
+#&gt; • start branch mcmc_model_a52bdb61
+#&gt; • built branch mcmc_model_654f8444
+#&gt; • start branch mcmc_model_bfcab06d
+#&gt; • built branch mcmc_model_a9e2a73d
+#&gt; • start branch mcmc_model_6c5ee4e0
+#&gt; • built branch mcmc_model_733ee94a
+#&gt; • start branch mcmc_model_c835059b
+#&gt; • built branch mcmc_model_cdfabc8a
+#&gt; • start branch mcmc_model_53b5f4fe
+#&gt; • built branch mcmc_model_3aaa7991
+#&gt; • start branch mcmc_model_0154f2e8
+#&gt; • built branch mcmc_model_defd2781
+#&gt; • start branch mcmc_model_0d2c9d47
+#&gt; • built branch mcmc_model_9c999c78
+#&gt; • start branch mcmc_model_5c478008
+#&gt; • built branch mcmc_model_dd6307b5
+#&gt; • start branch mcmc_model_d5dc4067
+#&gt; • built branch mcmc_model_84f8dba6
+#&gt; • start branch mcmc_model_fe8467a2
+#&gt; • built branch mcmc_model_b8dbfbfd
+#&gt; • start branch mcmc_model_c3d577e4
+#&gt; • built branch mcmc_model_0f33b6b8
+#&gt; • start branch mcmc_model_c03dfd0a
 #&gt; • built branch mcmc_model_6c5ee4e0
-#&gt; • built branch mcmc_model_e8af3e59
-#&gt; • built branch mcmc_model_59c8959a
-#&gt; • built branch mcmc_model_48a2aeda
-#&gt; • built branch mcmc_model_be96d094
-#&gt; • built branch mcmc_model_2d1acbbf
-#&gt; • built branch mcmc_model_d36885b6
-#&gt; • built branch mcmc_model_56ca0eec
-#&gt; • built branch mcmc_model_0a824133
-#&gt; • built branch mcmc_model_3cb4cd7b
-#&gt; • built branch mcmc_model_cabf6fa0
+#&gt; • start branch mcmc_model_8252a25a
+#&gt; • built branch mcmc_model_f922b1cb
+#&gt; • start branch mcmc_model_9c6c781a
+#&gt; • built branch mcmc_model_d6ab7c7d
+#&gt; • start branch mcmc_model_b1ea3ccc
+#&gt; • built branch mcmc_model_57511978
+#&gt; • start branch mcmc_model_83540740
+#&gt; • built branch mcmc_model_c835059b
+#&gt; • start branch mcmc_model_2369d064
+#&gt; • built branch mcmc_model_85b49f2c
+#&gt; • start branch mcmc_model_ae150573
+#&gt; • built branch mcmc_model_5c478008
+#&gt; • start branch mcmc_model_f531d0b1
+#&gt; • built branch mcmc_model_53b5f4fe
+#&gt; • start branch mcmc_model_0a824133
+#&gt; • built branch mcmc_model_8252a25a
+#&gt; • start branch mcmc_model_dda4c06d
+#&gt; • built branch mcmc_model_b98acaac
+#&gt; • start branch mcmc_model_4365f29f
+#&gt; • built branch mcmc_model_67e90f02
+#&gt; • start branch mcmc_model_f8ba1d0a
+#&gt; • built branch mcmc_model_c03dfd0a
+#&gt; • start branch mcmc_model_3cd80108
+#&gt; • built branch mcmc_model_33cc0173
+#&gt; • start branch mcmc_model_adbcebab
+#&gt; • built branch mcmc_model_0d2c9d47
+#&gt; • start branch mcmc_model_7a522d65
+#&gt; • built branch mcmc_model_8fc7b675
+#&gt; • start branch mcmc_model_7eeee661
 #&gt; • built branch mcmc_model_85ec1b4c
-#&gt; • built branch mcmc_model_009af40f
-#&gt; • built branch mcmc_model_f531d0b1
-#&gt; • built branch mcmc_model_3c3cf5ae
+#&gt; • start branch mcmc_model_5d632b60
+#&gt; • built branch mcmc_model_adbcebab
+#&gt; • start branch mcmc_model_7556a446
+#&gt; • built branch mcmc_model_7aca3daf
+#&gt; • start branch mcmc_model_26b995d0
+#&gt; • built branch mcmc_model_220c88b7
+#&gt; • start branch mcmc_model_3d04796f
+#&gt; • built branch mcmc_model_9c6c781a
+#&gt; • start branch mcmc_model_fcbd0889
+#&gt; • built branch mcmc_model_0a824133
+#&gt; • start branch mcmc_model_3c3cf5ae
+#&gt; • built branch mcmc_model_d5dc4067
+#&gt; • start branch mcmc_model_3cb4cd7b
+#&gt; • built branch mcmc_model_ae150573
+#&gt; • start branch mcmc_model_009af40f
+#&gt; • built branch mcmc_model_a52bdb61
+#&gt; • start branch mcmc_model_5fd6087a
+#&gt; • built branch mcmc_model_cabf6fa0
+#&gt; • start branch mcmc_model_2d1acbbf
+#&gt; • built branch mcmc_model_b1ea3ccc
+#&gt; • start branch mcmc_model_56ca0eec
+#&gt; • built branch mcmc_model_7556a446
+#&gt; • start branch mcmc_model_d36885b6
+#&gt; • built branch mcmc_model_c3d577e4
+#&gt; • start branch mcmc_model_0bf12874
+#&gt; • built branch mcmc_model_2369d064
+#&gt; • start branch mcmc_model_f40d332b
+#&gt; • built branch mcmc_model_535b306a
+#&gt; • start branch mcmc_model_48a2aeda
+#&gt; • built branch mcmc_model_fe8467a2
+#&gt; • start branch mcmc_model_1c871cf6
 #&gt; • built branch mcmc_model_83540740
+#&gt; • start branch mcmc_model_c142d23a
+#&gt; • built branch mcmc_model_0154f2e8
+#&gt; • start branch mcmc_model_59c8959a
+#&gt; • built branch mcmc_model_2d1acbbf
+#&gt; • start branch mcmc_model_e23499bb
+#&gt; • built branch mcmc_model_dda4c06d
+#&gt; • built branch mcmc_model_bfcab06d
+#&gt; • built branch mcmc_model_d36885b6
+#&gt; • built branch mcmc_model_26b995d0
+#&gt; • built branch mcmc_model_3cd80108
+#&gt; • built branch mcmc_model_7a522d65
+#&gt; • built branch mcmc_model_56ca0eec
+#&gt; • built branch mcmc_model_59c8959a
+#&gt; • built branch mcmc_model_4365f29f
+#&gt; • built branch mcmc_model_f40d332b
+#&gt; • built branch mcmc_model_c142d23a
+#&gt; • built branch mcmc_model_48a2aeda
+#&gt; • built branch mcmc_model_3c3cf5ae
+#&gt; • built branch mcmc_model_5fd6087a
+#&gt; • built branch mcmc_model_5d632b60
+#&gt; • built branch mcmc_model_f531d0b1
+#&gt; • built branch mcmc_model_0bf12874
+#&gt; • built branch mcmc_model_fcbd0889
+#&gt; • built branch mcmc_model_1c871cf6
+#&gt; • built branch mcmc_model_e23499bb
+#&gt; • built branch mcmc_model_f8ba1d0a
+#&gt; • built branch mcmc_model_009af40f
+#&gt; • built branch mcmc_model_7eeee661
+#&gt; • built branch mcmc_model_3d04796f
+#&gt; • built branch mcmc_model_3cb4cd7b
 #&gt; • built pattern mcmc_model
 #&gt; • start target mcmc
 #&gt; • built target mcmc
+#&gt; • start target convergence
 #&gt; • start target coverage
 #&gt; • built target coverage
-#&gt; Master: [16596.2s 1.1% CPU]; Worker: [avg 0.5% CPU, max 430.4 Mb]
-#&gt; • end pipeline
-#&gt; Warning message:
-#&gt; 7 targets produced warnings. Run tar_meta(fields = warnings) for the messages.</code></pre>
+#&gt; • built target convergence
+#&gt; Master: [1903.6s 2.2% CPU]; Worker: [avg 2.6% CPU, max 418.3 Mb]
+#&gt; • end pipeline</code></pre>
 </div>
 </div>
 <div id="results" class="section level1">
@@ -6191,12 +6202,12 @@ tar_make_clustermq(workers = 100)
 <p>Finally, we report coverage statistics and convergence diagnostics. If the model is implemented correctly, <code>coverage_50</code> should not differ systematically from 0.5, <code>coverage_95</code> should not differ systematically from 0.95, and <code>max_rhat</code> should be close to 1.</p>
 <pre class="r"><code>library(gt)
 gt(tar_read(coverage))</code></pre>
-<div id="pzvcokvqto" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="pstytafcpp" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#pzvcokvqto .gt_table {
+#pstytafcpp .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -6221,7 +6232,7 @@ gt(tar_read(coverage))</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#pzvcokvqto .gt_heading {
+#pstytafcpp .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -6233,7 +6244,7 @@ gt(tar_read(coverage))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#pzvcokvqto .gt_title {
+#pstytafcpp .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -6243,7 +6254,7 @@ gt(tar_read(coverage))</code></pre>
   border-bottom-width: 0;
 }
 
-#pzvcokvqto .gt_subtitle {
+#pstytafcpp .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -6253,13 +6264,13 @@ gt(tar_read(coverage))</code></pre>
   border-top-width: 0;
 }
 
-#pzvcokvqto .gt_bottom_border {
+#pstytafcpp .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#pzvcokvqto .gt_col_headings {
+#pstytafcpp .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -6274,7 +6285,7 @@ gt(tar_read(coverage))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#pzvcokvqto .gt_col_heading {
+#pstytafcpp .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -6294,7 +6305,7 @@ gt(tar_read(coverage))</code></pre>
   overflow-x: hidden;
 }
 
-#pzvcokvqto .gt_column_spanner_outer {
+#pstytafcpp .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -6306,15 +6317,15 @@ gt(tar_read(coverage))</code></pre>
   padding-right: 4px;
 }
 
-#pzvcokvqto .gt_column_spanner_outer:first-child {
+#pstytafcpp .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#pzvcokvqto .gt_column_spanner_outer:last-child {
+#pstytafcpp .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#pzvcokvqto .gt_column_spanner {
+#pstytafcpp .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -6326,7 +6337,7 @@ gt(tar_read(coverage))</code></pre>
   width: 100%;
 }
 
-#pzvcokvqto .gt_group_heading {
+#pstytafcpp .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -6348,7 +6359,7 @@ gt(tar_read(coverage))</code></pre>
   vertical-align: middle;
 }
 
-#pzvcokvqto .gt_empty_group_heading {
+#pstytafcpp .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -6363,15 +6374,15 @@ gt(tar_read(coverage))</code></pre>
   vertical-align: middle;
 }
 
-#pzvcokvqto .gt_from_md > :first-child {
+#pstytafcpp .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#pzvcokvqto .gt_from_md > :last-child {
+#pstytafcpp .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#pzvcokvqto .gt_row {
+#pstytafcpp .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -6390,7 +6401,7 @@ gt(tar_read(coverage))</code></pre>
   overflow-x: hidden;
 }
 
-#pzvcokvqto .gt_stub {
+#pstytafcpp .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -6402,7 +6413,7 @@ gt(tar_read(coverage))</code></pre>
   padding-left: 12px;
 }
 
-#pzvcokvqto .gt_summary_row {
+#pstytafcpp .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -6412,7 +6423,7 @@ gt(tar_read(coverage))</code></pre>
   padding-right: 5px;
 }
 
-#pzvcokvqto .gt_first_summary_row {
+#pstytafcpp .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -6422,7 +6433,7 @@ gt(tar_read(coverage))</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#pzvcokvqto .gt_grand_summary_row {
+#pstytafcpp .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -6432,7 +6443,7 @@ gt(tar_read(coverage))</code></pre>
   padding-right: 5px;
 }
 
-#pzvcokvqto .gt_first_grand_summary_row {
+#pstytafcpp .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -6442,11 +6453,11 @@ gt(tar_read(coverage))</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#pzvcokvqto .gt_striped {
+#pstytafcpp .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#pzvcokvqto .gt_table_body {
+#pstytafcpp .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -6455,7 +6466,7 @@ gt(tar_read(coverage))</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#pzvcokvqto .gt_footnotes {
+#pstytafcpp .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -6469,13 +6480,13 @@ gt(tar_read(coverage))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#pzvcokvqto .gt_footnote {
+#pstytafcpp .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#pzvcokvqto .gt_sourcenotes {
+#pstytafcpp .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -6489,41 +6500,41 @@ gt(tar_read(coverage))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#pzvcokvqto .gt_sourcenote {
+#pstytafcpp .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#pzvcokvqto .gt_left {
+#pstytafcpp .gt_left {
   text-align: left;
 }
 
-#pzvcokvqto .gt_center {
+#pstytafcpp .gt_center {
   text-align: center;
 }
 
-#pzvcokvqto .gt_right {
+#pstytafcpp .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#pzvcokvqto .gt_font_normal {
+#pstytafcpp .gt_font_normal {
   font-weight: normal;
 }
 
-#pzvcokvqto .gt_font_bold {
+#pstytafcpp .gt_font_bold {
   font-weight: bold;
 }
 
-#pzvcokvqto .gt_font_italic {
+#pstytafcpp .gt_font_italic {
   font-style: italic;
 }
 
-#pzvcokvqto .gt_super {
+#pstytafcpp .gt_super {
   font-size: 65%;
 }
 
-#pzvcokvqto .gt_footnote_marks {
+#pstytafcpp .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 65%;
@@ -6536,102 +6547,57 @@ gt(tar_read(coverage))</code></pre>
       <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">variable</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">coverage_50</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">coverage_95</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">max_rhat</th>
     </tr>
   </thead>
   <tbody class="gt_table_body">
     <tr><td class="gt_row gt_left">beta[1]</td>
-<td class="gt_row gt_right">0.491</td>
-<td class="gt_row gt_right">0.932</td>
-<td class="gt_row gt_right">3.4162</td></tr>
-    <tr><td class="gt_row gt_left">beta[10]</td>
-<td class="gt_row gt_right">0.493</td>
-<td class="gt_row gt_right">0.951</td>
-<td class="gt_row gt_right">3.8711</td></tr>
+<td class="gt_row gt_right">0.484</td>
+<td class="gt_row gt_right">0.948</td></tr>
     <tr><td class="gt_row gt_left">beta[2]</td>
-<td class="gt_row gt_right">0.464</td>
-<td class="gt_row gt_right">0.945</td>
-<td class="gt_row gt_right">1.5728</td></tr>
+<td class="gt_row gt_right">0.510</td>
+<td class="gt_row gt_right">0.959</td></tr>
     <tr><td class="gt_row gt_left">beta[3]</td>
-<td class="gt_row gt_right">0.520</td>
-<td class="gt_row gt_right">0.952</td>
-<td class="gt_row gt_right">1.5971</td></tr>
+<td class="gt_row gt_right">0.475</td>
+<td class="gt_row gt_right">0.948</td></tr>
     <tr><td class="gt_row gt_left">beta[4]</td>
-<td class="gt_row gt_right">0.499</td>
-<td class="gt_row gt_right">0.941</td>
-<td class="gt_row gt_right">3.4566</td></tr>
+<td class="gt_row gt_right">0.475</td>
+<td class="gt_row gt_right">0.938</td></tr>
     <tr><td class="gt_row gt_left">beta[5]</td>
-<td class="gt_row gt_right">0.500</td>
-<td class="gt_row gt_right">0.946</td>
-<td class="gt_row gt_right">3.5345</td></tr>
+<td class="gt_row gt_right">0.479</td>
+<td class="gt_row gt_right">0.957</td></tr>
     <tr><td class="gt_row gt_left">beta[6]</td>
-<td class="gt_row gt_right">0.485</td>
-<td class="gt_row gt_right">0.943</td>
-<td class="gt_row gt_right">3.4648</td></tr>
+<td class="gt_row gt_right">0.505</td>
+<td class="gt_row gt_right">0.962</td></tr>
     <tr><td class="gt_row gt_left">beta[7]</td>
-<td class="gt_row gt_right">0.509</td>
-<td class="gt_row gt_right">0.943</td>
-<td class="gt_row gt_right">3.2432</td></tr>
+<td class="gt_row gt_right">0.503</td>
+<td class="gt_row gt_right">0.959</td></tr>
     <tr><td class="gt_row gt_left">beta[8]</td>
 <td class="gt_row gt_right">0.491</td>
-<td class="gt_row gt_right">0.941</td>
-<td class="gt_row gt_right">3.3269</td></tr>
-    <tr><td class="gt_row gt_left">beta[9]</td>
-<td class="gt_row gt_right">0.489</td>
-<td class="gt_row gt_right">0.950</td>
-<td class="gt_row gt_right">3.1325</td></tr>
+<td class="gt_row gt_right">0.947</td></tr>
     <tr><td class="gt_row gt_left">lambda[2,1]</td>
-<td class="gt_row gt_right">0.254</td>
-<td class="gt_row gt_right">0.476</td>
-<td class="gt_row gt_right">3.4253</td></tr>
+<td class="gt_row gt_right">0.277</td>
+<td class="gt_row gt_right">0.544</td></tr>
     <tr><td class="gt_row gt_left">lambda[2,2]</td>
-<td class="gt_row gt_right">0.485</td>
-<td class="gt_row gt_right">0.944</td>
-<td class="gt_row gt_right">3.5778</td></tr>
+<td class="gt_row gt_right">0.491</td>
+<td class="gt_row gt_right">0.939</td></tr>
     <tr><td class="gt_row gt_left">lambda[3,1]</td>
-<td class="gt_row gt_right">0.256</td>
-<td class="gt_row gt_right">0.495</td>
-<td class="gt_row gt_right">4.1413</td></tr>
+<td class="gt_row gt_right">0.288</td>
+<td class="gt_row gt_right">0.576</td></tr>
     <tr><td class="gt_row gt_left">lambda[3,2]</td>
-<td class="gt_row gt_right">0.246</td>
-<td class="gt_row gt_right">0.487</td>
-<td class="gt_row gt_right">2.5769</td></tr>
+<td class="gt_row gt_right">0.286</td>
+<td class="gt_row gt_right">0.536</td></tr>
     <tr><td class="gt_row gt_left">lambda[3,3]</td>
-<td class="gt_row gt_right">0.518</td>
-<td class="gt_row gt_right">0.926</td>
-<td class="gt_row gt_right">3.2721</td></tr>
-    <tr><td class="gt_row gt_left">lambda[4,1]</td>
-<td class="gt_row gt_right">0.248</td>
-<td class="gt_row gt_right">0.506</td>
-<td class="gt_row gt_right">4.2181</td></tr>
-    <tr><td class="gt_row gt_left">lambda[4,2]</td>
-<td class="gt_row gt_right">0.254</td>
-<td class="gt_row gt_right">0.504</td>
-<td class="gt_row gt_right">3.3777</td></tr>
-    <tr><td class="gt_row gt_left">lambda[4,3]</td>
-<td class="gt_row gt_right">0.244</td>
-<td class="gt_row gt_right">0.482</td>
-<td class="gt_row gt_right">3.2566</td></tr>
-    <tr><td class="gt_row gt_left">lambda[4,4]</td>
-<td class="gt_row gt_right">0.494</td>
-<td class="gt_row gt_right">0.957</td>
-<td class="gt_row gt_right">3.1844</td></tr>
+<td class="gt_row gt_right">0.509</td>
+<td class="gt_row gt_right">0.940</td></tr>
     <tr><td class="gt_row gt_left">sigma[1]</td>
-<td class="gt_row gt_right">0.249</td>
-<td class="gt_row gt_right">0.463</td>
-<td class="gt_row gt_right">3.6496</td></tr>
+<td class="gt_row gt_right">0.258</td>
+<td class="gt_row gt_right">0.464</td></tr>
     <tr><td class="gt_row gt_left">sigma[2]</td>
-<td class="gt_row gt_right">0.223</td>
-<td class="gt_row gt_right">0.469</td>
-<td class="gt_row gt_right">3.7227</td></tr>
+<td class="gt_row gt_right">0.248</td>
+<td class="gt_row gt_right">0.476</td></tr>
     <tr><td class="gt_row gt_left">sigma[3]</td>
-<td class="gt_row gt_right">0.237</td>
-<td class="gt_row gt_right">0.457</td>
-<td class="gt_row gt_right">3.6940</td></tr>
-    <tr><td class="gt_row gt_left">sigma[4]</td>
-<td class="gt_row gt_right">0.245</td>
-<td class="gt_row gt_right">0.447</td>
-<td class="gt_row gt_right">3.3678</td></tr>
+<td class="gt_row gt_right">0.242</td>
+<td class="gt_row gt_right">0.458</td></tr>
   </tbody>
   
   
@@ -6641,6 +6607,9 @@ gt(tar_read(coverage))</code></pre>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>
 <div id="refs" class="references">
+<div id="ref-alvarez2016bayesian">
+<p>Alvarez, Ignacio, Jarad Niemi, and Matt Simpson. 2016. “Bayesian Inference for a Covariance Matrix.”</p>
+</div>
 <div id="ref-cook2006">
 <p>Cook, Samantha R., Andrew Gelman, and Donald B. Rubin. 2006. “Validation of Software for Bayesian Models Using Posterior Quantiles.” <em>Journal of Computational and Graphical Statistics</em> 15 (3). [American Statistical Association, Taylor &amp; Francis, Ltd., Institute of Mathematical Statistics, Interface Foundation of America]:675–92. <a href="http://www.jstor.org/stable/27594203" class="uri">http://www.jstor.org/stable/27594203</a>.</p>
 </div>
@@ -6654,6 +6623,12 @@ gt(tar_read(coverage))</code></pre>
 <p>Talts, Sean, Michael Betancourt, Daniel Simpson, Aki Vehtari, and Andrew Gelman. 2020. “Validating Bayesian Inference Algorithms with Simulation-Based Calibration.”</p>
 </div>
 </div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Inverse-Wishart is more common than LKJ because of conjugacy but induces a problematic prior relationship among covariance components <span class="citation">(Alvarez, Niemi, and Simpson 2016)</span>.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+</ol>
 </div>
 
 

@@ -96,7 +96,7 @@ Next, we register the packages required to *run* the pipeline, as well as and gl
 
 ```{targets settings, tar_globals = TRUE}
 tar_option_set(
-  packages = c("tidyverse", "trialr"),
+  packages = c("extraDistr", "tidyverse", "trialr"),
   storage = "worker",
   retrieval = "worker",
   memory = "transient",
@@ -112,7 +112,7 @@ options(clustermq.scheduler = "sge", clustermq.template = "sge.tmpl")
 
 ## Data generation
 
-The following function simulates one rep of a clinical trial data from the prior predictive distribution of the model. The function returns a Stan data list and accepts arguments `n_patients` (number of patients in the trial), `n_visits` (number of scheduled study visits, e.g. repeated measures per patient), and `n_arms` (number of study arms, e.g. treatment groups). To mitigate numerical stability issues, the covariance matrix is restricted such that each matrix element lies between -500 and 500 (via rejection sampling). The `.join_data` list at the end tells `stantargets` to append the prior predictive draws of model parameters to the MCMC output.
+The following function simulates one rep of a clinical trial data from the prior predictive distribution of the model. The function returns a Stan data list and accepts arguments `n_patients` (number of patients in the trial), `n_visits` (number of scheduled study visits, e.g. repeated measures per patient), and `n_arms` (number of study arms, e.g. treatment groups). To mitigate numerical stability issues, the covariance matrix is restricted (via rejection sampling) such that each response standard deviation lies is less than 10. The `.join_data` list at the end tells `stantargets` to append the prior predictive draws of model parameters to the MCMC output.
 
 ```{targets data, tar_globals = TRUE}
 simulate_data <- function(n_patients = 50, n_visits = 3, n_arms = 2) {
@@ -124,8 +124,8 @@ simulate_data <- function(n_patients = 50, n_visits = 3, n_arms = 2) {
   x <- model.matrix(~ covariate1 + covariate2 + group, data = structure) %>%
     as.matrix()
   beta <- rnorm(n = ncol(x), mean = 0, sd = 2)
-  covariance <- NULL
-  while (is.null(covariance) || max(abs(covariance)) > 100) {
+  sigma <- NULL
+  while (is.null(sigma) || max(sigma) > 10) {
     rho <- rlkjcorr(n = 1, K = n_visits, eta = 1)
     lambda <- t(chol(rho))
     sigma <- rcauchy(n = n_visits, location = 0, scale = 1)
@@ -159,7 +159,7 @@ simulate_data <- function(n_patients = 50, n_visits = 3, n_arms = 2) {
 
 ## Target definitions
 
-Now, we define the targets for the steps of the workflow. We use the `stantargets` R package to manage most of the work: simulate multiple datasets, analyze each dataset with the model, and calculate the coverage status of each simulation. As explained at <https://docs.ropensci.org/stantargets/articles/simulation.html>, all this can be done with the `tar_stan_mcmc_rep_summary()` function. The targets created by `tar_stan_mcmc_rep_summary()` can take a long time to run, so it is recommended to suppress interactive mode.
+Now, we define the targets for the steps of the workflow. We use the `stantargets` R package to manage most of the work: simulate 10000 datasets, analyze each dataset with the model, and calculate the coverage status of each simulation. We divide these 10000 replications among 100 batches for computational efficiency. As explained at <https://docs.ropensci.org/stantargets/articles/simulation.html>, all this can be done with the `tar_stan_mcmc_rep_summary()` function. The targets created by `tar_stan_mcmc_rep_summary()` can take a long time to run, so it is recommended to suppress interactive mode.
 
 ```{targets mcmc, tar_interactive = FALSE}
 tar_stan_mcmc_rep_summary(
@@ -167,7 +167,7 @@ tar_stan_mcmc_rep_summary(
   stan_files = "model.stan",
   data = simulate_data(), # Runs once per rep.
   batches = 100, # Number of branch targets.
-  reps = 10, # Number of model reps per branch target.
+  reps = 100, # Number of model reps per branch target.
   chains = 4, # Number of MCMC chains.
   parallel_chains = 4, # How many MCMC chains to run in parallel.
   iter_warmup = 2e3, # Number of MCMC warmup iterations to run.
