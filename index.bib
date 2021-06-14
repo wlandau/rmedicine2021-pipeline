@@ -154,3 +154,44 @@ eprint = {
 ,
     abstract = { Valid analyses of longitudinal data can be problematic, particularly when subjects dropout prior to completing the trial for reasons related to the outcome. Regulatory agencies often favor the last observation carried forward (LOCF) approach for imputing missing values in the primary analysis of clinical trials. However, recent evidence suggests that likelihood-based analyses developed under the missing at random framework provide viable alternatives. The within-subject error correlation structure is often the means by which such methods account for the bias from missing data. The objective of this study was to extend previous work that used only one correlation structure by including several common correlation structures in order to assess the effect of the correlation structure in the data, and how it is modeled, on Type I error rates and power from a likelihood-based repeated measures analysis (MMRM), using LOCF for comparison. Data from four realistic clinical trial scenarios were simulated using autoregressive, compound symmetric and unstructured correlation structures. When the correct correlation structure was fit, MMRM provided better control of Type I error and power than LOCF. Although misfitting the correlation structure in MMRM inflated Type I error and altered power, misfitting the structure was typically less deleterious than using LOCF. In fact, simply specifying an unstructured matrix for use in MMRM, regardless of the true correlation structure, yielded superior control of Type I error than LOCF in every scenario. The present and previous investigations have shown that the bias in LOCF is influenced by several factors and interactions between them. Hence, it is difficult to precisely anticipate the direction and magnitude of bias from LOCF in practical situations. However, in scenarios where the overall tendency is for patient improvement, LOCF tends to: 1) overestimate a drug's advantage when dropout is higher in the comparator and underestimate the advantage when dropout is lower in the comparator; 2) overestimate a drug's advantage when the advantage is maximum at intermediate time points and underestimate the advantage when the advantage increases over time; and 3) have a greater likelihood of overestimating a drug's advantage when the advantage is small. In scenarios in which the overall tendency is for patient worsening, the above biases are reversed. In the simulation scenarios considered in this study, which were patterned after acute phase neuropsychiatric clinical trials, the likelihood-based repeated measures approach, implemented with standard software, was more robust to the bias from missing data than LOCF, and choice of correlation structure was not an impediment to its implementation. }
 }
+
+@article{
+clustermq,
+    author = {Schubert, Michael},
+    title = "{clustermq enables efficient parallelization of genomic analyses}",
+    journal = {Bioinformatics},
+    volume = {35},
+    number = {21},
+    pages = {4493-4495},
+    year = {2019},
+    month = {05},
+    abstract = "{High performance computing (HPC) clusters play a pivotal role in large-scale bioinformatics analysis and modeling. For the statistical computing language R, packages exist to enable a user to submit their analyses as jobs on HPC schedulers. However, these packages do not scale well to high numbers of tasks, and their processing overhead quickly becomes a prohibitive bottleneck.Here we present clustermq, an R package that can process analyses up to three orders of magnitude faster than previously published alternatives. We show this for investigating genomic associations of drug sensitivity in cancer cell lines, but it can be applied to any kind of parallelizable workflow.The package is available on CRAN and https://github.com/mschubert/clustermq. Code for performance testing is available at https://github.com/mschubert/clustermq-performance.Supplementary data are available at Bioinformatics online.}",
+    issn = {1367-4803},
+    doi = {10.1093/bioinformatics/btz284},
+    url = {https://doi.org/10.1093/bioinformatics/btz284},
+    eprint = {https://academic.oup.com/bioinformatics/article-pdf/35/21/4493/30330796/btz284.pdf},
+}
+
+@article{gelmanvariance,
+author = {Andrew Gelman},
+title = {{Prior distributions for variance parameters in hierarchical models (comment on article by Browne and Draper)}},
+volume = {1},
+journal = {Bayesian Analysis},
+number = {3},
+publisher = {International Society for Bayesian Analysis},
+pages = {515 -- 534},
+keywords = {Bayesian inference, conditional conjugacy, folded-noncentral-$t$ distribution, half-$t$ distribution, hierarchical model, multilevel model, noninformative prior distribution, weakly informative prior distribution},
+year = {2006},
+doi = {10.1214/06-BA117A},
+URL = {https://doi.org/10.1214/06-BA117A}
+}
+
+@book{
+  bda3,
+  author         = {Andrew Gelman and John B. Carlin and Hal S. Stern and David B. Dunson and Aki Vehtari and Donald B. Rubin},
+  editor         = {Francesca Dominici and Julian J. Faraway and Martin Tanner and Jim idek},
+  title          = {Bayesian Data Analysis},
+  edition = {Third},
+  publisher      = {CRC Press},
+  year           = {2014}
+}

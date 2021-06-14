@@ -16,11 +16,11 @@ The `targets` R package enhances the reproducibility, scale, and maintainability
 
 # Methods
 
-This Target Markdown report demonstrates both capabilities in a workflow to validate a Bayesian longitudinal linear model common to clinical trial data analysis. Using multiple simulated datasets from the prior predictive distribution of the model, we evaluate how well the model recovers the true parameters drawn from the data-generating process.
+This Target Markdown report demonstrates Target Markdown and `stantargets` in a workflow to validate a Bayesian longitudinal linear model common to clinical trial data analysis. Using multiple simulated datasets from the prior predictive distribution of the model, we evaluate how well the model recovers the true parameters drawn from the data-generating process.
  
 ## The model
 
-This particular model assumes independent patients, correlated study visits within each patient, and an LKJ prior on the correlation matrix for study visits.^[Inverse-Wishart is more common than LKJ because of conjugacy but induces a problematic prior relationship among covariance components [@alvarez2016bayesian].]
+The model assumes a normally-distributed response variable `y`, which could be a clinical endpoint, biomarker, or other continuous measure of efficacy or safety. The mean response is expressed in terms of a model matrix and independent model coefficients. Patients are conditionally independent, and different study visits from the same patient are correlated. We apply half-Cauchy priors to the standard deviations [@gelmanvariance], and we apply an LKJ prior to the correlations among study visits in order to avoid the known pathology of inverse-Wishart [@alvarez2016bayesian].
 
 ### Notation
 
@@ -62,24 +62,24 @@ The goal of this validation exercise is to verify that the fitted model recovers
   1. Draw a set of "true" parameters parameters from the joint prior.
   2. Draw a dataset from the likelihood given the parameter draws from (1).
   3. Fit the Stan model to the data.
-  4. Let $x \in (0, 1)$ be a target coverage level. (In this particular workflow, we choose values 0.5 and 0.95 for $x$.) For each scalar model parameter $\theta_j$, let $c_{ij}$ = 1 if the $100 \cdot x$% posterior interval covers the prior predictive draw of $\theta_j$ from (1). Otherwise, $c_{ij}$ = 0.
-* For each parameter $j$, calculate coverage: $C_j = \frac{1}{n} \sum_{i = 1}^r c_{ij}$. If $C_j$ is systematically different from $x$%, then there are problems with the model, the implementation, or the validation workflow.
+  4. Let $x \in (0, 1)$ be the target coverage level. (In this particular workflow, we choose values 0.5 and 0.95 for $x$.) For each scalar model parameter $\theta_j$, let $c_{ij}$ = 1 if the $100 \cdot x$% posterior interval covers the prior predictive draw of $\theta_j$ from (1). Otherwise, $c_{ij}$ = 0.
+* For each parameter $\theta_j$, calculate coverage as averaged over the prior predictive distribution: $C_j = \frac{1}{n} \sum_{i = 1}^r c_{ij}$. If $C_j$ is systematically different from $x$%, then there are problems with the model, the implementation, or the validation workflow.
 
-This technique is similar to simulation-based calibration (SBC) [@cook2006; @talts2020]. SBC may be more robust than the interval-based validation technique above, but the latter is easier to perform with `stantargets` and easier to communicate for high-dimensional models. (Parameter-specific rank statistic histograms can be difficult to inspect when there are many parameters.)
+This technique is similar to simulation-based calibration (SBC) [@cook2006; @talts2020]. SBC may be more robust than the interval-based validation technique above, but the latter is currently easier to perform with `stantargets` and easier to communicate for high-dimensional models.^[Parameter-specific rank statistic histograms can be difficult to inspect when there are many parameters.]
 
 # Construct the pipeline
 
-This section constructs the steps of the pipeline and uses Target Markdown to explain the purpose of each step along the way. In interactive mode in the RStudio IDE, you can run each inexpensive `{targets}` code chunk in the notebook interface in order to emulate the behavior of a section of the `targets` pipeline. If you run the report in a non-interactive R session, the `{targets}` code chunks write scripts to set up the pipeline and prepare it to run later on. When it comes time to actually run the pipeline, you can do so either outside this report or by calling `tar_make()`, `tar_make_clustermq()`, or `tar_make_future()` inside an ordinary `{r}` code chunk.
+This section constructs the pipeline and uses Target Markdown to explain the purpose of each target along the way. In interactive mode in the RStudio IDE, you can run the inexpensive `{targets}` code chunks in order to emulate a section of the `targets` pipeline. If you run the report in a non-interactive R session, the `{targets}` code chunks write scripts to set up the pipeline for a `tar_make_clustermq()` call later on. When it comes time to actually run the pipeline, call `tar_make_clustermq()`, either inside an ordinary `{r}` code chunk or outside the R Markdown report altogether.
 
 ## Setup
 
-First, we load the `targets` package in the report to register the Target Markdown `knitr` language engine.
+First, we load the `targets` package to register the Target Markdown `knitr` language engine.
 
 ```{r, message = FALSE}
 library(targets)
 ```
 
-Next, we remove transient scripts previously generated by Target Markdown in non-interactive mode (optional).
+Next, we remove any transient scripts previously generated by Target Markdown non-interactively (optional).
 
 ```{r}
 tar_unscript()
@@ -104,7 +104,7 @@ tar_option_set(
 )
 ```
 
-We also register a Sun Grid Engine (SGE) cluster with the `clustermq` package to enable distributed computing via `tar_make_clustermq()`.
+We also register a Sun Grid Engine (SGE) cluster with the `clustermq` package to enable distributed computing via `tar_make_clustermq()`. You can choose a different scheduler or local multicore computing by following the instructions at https://mschubert.github.io/clustermq/articles/userguide.html [@clustermq].
 
 ```{targets clustermq, tar_globals = TRUE}
 options(clustermq.scheduler = "sge", clustermq.template = "sge.tmpl")
@@ -112,7 +112,7 @@ options(clustermq.scheduler = "sge", clustermq.template = "sge.tmpl")
 
 ## Data generation
 
-The following function simulates one rep of a clinical trial data from the prior predictive distribution of the model. The function returns a Stan data list and accepts arguments `n_patients` (number of patients in the trial), `n_visits` (number of scheduled study visits, e.g. repeated measures per patient), and `n_arms` (number of study arms, e.g. treatment groups). To mitigate numerical stability issues, the covariance matrix is restricted (via rejection sampling) such that each response standard deviation lies is less than 10. The `.join_data` list at the end tells `stantargets` to append the prior predictive draws of model parameters to the MCMC output.
+The following function simulates a single clinical trial dataset from the prior predictive distribution of the model. The function returns a Stan data list and accepts arguments `n_patients` (number of patients in the trial), `n_visits` (number of scheduled study visits, e.g. repeated measures per patient), and `n_arms` (number of study arms, e.g. treatment groups). To mitigate numerical stability issues, the covariance matrix is restricted (via rejection sampling) such that each response standard deviation lies is less than 10. The `.join_data` list at the end tells `stantargets` to append the prior predictive draws of model parameters to the MCMC output.
 
 ```{targets data, tar_globals = TRUE}
 simulate_data <- function(n_patients = 50, n_visits = 3, n_arms = 2) {
@@ -159,7 +159,7 @@ simulate_data <- function(n_patients = 50, n_visits = 3, n_arms = 2) {
 
 ## Target definitions
 
-Now, we define the targets for the steps of the workflow. We use the `stantargets` R package to manage most of the work: simulate 1000 datasets, analyze each dataset with the model, and calculate the coverage status of each simulation. We divide these 1000 replications among 100 batches for computational efficiency. As explained at <https://docs.ropensci.org/stantargets/articles/simulation.html>, all this can be done with the `tar_stan_mcmc_rep_summary()` function. The targets created by `tar_stan_mcmc_rep_summary()` can take a long time to run, so it is recommended to suppress interactive mode.
+Now, we define the targets for the steps of the workflow. We use the `stantargets` R package to manage most of the work: simulate 1000 datasets, analyze each dataset with the model, and calculate the coverage status of each simulation. Following the advice at <https://books.ropensci.org/targets/dynamic.html#batching>, we divide these 1000 replications among 100 batches for computational efficiency. As explained at <https://docs.ropensci.org/stantargets/articles/simulation.html>, all this can be done with the `tar_stan_mcmc_rep_summary()` function. The targets created by `tar_stan_mcmc_rep_summary()` can take a long time to run, so it is recommended to suppress interactive mode in this particular code chunk unless you reduce `iter_warmup` and `iter_sampling`  to very small values and `batches`, `reps`, `chains`, and `parallel_chains` each down to 1.
 
 ```{targets mcmc, tar_interactive = FALSE}
 tar_stan_mcmc_rep_summary(
@@ -170,8 +170,8 @@ tar_stan_mcmc_rep_summary(
   reps = 10, # Number of model reps per branch target.
   chains = 4, # Number of MCMC chains.
   parallel_chains = 4, # How many MCMC chains to run in parallel.
-  iter_warmup = 2e3, # Number of MCMC warmup iterations to run.
-  iter_sampling = 2e3, # Number of MCMC post-warmup iterations to run.
+  iter_warmup = 1e4, # Number of MCMC warmup iterations to run.
+  iter_sampling = 1e4, # Number of MCMC post-warmup iterations to run.
   summaries = list(
     # Compute posterior intervals at levels 50% and 95%.
     # The 50% intervals should cover prior predictive parameter draws
@@ -186,13 +186,14 @@ tar_stan_mcmc_rep_summary(
 )
 ```
 
-After we fit the model, we assess convergence using Gelman-Rubin potential scale reduction factors. Values far above 1 indicate convergence issues. The vast majority of Gelman factors are close to 1, so any convergence issues seem unlikely to affect coverage results.
+After we fit the model, we assess convergence using univariate Gelman-Rubin potential scale reduction factors [@bda3] on all scalar parameters across all simulations. Below, we report the maximum Gelman factor of each visibly divergent simulation rep (i.e. with a Gelman factor above 1.01).
 
 ```{targets convergence, tar_simple = TRUE}
-ggplot(filter(mcmc, !is.na(rhat))) +
-  geom_histogram(aes(x = rhat), bins = 30) +
-  xlab("Gelman-Rubin potential scale reduction factor") +
-  theme_gray(16)
+mcmc %>%
+  filter(!is.na(rhat) & rhat > 1.01) %>%
+  group_by(.rep) %>%
+  summarize(max_rhat = max(rhat), .groups = "drop") %>%
+  arrange(desc(max_rhat))
 ```
 
 Our last target calculates coverage levels across all simulations. Because this is a single target and easy to define, we can set the `tar_simple` chunk option to `TRUE`. That way, the chunk label becomes the target name, and the chunk code becomes the target command.
@@ -208,9 +209,9 @@ mcmc %>%
   )
 ```
 
-# Use the pipeline
+# Invoke the pipeline
 
-Up to this point, we have only constructed the pipeline. The `{targets}` chunks write R scripts to `_targets.R` and `_targets_r/` (in non-interactive mode) but they do not actually run the pipeline. To run the pipeline, we use `tar_make()` or a related function, either outside the report or in a subsequent ordinary `{r}` code chunk.
+Up to this point, we have only constructed the pipeline. The `{targets}` chunks write R scripts to `_targets.R` and `_targets_r/` (in non-interactive mode) but they do not actually run the pipeline. To run the pipeline, we use `tar_make_clustermq()`, either outside the report or in a subsequent ordinary `{r}` code chunk.
 
 ## Inspect the pipeline
 
@@ -222,7 +223,7 @@ tar_visnetwork()
 
 ## Run the pipeline
 
-Because there are so many simulations to run, the pipeline could take a long time. Below, we use the `tar_make_clustermq()` to run different targets in parallel across multiple workers on an SGE cluster. If there are any outdated targets according to the graph above, it is recommended to run this report in a non-interactive background process (e.g. via the included shell script `run.sh`) rather than clicking the "Knit" button in the RStudio IDE. While the pipeline is running, you may wish to monitor the cluster workers with `qstat` and monitor the progress of targets using `tar_watch()` and/or `tar_poll()`.
+Because there are so many simulations to run, the pipeline could take a long time. Below, we use the `tar_make_clustermq()` to run different targets on different parallel workers on a Sun Grid Engine (SGE) cluster. Because of the long computation time, if there are any outdated targets according to the graph above, it is recommended to run this report in a non-interactive background process (e.g. via the included shell script `run.sh`) rather than clicking the "Knit" button in the RStudio IDE. While the pipeline is running, you may wish to monitor the SGE workers with `qstat` and monitor the progress of the targets using `tar_watch()` and/or `tar_poll()`.
 
 ```{r pipeline}
 unlink("logs", recursive = TRUE)
@@ -231,17 +232,25 @@ tar_make_clustermq(workers = 100, reporter = "silent")
 
 # Results
 
-First, we examine convergence diagnostics. The Gelman-Rubin potential scale reduction factors should be close to 1.
-
-```{r}
-tar_read(convergence)
-```
-
-Finally, we report coverage statistics. If the model is implemented correctly, `coverage_50` should not differ systematically from 0.5, and `coverage_95` should not differ systematically from 0.95.
+First, we examine convergence diagnostics. There are few visibly divergent simulation reps, so convergence issues seem unlikely to impact coverage statistics.
 
 ```{r}
 library(gt)
+gt(tar_read(convergence))
+```
+
+Finally, we report coverage statistics. If the model is implemented correctly, `coverage_50` should not differ systematically from 0.5, and `coverage_95` should not differ systematically from 0.95. Coverage appears nominal in the table below. If there is doubt, simply increase the number of batches or reps per batch in `tar_stan_mcmc_rep_summary()` and run the pipeline again.
+
+```{r}
 gt(tar_read(coverage))
 ```
+
+# Resources
+
+* Source: <https://github.com/wlandau/rmedicine2021-pipeline>
+* Slides: <https://wlandau.github.io/rmedicine2021-slides>
+* `targets`: <https://docs.ropensci.org/targets/>
+* Target Markdown: <https://books.ropensci.org/targets/markdown.html>
+* `stantargets`: <https://docs.ropensci.org/stantargets/>
 
 # References

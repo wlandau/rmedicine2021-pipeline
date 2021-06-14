@@ -213,12 +213,13 @@ pre code {
 <li><a href="#data-generation"><span class="toc-section-number">2.2</span> Data generation</a></li>
 <li><a href="#target-definitions"><span class="toc-section-number">2.3</span> Target definitions</a></li>
 </ul></li>
-<li><a href="#use-the-pipeline"><span class="toc-section-number">3</span> Use the pipeline</a>
+<li><a href="#invoke-the-pipeline"><span class="toc-section-number">3</span> Invoke the pipeline</a>
 <ul>
 <li><a href="#inspect-the-pipeline"><span class="toc-section-number">3.1</span> Inspect the pipeline</a></li>
 <li><a href="#run-the-pipeline"><span class="toc-section-number">3.2</span> Run the pipeline</a></li>
 </ul></li>
 <li><a href="#results"><span class="toc-section-number">4</span> Results</a></li>
+<li><a href="#resources"><span class="toc-section-number">5</span> Resources</a></li>
 <li><a href="#references">References</a></li>
 </ul>
 </div>
@@ -226,10 +227,10 @@ pre code {
 <p>The <code>targets</code> R package enhances the reproducibility, scale, and maintainability of data science projects in computationally intense fields such as machine learning, Bayesian Statistics, and statistical genomics <span class="citation">(Landau 2021b)</span>. Recent breakthroughs in the targets ecosystem make it easy to create ambitious, domain-specific, reproducible data analysis pipelines. Two highlights include Target Markdown, an R Markdown interface to transparently communicate the entire process of pipeline construction and prototyping, and <code>stantargets</code>, a new rOpenSci package that generates specialized workflows for Stan models while reducing the required volume of user-side R code <span class="citation">(Landau 2021a)</span>.</p>
 <div id="methods" class="section level1" number="1">
 <h1 number="1"><span class="header-section-number">1</span> Methods</h1>
-<p>This Target Markdown report demonstrates both capabilities in a workflow to validate a Bayesian longitudinal linear model common to clinical trial data analysis. Using multiple simulated datasets from the prior predictive distribution of the model, we evaluate how well the model recovers the true parameters drawn from the data-generating process.</p>
+<p>This Target Markdown report demonstrates Target Markdown and <code>stantargets</code> in a workflow to validate a Bayesian longitudinal linear model common to clinical trial data analysis. Using multiple simulated datasets from the prior predictive distribution of the model, we evaluate how well the model recovers the true parameters drawn from the data-generating process.</p>
 <div id="the-model" class="section level2" number="1.1">
 <h2 number="1.1"><span class="header-section-number">1.1</span> The model</h2>
-<p>This particular model assumes independent patients, correlated study visits within each patient, and an LKJ prior on the correlation matrix for study visits.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<p>The model assumes a normally-distributed response variable <code>y</code>, which could be a clinical endpoint, biomarker, or other continuous measure of efficacy or safety. The mean response is expressed in terms of a model matrix and independent model coefficients. Patients are conditionally independent, and different study visits from the same patient are correlated. We apply half-Cauchy priors to the standard deviations <span class="citation">(Gelman 2006)</span>, and we apply an LKJ prior to the correlations among study visits in order to avoid the known pathology of inverse-Wishart <span class="citation">(Alvarez, Niemi, and Simpson 2016)</span>.</p>
 <div id="notation" class="section level3" number="1.1.1">
 <h3 number="1.1.1"><span class="header-section-number">1.1.1</span> Notation</h3>
 <ul>
@@ -302,21 +303,21 @@ pre code {
 <li>Draw a set of “true” parameters parameters from the joint prior.</li>
 <li>Draw a dataset from the likelihood given the parameter draws from (1).</li>
 <li>Fit the Stan model to the data.</li>
-<li>Let <span class="math inline">\(x \in (0, 1)\)</span> be a target coverage level. (In this particular workflow, we choose values 0.5 and 0.95 for <span class="math inline">\(x\)</span>.) For each scalar model parameter <span class="math inline">\(\theta_j\)</span>, let <span class="math inline">\(c_{ij}\)</span> = 1 if the <span class="math inline">\(100 \cdot x\)</span>% posterior interval covers the prior predictive draw of <span class="math inline">\(\theta_j\)</span> from (1). Otherwise, <span class="math inline">\(c_{ij}\)</span> = 0.</li>
+<li>Let <span class="math inline">\(x \in (0, 1)\)</span> be the target coverage level. (In this particular workflow, we choose values 0.5 and 0.95 for <span class="math inline">\(x\)</span>.) For each scalar model parameter <span class="math inline">\(\theta_j\)</span>, let <span class="math inline">\(c_{ij}\)</span> = 1 if the <span class="math inline">\(100 \cdot x\)</span>% posterior interval covers the prior predictive draw of <span class="math inline">\(\theta_j\)</span> from (1). Otherwise, <span class="math inline">\(c_{ij}\)</span> = 0.</li>
 </ol></li>
-<li>For each parameter <span class="math inline">\(j\)</span>, calculate coverage: <span class="math inline">\(C_j = \frac{1}{n} \sum_{i = 1}^r c_{ij}\)</span>. If <span class="math inline">\(C_j\)</span> is systematically different from <span class="math inline">\(x\)</span>%, then there are problems with the model, the implementation, or the validation workflow.</li>
+<li>For each parameter <span class="math inline">\(\theta_j\)</span>, calculate coverage as averaged over the prior predictive distribution: <span class="math inline">\(C_j = \frac{1}{n} \sum_{i = 1}^r c_{ij}\)</span>. If <span class="math inline">\(C_j\)</span> is systematically different from <span class="math inline">\(x\)</span>%, then there are problems with the model, the implementation, or the validation workflow.</li>
 </ul>
-<p>This technique is similar to simulation-based calibration (SBC) <span class="citation">(Cook, Gelman, and Rubin 2006; Talts et al. 2020)</span>. SBC may be more robust than the interval-based validation technique above, but the latter is easier to perform with <code>stantargets</code> and easier to communicate for high-dimensional models. (Parameter-specific rank statistic histograms can be difficult to inspect when there are many parameters.)</p>
+<p>This technique is similar to simulation-based calibration (SBC) <span class="citation">(Cook, Gelman, and Rubin 2006; Talts et al. 2020)</span>. SBC may be more robust than the interval-based validation technique above, but the latter is currently easier to perform with <code>stantargets</code> and easier to communicate for high-dimensional models.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
 </div>
 </div>
 <div id="construct-the-pipeline" class="section level1" number="2">
 <h1 number="2"><span class="header-section-number">2</span> Construct the pipeline</h1>
-<p>This section constructs the steps of the pipeline and uses Target Markdown to explain the purpose of each step along the way. In interactive mode in the RStudio IDE, you can run each inexpensive <code>{targets}</code> code chunk in the notebook interface in order to emulate the behavior of a section of the <code>targets</code> pipeline. If you run the report in a non-interactive R session, the <code>{targets}</code> code chunks write scripts to set up the pipeline and prepare it to run later on. When it comes time to actually run the pipeline, you can do so either outside this report or by calling <code>tar_make()</code>, <code>tar_make_clustermq()</code>, or <code>tar_make_future()</code> inside an ordinary <code>{r}</code> code chunk.</p>
+<p>This section constructs the pipeline and uses Target Markdown to explain the purpose of each target along the way. In interactive mode in the RStudio IDE, you can run the inexpensive <code>{targets}</code> code chunks in order to emulate a section of the <code>targets</code> pipeline. If you run the report in a non-interactive R session, the <code>{targets}</code> code chunks write scripts to set up the pipeline for a <code>tar_make_clustermq()</code> call later on. When it comes time to actually run the pipeline, call <code>tar_make_clustermq()</code>, either inside an ordinary <code>{r}</code> code chunk or outside the R Markdown report altogether.</p>
 <div id="setup" class="section level2" number="2.1">
 <h2 number="2.1"><span class="header-section-number">2.1</span> Setup</h2>
-<p>First, we load the <code>targets</code> package in the report to register the Target Markdown <code>knitr</code> language engine.</p>
+<p>First, we load the <code>targets</code> package to register the Target Markdown <code>knitr</code> language engine.</p>
 <pre class="r"><code>library(targets)</code></pre>
-<p>Next, we remove transient scripts previously generated by Target Markdown in non-interactive mode (optional).</p>
+<p>Next, we remove any transient scripts previously generated by Target Markdown non-interactively (optional).</p>
 <pre class="r"><code>tar_unscript()</code></pre>
 <p>In our first Target Markdown code chunk, we load the packages required to define the targets in the pipeline: in this case, <code>targets</code> and <code>stantargets</code>.</p>
 <pre class="r"><code>library(targets)
@@ -331,13 +332,13 @@ library(stantargets)
   garbage_collection = TRUE
 )
 #&gt; Established _targets.R and _targets_r/globals/settings.R.</code></pre>
-<p>We also register a Sun Grid Engine (SGE) cluster with the <code>clustermq</code> package to enable distributed computing via <code>tar_make_clustermq()</code>.</p>
+<p>We also register a Sun Grid Engine (SGE) cluster with the <code>clustermq</code> package to enable distributed computing via <code>tar_make_clustermq()</code>. You can choose a different scheduler or local multicore computing by following the instructions at <a href="https://mschubert.github.io/clustermq/articles/userguide.html" class="uri">https://mschubert.github.io/clustermq/articles/userguide.html</a> <span class="citation">(Schubert 2019)</span>.</p>
 <pre class="r"><code>options(clustermq.scheduler = &quot;sge&quot;, clustermq.template = &quot;sge.tmpl&quot;)
 #&gt; Established _targets.R and _targets_r/globals/clustermq.R.</code></pre>
 </div>
 <div id="data-generation" class="section level2" number="2.2">
 <h2 number="2.2"><span class="header-section-number">2.2</span> Data generation</h2>
-<p>The following function simulates one rep of a clinical trial data from the prior predictive distribution of the model. The function returns a Stan data list and accepts arguments <code>n_patients</code> (number of patients in the trial), <code>n_visits</code> (number of scheduled study visits, e.g. repeated measures per patient), and <code>n_arms</code> (number of study arms, e.g. treatment groups). To mitigate numerical stability issues, the covariance matrix is restricted (via rejection sampling) such that each response standard deviation lies is less than 10. The <code>.join_data</code> list at the end tells <code>stantargets</code> to append the prior predictive draws of model parameters to the MCMC output.</p>
+<p>The following function simulates a single clinical trial dataset from the prior predictive distribution of the model. The function returns a Stan data list and accepts arguments <code>n_patients</code> (number of patients in the trial), <code>n_visits</code> (number of scheduled study visits, e.g. repeated measures per patient), and <code>n_arms</code> (number of study arms, e.g. treatment groups). To mitigate numerical stability issues, the covariance matrix is restricted (via rejection sampling) such that each response standard deviation lies is less than 10. The <code>.join_data</code> list at the end tells <code>stantargets</code> to append the prior predictive draws of model parameters to the MCMC output.</p>
 <pre class="r"><code>simulate_data &lt;- function(n_patients = 50, n_visits = 3, n_arms = 2) {
   structure &lt;- tibble(patient = as.character(seq_len(n_patients))) %&gt;%
     mutate(arm = as.character(rep(seq_len(n_arms), each = n_patients / n_arms))) %&gt;%
@@ -382,7 +383,7 @@ library(stantargets)
 </div>
 <div id="target-definitions" class="section level2" number="2.3">
 <h2 number="2.3"><span class="header-section-number">2.3</span> Target definitions</h2>
-<p>Now, we define the targets for the steps of the workflow. We use the <code>stantargets</code> R package to manage most of the work: simulate 1000 datasets, analyze each dataset with the model, and calculate the coverage status of each simulation. We divide these 1000 replications among 100 batches for computational efficiency. As explained at <a href="https://docs.ropensci.org/stantargets/articles/simulation.html" class="uri">https://docs.ropensci.org/stantargets/articles/simulation.html</a>, all this can be done with the <code>tar_stan_mcmc_rep_summary()</code> function. The targets created by <code>tar_stan_mcmc_rep_summary()</code> can take a long time to run, so it is recommended to suppress interactive mode.</p>
+<p>Now, we define the targets for the steps of the workflow. We use the <code>stantargets</code> R package to manage most of the work: simulate 1000 datasets, analyze each dataset with the model, and calculate the coverage status of each simulation. Following the advice at <a href="https://books.ropensci.org/targets/dynamic.html#batching" class="uri">https://books.ropensci.org/targets/dynamic.html#batching</a>, we divide these 1000 replications among 100 batches for computational efficiency. As explained at <a href="https://docs.ropensci.org/stantargets/articles/simulation.html" class="uri">https://docs.ropensci.org/stantargets/articles/simulation.html</a>, all this can be done with the <code>tar_stan_mcmc_rep_summary()</code> function. The targets created by <code>tar_stan_mcmc_rep_summary()</code> can take a long time to run, so it is recommended to suppress interactive mode in this particular code chunk unless you reduce <code>iter_warmup</code> and <code>iter_sampling</code> to very small values and <code>batches</code>, <code>reps</code>, <code>chains</code>, and <code>parallel_chains</code> each down to 1.</p>
 <pre class="r"><code>tar_stan_mcmc_rep_summary(
   name = mcmc,
   stan_files = &quot;model.stan&quot;,
@@ -406,12 +407,13 @@ library(stantargets)
   )
 )
 #&gt; Established _targets.R and _targets_r/targets/mcmc.R.</code></pre>
-<p>After we fit the model, we assess convergence using Gelman-Rubin potential scale reduction factors. Values far above 1 indicate convergence issues. The vast majority of Gelman factors are close to 1, so any convergence issues seem unlikely to affect coverage results.</p>
+<p>After we fit the model, we assess convergence using univariate Gelman-Rubin potential scale reduction factors <span class="citation">(Gelman et al. 2014)</span> on all scalar parameters across all simulations. Below, we report the maximum Gelman factor of each visibly divergent simulation rep (i.e. with a Gelman factor above 1.01).</p>
 <pre class="r"><code>tar_target(convergence, {
-  ggplot(filter(mcmc, !is.na(rhat))) +
-    geom_histogram(aes(x = rhat), bins = 30) +
-    xlab(&quot;Gelman-Rubin potential scale reduction factor&quot;) +
-    theme_gray(16)
+  mcmc %&gt;%
+    filter(!is.na(rhat) &amp; rhat &gt; 1.01) %&gt;%
+    group_by(.rep) %&gt;%
+    summarize(max_rhat = max(rhat), .groups = &quot;drop&quot;) %&gt;%
+    arrange(desc(max_rhat))
 })
 #&gt; Defined target convergence automatically from chunk code.
 #&gt; Established _targets.R and _targets_r/targets/convergence.R.</code></pre>
@@ -430,37 +432,242 @@ library(stantargets)
 #&gt; Established _targets.R and _targets_r/targets/coverage.R.</code></pre>
 </div>
 </div>
-<div id="use-the-pipeline" class="section level1" number="3">
-<h1 number="3"><span class="header-section-number">3</span> Use the pipeline</h1>
-<p>Up to this point, we have only constructed the pipeline. The <code>{targets}</code> chunks write R scripts to <code>_targets.R</code> and <code>_targets_r/</code> (in non-interactive mode) but they do not actually run the pipeline. To run the pipeline, we use <code>tar_make()</code> or a related function, either outside the report or in a subsequent ordinary <code>{r}</code> code chunk.</p>
+<div id="invoke-the-pipeline" class="section level1" number="3">
+<h1 number="3"><span class="header-section-number">3</span> Invoke the pipeline</h1>
+<p>Up to this point, we have only constructed the pipeline. The <code>{targets}</code> chunks write R scripts to <code>_targets.R</code> and <code>_targets_r/</code> (in non-interactive mode) but they do not actually run the pipeline. To run the pipeline, we use <code>tar_make_clustermq()</code>, either outside the report or in a subsequent ordinary <code>{r}</code> code chunk.</p>
 <div id="inspect-the-pipeline" class="section level2" number="3.1">
 <h2 number="3.1"><span class="header-section-number">3.1</span> Inspect the pipeline</h2>
 <p>But first, it is good practice to visualize the dependency graph to verify that the workflow is correctly specified. All targets should be connected by graph edges, and they should appear in the correct order in relation to one another.</p>
 <pre class="r"><code>tar_visnetwork()</code></pre>
-<div id="htmlwidget-9edfdd5892290d6f5448" style="width:672px;height:480px;" class="visNetwork html-widget"></div>
-<script type="application/json" data-for="htmlwidget-9edfdd5892290d6f5448">{"x":{"nodes":{"name":["convergence","coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","simulate_data"],"type":["stem","stem","stem","stem","pattern","stem","pattern","function"],"status":["uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate"],"seconds":[8.423,7.781,5.272,0.002,162.819,47.683,122148.603,null],"bytes":[1771824,442,1511656,96,3611115,1732011,1817476,null],"branches":[null,null,null,null,100,null,100,null],"id":["convergence","coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","simulate_data"],"label":["convergence","coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","simulate_data"],"level":[5,5,4,1,2,1,3,1],"color":["#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823"],"shape":["dot","dot","dot","dot","square","dot","square","triangle"]},"edges":{"from":["mcmc","mcmc_data","mcmc_file_model","simulate_data","mcmc_batch","mcmc","mcmc_model"],"to":["convergence","mcmc_model","mcmc_model","mcmc_data","mcmc_data","coverage","mcmc"],"arrows":["to","to","to","to","to","to","to"]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot","physics":false},"manipulation":{"enabled":false},"edges":{"smooth":{"type":"cubicBezier","forceDirection":"horizontal"}},"physics":{"stabilization":false},"layout":{"hierarchical":{"enabled":true,"direction":"LR"}}},"groups":null,"width":null,"height":null,"idselection":{"enabled":false,"style":"width: 150px; height: 26px","useLabels":true,"main":"Select by id"},"byselection":{"enabled":false,"style":"width: 150px; height: 26px","multiple":false,"hideColor":"rgba(200,200,200,0.5)","highlight":false},"main":{"text":"","style":"font-family:Georgia, Times New Roman, Times, serif;font-weight:bold;font-size:20px;text-align:center;"},"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)","highlight":{"enabled":true,"hoverNearest":false,"degree":{"from":1,"to":1},"algorithm":"hierarchical","hideColor":"rgba(200,200,200,0.5)","labelOnly":true},"collapse":{"enabled":true,"fit":false,"resetHighlight":true,"clusterOptions":null,"keepCoord":true,"labelSuffix":"(cluster)"},"legend":{"width":0.2,"useGroups":false,"position":"right","ncol":1,"stepX":100,"stepY":100,"zoom":true,"nodes":{"label":["Up to date","Stem","Pattern","Function"],"color":["#354823","#899DA4","#899DA4","#899DA4"],"shape":["dot","dot","square","triangle"]},"nodesToDataframe":true}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-5babdf53082556519137" style="width:672px;height:480px;" class="visNetwork html-widget"></div>
+<script type="application/json" data-for="htmlwidget-5babdf53082556519137">{"x":{"nodes":{"name":["convergence","coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","simulate_data"],"type":["stem","stem","stem","stem","pattern","stem","pattern","function"],"status":["outdated","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate"],"seconds":[10.864,7.781,5.272,0.002,162.819,47.683,122148.603,null],"bytes":[366,442,1511656,96,3611115,1732011,1817476,null],"branches":[null,null,null,null,100,null,100,null],"id":["convergence","coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","simulate_data"],"label":["convergence","coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","simulate_data"],"level":[5,5,4,1,2,1,3,1],"color":["#78B7C5","#354823","#354823","#354823","#354823","#354823","#354823","#354823"],"shape":["dot","dot","dot","dot","square","dot","square","triangle"]},"edges":{"from":["mcmc","mcmc_data","mcmc_file_model","simulate_data","mcmc_batch","mcmc","mcmc_model"],"to":["convergence","mcmc_model","mcmc_model","mcmc_data","mcmc_data","coverage","mcmc"],"arrows":["to","to","to","to","to","to","to"]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot","physics":false},"manipulation":{"enabled":false},"edges":{"smooth":{"type":"cubicBezier","forceDirection":"horizontal"}},"physics":{"stabilization":false},"layout":{"hierarchical":{"enabled":true,"direction":"LR"}}},"groups":null,"width":null,"height":null,"idselection":{"enabled":false,"style":"width: 150px; height: 26px","useLabels":true,"main":"Select by id"},"byselection":{"enabled":false,"style":"width: 150px; height: 26px","multiple":false,"hideColor":"rgba(200,200,200,0.5)","highlight":false},"main":{"text":"","style":"font-family:Georgia, Times New Roman, Times, serif;font-weight:bold;font-size:20px;text-align:center;"},"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)","highlight":{"enabled":true,"hoverNearest":false,"degree":{"from":1,"to":1},"algorithm":"hierarchical","hideColor":"rgba(200,200,200,0.5)","labelOnly":true},"collapse":{"enabled":true,"fit":false,"resetHighlight":true,"clusterOptions":null,"keepCoord":true,"labelSuffix":"(cluster)"},"legend":{"width":0.2,"useGroups":false,"position":"right","ncol":1,"stepX":100,"stepY":100,"zoom":true,"nodes":{"label":["Outdated","Up to date","Stem","Pattern","Function"],"color":["#78B7C5","#354823","#899DA4","#899DA4","#899DA4"],"shape":["dot","dot","dot","square","triangle"]},"nodesToDataframe":true}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div id="run-the-pipeline" class="section level2" number="3.2">
 <h2 number="3.2"><span class="header-section-number">3.2</span> Run the pipeline</h2>
-<p>Because there are so many simulations to run, the pipeline could take a long time. Below, we use the <code>tar_make_clustermq()</code> to run different targets in parallel across multiple workers on an SGE cluster. If there are any outdated targets according to the graph above, it is recommended to run this report in a non-interactive background process (e.g. via the included shell script <code>run.sh</code>) rather than clicking the “Knit” button in the RStudio IDE. While the pipeline is running, you may wish to monitor the cluster workers with <code>qstat</code> and monitor the progress of targets using <code>tar_watch()</code> and/or <code>tar_poll()</code>.</p>
+<p>Because there are so many simulations to run, the pipeline could take a long time. Below, we use the <code>tar_make_clustermq()</code> to run different targets on different parallel workers on a Sun Grid Engine (SGE) cluster. Because of the long computation time, if there are any outdated targets according to the graph above, it is recommended to run this report in a non-interactive background process (e.g. via the included shell script <code>run.sh</code>) rather than clicking the “Knit” button in the RStudio IDE. While the pipeline is running, you may wish to monitor the SGE workers with <code>qstat</code> and monitor the progress of the targets using <code>tar_watch()</code> and/or <code>tar_poll()</code>.</p>
 <pre class="r"><code>unlink(&quot;logs&quot;, recursive = TRUE)
-tar_make_clustermq(workers = 100, reporter = &quot;silent&quot;)</code></pre>
+tar_make()
+#&gt; ✔ skip target mcmc_file_model
+#&gt; ✔ skip target mcmc_batch
+#&gt; ✔ skip branch mcmc_data_18c6824d
+#&gt; ✔ skip branch mcmc_data_fe89b1b4
+#&gt; ✔ skip branch mcmc_data_dc7c13ba
+#&gt; ✔ skip branch mcmc_data_e35a8e8e
+#&gt; ✔ skip branch mcmc_data_9315d4c7
+#&gt; ✔ skip branch mcmc_data_4a530429
+#&gt; ✔ skip branch mcmc_data_021cfdec
+#&gt; ✔ skip branch mcmc_data_603f495a
+#&gt; ✔ skip branch mcmc_data_73141983
+#&gt; ✔ skip branch mcmc_data_754a52f3
+#&gt; ✔ skip branch mcmc_data_5d39c5aa
+#&gt; ✔ skip branch mcmc_data_e923f0b3
+#&gt; ✔ skip branch mcmc_data_f3a28643
+#&gt; ✔ skip branch mcmc_data_662f710d
+#&gt; ✔ skip branch mcmc_data_b1fcb9c4
+#&gt; ✔ skip branch mcmc_data_16b0c9c5
+#&gt; ✔ skip branch mcmc_data_9500703c
+#&gt; ✔ skip branch mcmc_data_55c8845f
+#&gt; ✔ skip branch mcmc_data_f8e3bbd0
+#&gt; ✔ skip branch mcmc_data_3486177e
+#&gt; ✔ skip branch mcmc_data_5a7c1b01
+#&gt; ✔ skip branch mcmc_data_0be92724
+#&gt; ✔ skip branch mcmc_data_3ebf80f0
+#&gt; ✔ skip branch mcmc_data_f2432bbf
+#&gt; ✔ skip branch mcmc_data_ac69079a
+#&gt; ✔ skip branch mcmc_data_aaa1acbb
+#&gt; ✔ skip branch mcmc_data_0480a3af
+#&gt; ✔ skip branch mcmc_data_838cf753
+#&gt; ✔ skip branch mcmc_data_662ae017
+#&gt; ✔ skip branch mcmc_data_b58e3b76
+#&gt; ✔ skip branch mcmc_data_fa4cc7ba
+#&gt; ✔ skip branch mcmc_data_afe5680a
+#&gt; ✔ skip branch mcmc_data_75b345b7
+#&gt; ✔ skip branch mcmc_data_91bcbf36
+#&gt; ✔ skip branch mcmc_data_4ee75a24
+#&gt; ✔ skip branch mcmc_data_50bed08b
+#&gt; ✔ skip branch mcmc_data_46ba868e
+#&gt; ✔ skip branch mcmc_data_e7ec179e
+#&gt; ✔ skip branch mcmc_data_b48697aa
+#&gt; ✔ skip branch mcmc_data_c1dfcc8f
+#&gt; ✔ skip branch mcmc_data_ab2e5289
+#&gt; ✔ skip branch mcmc_data_74d3b1e0
+#&gt; ✔ skip branch mcmc_data_2f9c087e
+#&gt; ✔ skip branch mcmc_data_6676bb9f
+#&gt; ✔ skip branch mcmc_data_aad32a18
+#&gt; ✔ skip branch mcmc_data_3d34c1a4
+#&gt; ✔ skip branch mcmc_data_db6f89b0
+#&gt; ✔ skip branch mcmc_data_4f88b783
+#&gt; ✔ skip branch mcmc_data_ca329337
+#&gt; ✔ skip branch mcmc_data_8ebd0f16
+#&gt; ✔ skip branch mcmc_data_3858a64c
+#&gt; ✔ skip branch mcmc_data_3bdbe1aa
+#&gt; ✔ skip branch mcmc_data_7927bc7a
+#&gt; ✔ skip branch mcmc_data_6dd6f27c
+#&gt; ✔ skip branch mcmc_data_e26a397e
+#&gt; ✔ skip branch mcmc_data_1c151b5f
+#&gt; ✔ skip branch mcmc_data_a544c75a
+#&gt; ✔ skip branch mcmc_data_1307550d
+#&gt; ✔ skip branch mcmc_data_39f081fd
+#&gt; ✔ skip branch mcmc_data_9e66ed2d
+#&gt; ✔ skip branch mcmc_data_c93971ab
+#&gt; ✔ skip branch mcmc_data_daf0c6f7
+#&gt; ✔ skip branch mcmc_data_d5fc9555
+#&gt; ✔ skip branch mcmc_data_89f8cd62
+#&gt; ✔ skip branch mcmc_data_10b49a62
+#&gt; ✔ skip branch mcmc_data_ee2100bd
+#&gt; ✔ skip branch mcmc_data_88986825
+#&gt; ✔ skip branch mcmc_data_3e8fefa9
+#&gt; ✔ skip branch mcmc_data_bbc35011
+#&gt; ✔ skip branch mcmc_data_ee814d83
+#&gt; ✔ skip branch mcmc_data_9295dac9
+#&gt; ✔ skip branch mcmc_data_32568b3c
+#&gt; ✔ skip branch mcmc_data_8627605a
+#&gt; ✔ skip branch mcmc_data_d61e4ae0
+#&gt; ✔ skip branch mcmc_data_f265a7fe
+#&gt; ✔ skip branch mcmc_data_9fd8bc3d
+#&gt; ✔ skip branch mcmc_data_cba8ff73
+#&gt; ✔ skip branch mcmc_data_b940f6a9
+#&gt; ✔ skip branch mcmc_data_6135058f
+#&gt; ✔ skip branch mcmc_data_b2aeb051
+#&gt; ✔ skip branch mcmc_data_38b3f0c5
+#&gt; ✔ skip branch mcmc_data_21ac2de4
+#&gt; ✔ skip branch mcmc_data_12f4c5c6
+#&gt; ✔ skip branch mcmc_data_2deb1c1c
+#&gt; ✔ skip branch mcmc_data_e1245f78
+#&gt; ✔ skip branch mcmc_data_f75c8236
+#&gt; ✔ skip branch mcmc_data_04a23ef7
+#&gt; ✔ skip branch mcmc_data_47aa785e
+#&gt; ✔ skip branch mcmc_data_bf335ba8
+#&gt; ✔ skip branch mcmc_data_88789df7
+#&gt; ✔ skip branch mcmc_data_62405d51
+#&gt; ✔ skip branch mcmc_data_acc2d68d
+#&gt; ✔ skip branch mcmc_data_cc0b04c1
+#&gt; ✔ skip branch mcmc_data_0487b1ec
+#&gt; ✔ skip branch mcmc_data_4f37c3f4
+#&gt; ✔ skip branch mcmc_data_9032ddc8
+#&gt; ✔ skip branch mcmc_data_cb7f26c1
+#&gt; ✔ skip branch mcmc_data_30c4edfe
+#&gt; ✔ skip branch mcmc_data_d5d6c4a5
+#&gt; ✔ skip branch mcmc_data_5cf99f48
+#&gt; ✔ skip branch mcmc_model_c0e651c1
+#&gt; ✔ skip branch mcmc_model_f7e6997f
+#&gt; ✔ skip branch mcmc_model_be96d094
+#&gt; ✔ skip branch mcmc_model_de3daafe
+#&gt; ✔ skip branch mcmc_model_e8af3e59
+#&gt; ✔ skip branch mcmc_model_4561392d
+#&gt; ✔ skip branch mcmc_model_b880d938
+#&gt; ✔ skip branch mcmc_model_feaeb0cd
+#&gt; ✔ skip branch mcmc_model_07a4a3b4
+#&gt; ✔ skip branch mcmc_model_6fa6cc36
+#&gt; ✔ skip branch mcmc_model_4f09387c
+#&gt; ✔ skip branch mcmc_model_7bf89232
+#&gt; ✔ skip branch mcmc_model_7eacc34d
+#&gt; ✔ skip branch mcmc_model_f2f3c2ef
+#&gt; ✔ skip branch mcmc_model_7aca3daf
+#&gt; ✔ skip branch mcmc_model_71c12c22
+#&gt; ✔ skip branch mcmc_model_833c4495
+#&gt; ✔ skip branch mcmc_model_cfed47a6
+#&gt; ✔ skip branch mcmc_model_66e37ca5
+#&gt; ✔ skip branch mcmc_model_84f8dba6
+#&gt; ✔ skip branch mcmc_model_8a384a19
+#&gt; ✔ skip branch mcmc_model_d17282f4
+#&gt; ✔ skip branch mcmc_model_1bb9ffbf
+#&gt; ✔ skip branch mcmc_model_fbe1db47
+#&gt; ✔ skip branch mcmc_model_ebe93763
+#&gt; ✔ skip branch mcmc_model_dd6307b5
+#&gt; ✔ skip branch mcmc_model_a9e2a73d
+#&gt; ✔ skip branch mcmc_model_cd38ebc1
+#&gt; ✔ skip branch mcmc_model_f922b1cb
+#&gt; ✔ skip branch mcmc_model_3aaa7991
+#&gt; ✔ skip branch mcmc_model_85ec1b4c
+#&gt; ✔ skip branch mcmc_model_4e514383
+#&gt; ✔ skip branch mcmc_model_d4180ff1
+#&gt; ✔ skip branch mcmc_model_cdfabc8a
+#&gt; ✔ skip branch mcmc_model_defd2781
+#&gt; ✔ skip branch mcmc_model_0f33b6b8
+#&gt; ✔ skip branch mcmc_model_85b49f2c
+#&gt; ✔ skip branch mcmc_model_44382af0
+#&gt; ✔ skip branch mcmc_model_d3bc457a
+#&gt; ✔ skip branch mcmc_model_654f8444
+#&gt; ✔ skip branch mcmc_model_66b2975c
+#&gt; ✔ skip branch mcmc_model_9c999c78
+#&gt; ✔ skip branch mcmc_model_fc9048b8
+#&gt; ✔ skip branch mcmc_model_8fc7b675
+#&gt; ✔ skip branch mcmc_model_57511978
+#&gt; ✔ skip branch mcmc_model_cabf6fa0
+#&gt; ✔ skip branch mcmc_model_b8dbfbfd
+#&gt; ✔ skip branch mcmc_model_733ee94a
+#&gt; ✔ skip branch mcmc_model_67e90f02
+#&gt; ✔ skip branch mcmc_model_d6ab7c7d
+#&gt; ✔ skip branch mcmc_model_220c88b7
+#&gt; ✔ skip branch mcmc_model_535b306a
+#&gt; ✔ skip branch mcmc_model_b98acaac
+#&gt; ✔ skip branch mcmc_model_33cc0173
+#&gt; ✔ skip branch mcmc_model_a52bdb61
+#&gt; ✔ skip branch mcmc_model_bfcab06d
+#&gt; ✔ skip branch mcmc_model_6c5ee4e0
+#&gt; ✔ skip branch mcmc_model_c835059b
+#&gt; ✔ skip branch mcmc_model_53b5f4fe
+#&gt; ✔ skip branch mcmc_model_0154f2e8
+#&gt; ✔ skip branch mcmc_model_0d2c9d47
+#&gt; ✔ skip branch mcmc_model_5c478008
+#&gt; ✔ skip branch mcmc_model_d5dc4067
+#&gt; ✔ skip branch mcmc_model_fe8467a2
+#&gt; ✔ skip branch mcmc_model_c3d577e4
+#&gt; ✔ skip branch mcmc_model_c03dfd0a
+#&gt; ✔ skip branch mcmc_model_8252a25a
+#&gt; ✔ skip branch mcmc_model_9c6c781a
+#&gt; ✔ skip branch mcmc_model_b1ea3ccc
+#&gt; ✔ skip branch mcmc_model_83540740
+#&gt; ✔ skip branch mcmc_model_2369d064
+#&gt; ✔ skip branch mcmc_model_ae150573
+#&gt; ✔ skip branch mcmc_model_f531d0b1
+#&gt; ✔ skip branch mcmc_model_0a824133
+#&gt; ✔ skip branch mcmc_model_dda4c06d
+#&gt; ✔ skip branch mcmc_model_4365f29f
+#&gt; ✔ skip branch mcmc_model_f8ba1d0a
+#&gt; ✔ skip branch mcmc_model_3cd80108
+#&gt; ✔ skip branch mcmc_model_adbcebab
+#&gt; ✔ skip branch mcmc_model_7a522d65
+#&gt; ✔ skip branch mcmc_model_7eeee661
+#&gt; ✔ skip branch mcmc_model_5d632b60
+#&gt; ✔ skip branch mcmc_model_7556a446
+#&gt; ✔ skip branch mcmc_model_26b995d0
+#&gt; ✔ skip branch mcmc_model_3d04796f
+#&gt; ✔ skip branch mcmc_model_fcbd0889
+#&gt; ✔ skip branch mcmc_model_3c3cf5ae
+#&gt; ✔ skip branch mcmc_model_3cb4cd7b
+#&gt; ✔ skip branch mcmc_model_009af40f
+#&gt; ✔ skip branch mcmc_model_5fd6087a
+#&gt; ✔ skip branch mcmc_model_2d1acbbf
+#&gt; ✔ skip branch mcmc_model_56ca0eec
+#&gt; ✔ skip branch mcmc_model_d36885b6
+#&gt; ✔ skip branch mcmc_model_0bf12874
+#&gt; ✔ skip branch mcmc_model_f40d332b
+#&gt; ✔ skip branch mcmc_model_48a2aeda
+#&gt; ✔ skip branch mcmc_model_1c871cf6
+#&gt; ✔ skip branch mcmc_model_c142d23a
+#&gt; ✔ skip branch mcmc_model_59c8959a
+#&gt; ✔ skip branch mcmc_model_e23499bb
+#&gt; ✔ skip target mcmc
+#&gt; • start target convergence
+#&gt; • built target convergence
+#&gt; ✔ skip target coverage
+#&gt; • end pipeline
+#tar_make_clustermq(workers = 100, reporter = &quot;silent&quot;)</code></pre>
 </div>
 </div>
 <div id="results" class="section level1" number="4">
 <h1 number="4"><span class="header-section-number">4</span> Results</h1>
-<p>First, we examine convergence diagnostics. The Gelman-Rubin potential scale reduction factors should be close to 1.</p>
-<pre class="r"><code>tar_read(convergence)</code></pre>
-<p><img src="data:image/png;base64,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DQEVEdDonCkQUBMB1RBQEQGNzpkCATURUA0BFRHQ6JwpEFATAdUQUBEBjc6ZAgE1EVANARUR0OicKRBQEwHVEFARAY3OmQIBNRFQDQEVEdDonCkQUBMB1RBQEQGNzpkCATURUA0BFRHQ6JwpEFATAdUQUBEBjc6ZAgE1EVANARUR0OicKRBQEwHVEFARAY3OmQIBNRFQDQEVEdDonCkQUBMB1RBQEQGNzpkCATURUA0BFRHQ6JwpEFATAdUQUBEBjc6ZAgE1EVANARUR0OicKRBQEwHVEFARAY3OmQIBNRFQDQEVEdDonCkQUBMB1RBQEQGNzpkCATURUA0BFRHQ6JwpEFATAdUQUBEBjc6ZAgE1EVANARUR0OicKRBQEwHVEFARAY3OmQIBNRFQDQEVEdDonCkQUBMB1RBQEQGNzpkCATURUA0BFRHQ6JwpEFATAdUQUBEBjc6ZAgE1EVANARUR0OicKRBQEwHVEFARAY3OmQIBNRFQDQEVEdDonCkQUBMB1RBQEQGNzpkCATURUA0BFRHQ6JwpEFATAdUQUBEBjc6ZAgE1EVANARUR0OicKRBQEwHVEFARAY3OmQIBNRFQDQEVEdDonCkQUBMB1RBQEQGNzpkCATURUA0BFRHQ6JwpEFATAdUQUBEBjc6ZAgE1EVANARUR0OicKRBQEwHVEFARAY3OmQIBNRFQDQEVEdDonCkQUBMB1RBQEQGNzpkCATURUA0BFRHQ6JwpEFATAdUQUBEBjc6ZAgE1EVANARUR0OicKRBQEwHVEFARAY3OmQIBNRFQDQEVEdDonCkQUBMB1RBQEQGNzpkCATURUA0BFRHQ6JwpEFATAdUQUBEBjc6ZAgE1EVANARUR0OicKRBQEwHVEFARAY3OmQIBNRFQDQEVEdDonCkQUBMB1RBQEQGNzpkCATURUA0BFRHQ6JwpEFATAdUQUBEBjc6ZAgE1EVANARUR0OicKRBQEwHVEFARAY3OmQIBNRFQDQEVEdDonCkQUBMB1RBQEQGNzpkCATURUA0BFRHQ6JwpEFATAdUQUBEBjc6ZAgE1EVANARUR0OicKRBQEwHVEFARAY3OmQIBNRFQDQEVEdDonCkQUBMB1RBQEQGNzpkCATURUA0BFRHQ6JwpEFATAdUQUBEBjc6ZAgE1EVANARUR0OicKRBQEwHVEFARAY3OmQIBNRFQ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gEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaNOS8z9T/ZUWcaZA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FAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighooR+FnF82Fo58e8Hhc+Zd+LPc901tUTtnCgTUREA1BFREQAt9rSCgD81vnL9gU/PbpraogzMFAmoioBoCKiKghT4Vwtv2ahoL6PJ5Icyef+YxaRsXjNaERZ2cKRBQEwHVEFARAS10SggrOhadH8Jx96X/Lt4/hOuVRZ2cKRBQEwHVEFARAS00N+zXseT2EPb7Xf3Uj0M4cOPUF03gTIGAmgiohoCKCGiRTbPD/I5FF4dwaePk8SF8b+qLJnCmQEBNBFRDQEUEtMiSED7SvmT04BBubpy+MoQPT3nRRM4UCKiJgGoIqIiAFkkff3+5fcnSEPbf2jh9VwjzprxoImcKBNREQDUEVERAi3w9hBvv+ugJ+x40/4qxZzRri0M4sfnVTSHM3jDVRRM5UyCgJgKqIaAiAlrkUyG8p/F2zr2vqr8baWEIZ7S+vE8I9011UcOZL2kZMTaoe0CNKwUw7LYULu1zQE/N0nn4aacdlv1bf1Xo6hA+1vry3BDumOqiBgIKIL5tEtAjQzhsUXbPc8mJaUF/mJ64IoTPtL58Qgi3THVRAwEFEN+2COjISe87denYydEPhnBs+u/lHWm8aaqLGggogPi2yT3QnPv2CmFJrfbVEC5qLUsfnN8+1UUNy+9vWW7oHlDnWsusq22s8uqKZXfwV/V9LWtrm/u+juXZf4lr+r6WNbWtfV/H8uzmtrbva1lVG+n7OpZnr4et7/taVtRG+76O5dlv5GwwL7uqMGsRP87u+BC+WatdF8KZrUX7hnDPVBdN5LyU1j2g5mt0hXgVXsOr8CJehdcM3KvweReEcHX9DUonNZdsDiGsm+qiiZwpEFATAdUQUBEB7eaiEBbWag+EcHDz05WWhHBEbaqLJnKmQEBNBFRDQEUEtMD3r712aevM/BAW12qjB40/o3l1COfWprpoImcKBNREQDUEVERAC1wWwiWt3M0Je2WPxNM7opc3Fp0UwrdqU140gTMFAmoioBoCKiKgBW4LYd+7G6fPbnyuyK0hHDb2lOads8MB66a+aAJnCgTUREA1BFREQIucHsKhP8pu4Q99KIS3P1hfdmoIC7IdeeDoEK6qCYs6OVMgoCYCqiGgIgJaZFmavzD3tAXzZoew16KxZUsPCeGQi790/t4hnLJVWdTJmQIBNRFQDQEVEdDiyC1o/kW5o25rLrv7mMais9Zoizqv20BATQRUQ0BFBLTErZccd8CcuefckLsbuWHhyYfOOfLcRTV1UTtnCgTUREA1BFREQKNzpkBATQRUQ0BFBDQ6ZwoE1ERANQRURECjc6ZAQE0EVENARQQ0OmcKBNREQDUEVERAo3OmQEBNBFRDQEUENDpnCgTUREA1BFREQKNzpkBATQRUQ0BFBDQ6ZwoE1ERANQRURECjc6ZAQE0EVENARQQ0OmcKBNREQDUEVERAo3OmQEBNBFRDQEUENDpnCgTUREA1BFREQKNzpkBATQRUQ0BFBDQ6ZwoE1ERANQRURECjc6ZAQE0EVENARQQ0OmcKBNREQDUEVERAo3OmQEBNBFRDQEUENDpnCgTUREA1BFREQKNzpkBATQRUQ0BFBDQ6ZwoE1ERANQRURECjc6ZAQE0EVENARQQ0OmcKBNREQDUEVERAo3OmQEBNBFRDQEUENDpnCgTUREA1BFREQKNzpkBATQRUQ0BFBDQ6ZwoE1ERANQRURECjc6ZAQE0EVENARQQ0OmcKBNREQDUEVERAo3OmQEBNBFRDQEUENDpnCgTUREA1BFREQKNzpkBATQRUQ0BFBDQ6ZwoE1ERANQRURECjc6ZAQE0EVENARQQ0OmcKBNREQDUEVERAo3OmQEBNBFRDQEUENDpnCgTUREA1BFREQKNzpkBATQRUQ0BFBDQ6ZwoE1ERANQRURECjc6ZAQE0EVENARQQ0OmcKBNREQDUEVERAo3OmQEBNBFRDQEUENDpnCgTUREA1BFREQKNzpkBATQRUQ0BFBDQ6ZwoE1ERANQRURECjc6ZAQE0EVENARQQ0OmcKBNREQDUEVERAo3OmQEBNBFRDQEUENDpnCgTUREA1BFREQKNzpkBATQRUQ0BFBDQ6ZwoE1ERANQRURECjc6ZAQE0EVENARQQ0OmcKBNREQDUEVERAo3OmQEBNBFRDQEUENDpnCgTUREA1BFREQKNzpkBATQRUQ0BFBDQ6ZwoE1ERANQRURECjc6ZAQE0EVENARQQ0OmcKBNREQDUEVERAo3OmQEBNBFRDQEUENDpnCgTUREA1BFREQKNzpkBATQRUQ0BFBDQ6ZwoE1ERANQRURECjc6ZAQE0EVENARQQ0OmcKBNREQDUEVERAo3OmQEBNBFRDQEUENDpnCgTUREA1BFREQKNzpkBATQRUQ0BFBDQ6ZwoE1ERANQRURECjc6ZAQE0EVENARQQ0OmcKBNREQDUEVERAo3OmQEBNBFRDQEUENDpnCgTUREA1BFREQKNzpkBATQRUQ0BFBDQ6ZwoE1ERANQRURECjc6ZAQE0EVENARQQ0OmcKBNREQDUEVERAo3OmQEBNBFRDQEUENDpnCgTUREA1BFREQKNzpkBATQRUQ0BFBDQ6ZwoE1ERANQRURECjc6ZAQE0EVENARQQ0OmcKBNREQDUEVERAo3OmQEBNBFRDQEUENDpnCgTUREA1BFREQKNzpkBATQRUQ0BFBDQ6ZwoE1ERANQRURECjc6ZAQE0EVENARQQ0OmcKBNREQDUEVERAo3OmQEBNBFRDQEUENDpnCgTUREA1BFREQKNzpkBATQRUQ0BFBDQ6ZwoE1ERANQRURECjc6ZAQE0EVENARQQ0OmcKBNREQDUEVERAo3OmQEBNBFRDQEUEdCB0D+i23kIA09CWwqUElIAC6Gr4ArrM0D2gzrWWWVfbWOXVFcsewq/s+1rW1Db1fR3L6g/h+76W9CF839exLLu5ren7WlbWRvq+jmXZQ/h1fV/L8tpo39exrP4Q3rzsqsIIDXJAnScyeA7UxHOgGp4DFfEcaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiARudMgYCaCKiGgIoIaHTOFAioiYBqCKiIgEbnTIGAmgiohoCKCGh0zhQIqImAagioiIBG50yBgJoIqIaAighodM4UCKiJgGoIqIiAVm3k2wsOnzPvwp+VfoMzBQJqIqAaAioioBV7aH4Yc8Gmku9wpkBATQRUQ0BFBLRay+eFMHv+mcekBV0wWvwtzhQIqImAagioiIBW6/wQjrsv/Xfx/iFcX/wtzhQIqImAagioiIBW6vYQ9vtd/dSPQzhwY+H3OFMgoCYCqiGgIgJaqYtDuLRx8vgQvlf4Pc4UCKiJgGoIqIiAVmn04BBubpy+MoQPF36TMwUCaiKgGgIqIqBVWhrC/lsbp+8K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" width="672" /></p>
-<p>Finally, we report coverage statistics. If the model is implemented correctly, <code>coverage_50</code> should not differ systematically from 0.5, and <code>coverage_95</code> should not differ systematically from 0.95.</p>
+<p>First, we examine convergence diagnostics. There are few visibly divergent simulation reps, so convergence issues seem unlikely to impact coverage statistics.</p>
 <pre class="r"><code>library(gt)
-gt(tar_read(coverage))</code></pre>
-<div id="dfgqpncdvf" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+gt(tar_read(convergence))</code></pre>
+<div id="lirsjgblhd" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#dfgqpncdvf .gt_table {
+#lirsjgblhd .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -485,7 +692,7 @@ gt(tar_read(coverage))</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#dfgqpncdvf .gt_heading {
+#lirsjgblhd .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -497,7 +704,7 @@ gt(tar_read(coverage))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#dfgqpncdvf .gt_title {
+#lirsjgblhd .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -507,7 +714,7 @@ gt(tar_read(coverage))</code></pre>
   border-bottom-width: 0;
 }
 
-#dfgqpncdvf .gt_subtitle {
+#lirsjgblhd .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -517,13 +724,13 @@ gt(tar_read(coverage))</code></pre>
   border-top-width: 0;
 }
 
-#dfgqpncdvf .gt_bottom_border {
+#lirsjgblhd .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#dfgqpncdvf .gt_col_headings {
+#lirsjgblhd .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -538,7 +745,7 @@ gt(tar_read(coverage))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#dfgqpncdvf .gt_col_heading {
+#lirsjgblhd .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -558,7 +765,7 @@ gt(tar_read(coverage))</code></pre>
   overflow-x: hidden;
 }
 
-#dfgqpncdvf .gt_column_spanner_outer {
+#lirsjgblhd .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -570,15 +777,15 @@ gt(tar_read(coverage))</code></pre>
   padding-right: 4px;
 }
 
-#dfgqpncdvf .gt_column_spanner_outer:first-child {
+#lirsjgblhd .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#dfgqpncdvf .gt_column_spanner_outer:last-child {
+#lirsjgblhd .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#dfgqpncdvf .gt_column_spanner {
+#lirsjgblhd .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -590,7 +797,7 @@ gt(tar_read(coverage))</code></pre>
   width: 100%;
 }
 
-#dfgqpncdvf .gt_group_heading {
+#lirsjgblhd .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -612,7 +819,7 @@ gt(tar_read(coverage))</code></pre>
   vertical-align: middle;
 }
 
-#dfgqpncdvf .gt_empty_group_heading {
+#lirsjgblhd .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -627,15 +834,15 @@ gt(tar_read(coverage))</code></pre>
   vertical-align: middle;
 }
 
-#dfgqpncdvf .gt_from_md > :first-child {
+#lirsjgblhd .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#dfgqpncdvf .gt_from_md > :last-child {
+#lirsjgblhd .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#dfgqpncdvf .gt_row {
+#lirsjgblhd .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -654,7 +861,7 @@ gt(tar_read(coverage))</code></pre>
   overflow-x: hidden;
 }
 
-#dfgqpncdvf .gt_stub {
+#lirsjgblhd .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -666,7 +873,7 @@ gt(tar_read(coverage))</code></pre>
   padding-left: 12px;
 }
 
-#dfgqpncdvf .gt_summary_row {
+#lirsjgblhd .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -676,7 +883,7 @@ gt(tar_read(coverage))</code></pre>
   padding-right: 5px;
 }
 
-#dfgqpncdvf .gt_first_summary_row {
+#lirsjgblhd .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -686,7 +893,7 @@ gt(tar_read(coverage))</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#dfgqpncdvf .gt_grand_summary_row {
+#lirsjgblhd .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -696,7 +903,7 @@ gt(tar_read(coverage))</code></pre>
   padding-right: 5px;
 }
 
-#dfgqpncdvf .gt_first_grand_summary_row {
+#lirsjgblhd .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -706,11 +913,11 @@ gt(tar_read(coverage))</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#dfgqpncdvf .gt_striped {
+#lirsjgblhd .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#dfgqpncdvf .gt_table_body {
+#lirsjgblhd .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -719,7 +926,7 @@ gt(tar_read(coverage))</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#dfgqpncdvf .gt_footnotes {
+#lirsjgblhd .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -733,13 +940,13 @@ gt(tar_read(coverage))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#dfgqpncdvf .gt_footnote {
+#lirsjgblhd .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#dfgqpncdvf .gt_sourcenotes {
+#lirsjgblhd .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -753,41 +960,419 @@ gt(tar_read(coverage))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#dfgqpncdvf .gt_sourcenote {
+#lirsjgblhd .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#dfgqpncdvf .gt_left {
+#lirsjgblhd .gt_left {
   text-align: left;
 }
 
-#dfgqpncdvf .gt_center {
+#lirsjgblhd .gt_center {
   text-align: center;
 }
 
-#dfgqpncdvf .gt_right {
+#lirsjgblhd .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#dfgqpncdvf .gt_font_normal {
+#lirsjgblhd .gt_font_normal {
   font-weight: normal;
 }
 
-#dfgqpncdvf .gt_font_bold {
+#lirsjgblhd .gt_font_bold {
   font-weight: bold;
 }
 
-#dfgqpncdvf .gt_font_italic {
+#lirsjgblhd .gt_font_italic {
   font-style: italic;
 }
 
-#dfgqpncdvf .gt_super {
+#lirsjgblhd .gt_super {
   font-size: 65%;
 }
 
-#dfgqpncdvf .gt_footnote_marks {
+#lirsjgblhd .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">.rep</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">max_rhat</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left">4bf0f60b</td>
+<td class="gt_row gt_right">3.456819</td></tr>
+    <tr><td class="gt_row gt_left">d287910c</td>
+<td class="gt_row gt_right">1.193255</td></tr>
+    <tr><td class="gt_row gt_left">4bdd23ed</td>
+<td class="gt_row gt_right">1.156554</td></tr>
+    <tr><td class="gt_row gt_left">ec9b2eef</td>
+<td class="gt_row gt_right">1.037496</td></tr>
+    <tr><td class="gt_row gt_left">6575caad</td>
+<td class="gt_row gt_right">1.032741</td></tr>
+    <tr><td class="gt_row gt_left">70d8798d</td>
+<td class="gt_row gt_right">1.030885</td></tr>
+    <tr><td class="gt_row gt_left">80b8802e</td>
+<td class="gt_row gt_right">1.027375</td></tr>
+    <tr><td class="gt_row gt_left">20ffdced</td>
+<td class="gt_row gt_right">1.023782</td></tr>
+    <tr><td class="gt_row gt_left">3df4c68c</td>
+<td class="gt_row gt_right">1.020829</td></tr>
+    <tr><td class="gt_row gt_left">f9229a57</td>
+<td class="gt_row gt_right">1.015546</td></tr>
+    <tr><td class="gt_row gt_left">d6aeab86</td>
+<td class="gt_row gt_right">1.012917</td></tr>
+    <tr><td class="gt_row gt_left">ff35cd1e</td>
+<td class="gt_row gt_right">1.010245</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+<p>Finally, we report coverage statistics. If the model is implemented correctly, <code>coverage_50</code> should not differ systematically from 0.5, and <code>coverage_95</code> should not differ systematically from 0.95. Coverage appears nominal in the table below. If there is doubt, simply increase the number of batches or reps per batch in <code>tar_stan_mcmc_rep_summary()</code> and run the pipeline again.</p>
+<pre class="r"><code>gt(tar_read(coverage))</code></pre>
+<div id="kwemzuncdf" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#kwemzuncdf .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#kwemzuncdf .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#kwemzuncdf .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#kwemzuncdf .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#kwemzuncdf .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#kwemzuncdf .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#kwemzuncdf .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#kwemzuncdf .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#kwemzuncdf .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#kwemzuncdf .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#kwemzuncdf .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#kwemzuncdf .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#kwemzuncdf .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#kwemzuncdf .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#kwemzuncdf .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#kwemzuncdf .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#kwemzuncdf .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#kwemzuncdf .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#kwemzuncdf .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#kwemzuncdf .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#kwemzuncdf .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#kwemzuncdf .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#kwemzuncdf .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#kwemzuncdf .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#kwemzuncdf .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#kwemzuncdf .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#kwemzuncdf .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#kwemzuncdf .gt_left {
+  text-align: left;
+}
+
+#kwemzuncdf .gt_center {
+  text-align: center;
+}
+
+#kwemzuncdf .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#kwemzuncdf .gt_font_normal {
+  font-weight: normal;
+}
+
+#kwemzuncdf .gt_font_bold {
+  font-weight: bold;
+}
+
+#kwemzuncdf .gt_font_italic {
+  font-style: italic;
+}
+
+#kwemzuncdf .gt_super {
+  font-size: 65%;
+}
+
+#kwemzuncdf .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 65%;
@@ -857,6 +1442,16 @@ gt(tar_read(coverage))</code></pre>
 </table>
 </div>
 </div>
+<div id="resources" class="section level1" number="5">
+<h1 number="5"><span class="header-section-number">5</span> Resources</h1>
+<ul>
+<li>Source: <a href="https://github.com/wlandau/rmedicine2021-pipeline" class="uri">https://github.com/wlandau/rmedicine2021-pipeline</a></li>
+<li>Slides: <a href="https://wlandau.github.io/rmedicine2021-slides" class="uri">https://wlandau.github.io/rmedicine2021-slides</a></li>
+<li><code>targets</code>: <a href="https://docs.ropensci.org/targets/" class="uri">https://docs.ropensci.org/targets/</a></li>
+<li>Target Markdown: <a href="https://books.ropensci.org/targets/markdown.html" class="uri">https://books.ropensci.org/targets/markdown.html</a></li>
+<li><code>stantargets</code>: <a href="https://docs.ropensci.org/stantargets/" class="uri">https://docs.ropensci.org/stantargets/</a></li>
+</ul>
+</div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="unnumbered">References</h1>
 <div id="refs" class="references csl-bib-body hanging-indent">
@@ -866,11 +1461,20 @@ Alvarez, Ignacio, Jarad Niemi, and Matt Simpson. 2016. <span>“Bayesian Inferen
 <div id="ref-cook2006" class="csl-entry">
 Cook, Samantha R., Andrew Gelman, and Donald B. Rubin. 2006. <span>“Validation of Software for Bayesian Models Using Posterior Quantiles.”</span> <em>Journal of Computational and Graphical Statistics</em> 15 (3): 675–92. <a href="http://www.jstor.org/stable/27594203">http://www.jstor.org/stable/27594203</a>.
 </div>
+<div id="ref-gelmanvariance" class="csl-entry">
+Gelman, Andrew. 2006. <span>“<span class="nocase">Prior distributions for variance parameters in hierarchical models (comment on article by Browne and Draper)</span>.”</span> <em>Bayesian Analysis</em> 1 (3): 515–34. <a href="https://doi.org/10.1214/06-BA117A">https://doi.org/10.1214/06-BA117A</a>.
+</div>
+<div id="ref-bda3" class="csl-entry">
+Gelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2014. <em>Bayesian Data Analysis</em>. Edited by Francesca Dominici, Julian J. Faraway, Martin Tanner, and Jim idek. Third. CRC Press.
+</div>
 <div id="ref-stantargets" class="csl-entry">
 Landau, William Michael. 2021a. <span>“The Stantargets <span>R</span> Package: A Workflow Framework for Efficient Reproducible <span>S</span>tan-Powered Bayesian Data Analysis Pipelines.”</span> <em>Journal of Open Source Software</em> 6 (60): 3193. <a href="https://doi.org/10.21105/joss.03193">https://doi.org/10.21105/joss.03193</a>.
 </div>
 <div id="ref-targets" class="csl-entry">
 ———. 2021b. <span>“The Targets <span>R</span> Package: A Dynamic Make-Like Function-Oriented Pipeline Toolkit for Reproducibility and High-Performance Computing.”</span> <em>Journal of Open Source Software</em> 6 (57): 2959. <a href="https://doi.org/10.21105/joss.02959">https://doi.org/10.21105/joss.02959</a>.
+</div>
+<div id="ref-clustermq" class="csl-entry">
+Schubert, Michael. 2019. <span>“<span class="nocase">clustermq enables efficient parallelization of genomic analyses</span>.”</span> <em>Bioinformatics</em> 35 (21): 4493–95. <a href="https://doi.org/10.1093/bioinformatics/btz284">https://doi.org/10.1093/bioinformatics/btz284</a>.
 </div>
 <div id="ref-talts2020" class="csl-entry">
 Talts, Sean, Michael Betancourt, Daniel Simpson, Aki Vehtari, and Andrew Gelman. 2020. <span>“Validating Bayesian Inference Algorithms with Simulation-Based Calibration.”</span> <a href="http://arxiv.org/abs/1804.06788">http://arxiv.org/abs/1804.06788</a>.
@@ -880,7 +1484,7 @@ Talts, Sean, Michael Betancourt, Daniel Simpson, Aki Vehtari, and Andrew Gelman.
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>Inverse-Wishart is more common than LKJ because of conjugacy but induces a problematic prior relationship among covariance components <span class="citation">(Alvarez, Niemi, and Simpson 2016)</span>.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn1"><p>Parameter-specific rank statistic histograms can be difficult to inspect when there are many parameters.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
 
