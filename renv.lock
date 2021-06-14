@@ -1062,8 +1062,8 @@
       "RemoteRepo": "targets",
       "RemoteUsername": "ropensci",
       "RemoteRef": "HEAD",
-      "RemoteSha": "aba62c794764357db61ad7fabb4721854fbc67ad",
-      "Hash": "ab22213e0465e941d313128094d9bd0c"
+      "RemoteSha": "a17eecb4da42be66796f1ded91901b3d6d90477d",
+      "Hash": "098ecc76ef75bc8e84859133a080aa5b"
     },
     "tensorA": {
       "Package": "tensorA",
