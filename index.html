@@ -439,225 +439,20 @@ library(stantargets)
 <h2 number="3.1"><span class="header-section-number">3.1</span> Inspect the pipeline</h2>
 <p>But first, it is good practice to visualize the dependency graph to verify that the workflow is correctly specified. All targets should be connected by graph edges, and they should appear in the correct order in relation to one another.</p>
 <pre class="r"><code>tar_visnetwork()</code></pre>
-<div id="htmlwidget-0b70a691aacef5e5f707" style="width:672px;height:480px;" class="visNetwork html-widget"></div>
-<script type="application/json" data-for="htmlwidget-0b70a691aacef5e5f707">{"x":{"nodes":{"name":["convergence","coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","simulate_data"],"type":["stem","stem","stem","stem","pattern","stem","pattern","function"],"status":["outdated","outdated","outdated","outdated","outdated","uptodate","outdated","uptodate"],"seconds":[6.227,8.044,10.666,0.002,85.328,47.683,1198166.859,null],"bytes":[243,427,3019977,96,3610931,1732011,3634826,null],"branches":[null,null,null,null,200,null,200,null],"id":["convergence","coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","simulate_data"],"label":["convergence","coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","simulate_data"],"level":[5,5,4,1,2,1,3,1],"color":["#78B7C5","#78B7C5","#78B7C5","#78B7C5","#78B7C5","#354823","#78B7C5","#354823"],"shape":["dot","dot","dot","dot","square","dot","square","triangle"]},"edges":{"from":["mcmc","mcmc_data","mcmc_file_model","simulate_data","mcmc_batch","mcmc_model","mcmc"],"to":["convergence","mcmc_model","mcmc_model","mcmc_data","mcmc_data","mcmc","coverage"],"arrows":["to","to","to","to","to","to","to"]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot","physics":false},"manipulation":{"enabled":false},"edges":{"smooth":{"type":"cubicBezier","forceDirection":"horizontal"}},"physics":{"stabilization":false},"layout":{"hierarchical":{"enabled":true,"direction":"LR"}}},"groups":null,"width":null,"height":null,"idselection":{"enabled":false,"style":"width: 150px; height: 26px","useLabels":true,"main":"Select by id"},"byselection":{"enabled":false,"style":"width: 150px; height: 26px","multiple":false,"hideColor":"rgba(200,200,200,0.5)","highlight":false},"main":{"text":"","style":"font-family:Georgia, Times New Roman, Times, serif;font-weight:bold;font-size:20px;text-align:center;"},"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)","highlight":{"enabled":true,"hoverNearest":false,"degree":{"from":1,"to":1},"algorithm":"hierarchical","hideColor":"rgba(200,200,200,0.5)","labelOnly":true},"collapse":{"enabled":true,"fit":false,"resetHighlight":true,"clusterOptions":null,"keepCoord":true,"labelSuffix":"(cluster)"},"legend":{"width":0.2,"useGroups":false,"position":"right","ncol":1,"stepX":100,"stepY":100,"zoom":true,"nodes":{"label":["Outdated","Up to date","Stem","Pattern","Function"],"color":["#78B7C5","#354823","#899DA4","#899DA4","#899DA4"],"shape":["dot","dot","dot","square","triangle"]},"nodesToDataframe":true}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-d4c8515f2bc8c5877bfa" style="width:672px;height:480px;" class="visNetwork html-widget"></div>
+<script type="application/json" data-for="htmlwidget-d4c8515f2bc8c5877bfa">{"x":{"nodes":{"name":["convergence","coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","simulate_data"],"type":["stem","stem","stem","stem","pattern","stem","pattern","function"],"status":["uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate"],"seconds":[0.022,0.01,11.696,0.001,0,47.683,0,null],"bytes":[167,424,1511371,96,0,1732011,0,null],"branches":[null,null,null,null,100,null,100,null],"id":["convergence","coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","simulate_data"],"label":["convergence","coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","simulate_data"],"level":[5,5,4,1,2,1,3,1],"color":["#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823"],"shape":["dot","dot","dot","dot","square","dot","square","triangle"]},"edges":{"from":["mcmc","mcmc_data","mcmc_file_model","simulate_data","mcmc_batch","mcmc","mcmc_model"],"to":["convergence","mcmc_model","mcmc_model","mcmc_data","mcmc_data","coverage","mcmc"],"arrows":["to","to","to","to","to","to","to"]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot","physics":false},"manipulation":{"enabled":false},"edges":{"smooth":{"type":"cubicBezier","forceDirection":"horizontal"}},"physics":{"stabilization":false},"layout":{"hierarchical":{"enabled":true,"direction":"LR"}}},"groups":null,"width":null,"height":null,"idselection":{"enabled":false,"style":"width: 150px; height: 26px","useLabels":true,"main":"Select by id"},"byselection":{"enabled":false,"style":"width: 150px; height: 26px","multiple":false,"hideColor":"rgba(200,200,200,0.5)","highlight":false},"main":{"text":"","style":"font-family:Georgia, Times New Roman, Times, serif;font-weight:bold;font-size:20px;text-align:center;"},"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)","highlight":{"enabled":true,"hoverNearest":false,"degree":{"from":1,"to":1},"algorithm":"hierarchical","hideColor":"rgba(200,200,200,0.5)","labelOnly":true},"collapse":{"enabled":true,"fit":false,"resetHighlight":true,"clusterOptions":null,"keepCoord":true,"labelSuffix":"(cluster)"},"legend":{"width":0.2,"useGroups":false,"position":"right","ncol":1,"stepX":100,"stepY":100,"zoom":true,"nodes":{"label":["Up to date","Stem","Pattern","Function"],"color":["#354823","#899DA4","#899DA4","#899DA4"],"shape":["dot","dot","square","triangle"]},"nodesToDataframe":true}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div id="run-the-pipeline" class="section level2" number="3.2">
 <h2 number="3.2"><span class="header-section-number">3.2</span> Run the pipeline</h2>
 <p>Because there are so many simulations to run, the pipeline could take a long time. Below, we use the <code>tar_make_clustermq()</code> to run different targets on different parallel workers on a Sun Grid Engine (SGE) cluster. Because of the long computation time, if there are any outdated targets according to the graph above, it is recommended to run this report in a non-interactive background process (e.g. via the included shell script <code>run.sh</code>) rather than clicking the “Knit” button in the RStudio IDE. While the pipeline is running, you may wish to monitor the SGE workers with <code>qstat</code> and monitor the progress of the targets using <code>tar_watch()</code> and/or <code>tar_poll()</code>.</p>
 <pre class="r"><code>unlink(&quot;logs&quot;, recursive = TRUE)
-tar_make()
-#&gt; ✔ skip target mcmc_file_model
-#&gt; • start target mcmc_batch
-#&gt; • built target mcmc_batch
-#&gt; ✔ skip branch mcmc_data_18c6824d
-#&gt; ✔ skip branch mcmc_data_fe89b1b4
-#&gt; ✔ skip branch mcmc_data_dc7c13ba
-#&gt; ✔ skip branch mcmc_data_e35a8e8e
-#&gt; ✔ skip branch mcmc_data_9315d4c7
-#&gt; ✔ skip branch mcmc_data_4a530429
-#&gt; ✔ skip branch mcmc_data_021cfdec
-#&gt; ✔ skip branch mcmc_data_603f495a
-#&gt; ✔ skip branch mcmc_data_73141983
-#&gt; ✔ skip branch mcmc_data_754a52f3
-#&gt; ✔ skip branch mcmc_data_5d39c5aa
-#&gt; ✔ skip branch mcmc_data_e923f0b3
-#&gt; ✔ skip branch mcmc_data_f3a28643
-#&gt; ✔ skip branch mcmc_data_662f710d
-#&gt; ✔ skip branch mcmc_data_b1fcb9c4
-#&gt; ✔ skip branch mcmc_data_16b0c9c5
-#&gt; ✔ skip branch mcmc_data_9500703c
-#&gt; ✔ skip branch mcmc_data_55c8845f
-#&gt; ✔ skip branch mcmc_data_f8e3bbd0
-#&gt; ✔ skip branch mcmc_data_3486177e
-#&gt; ✔ skip branch mcmc_data_5a7c1b01
-#&gt; ✔ skip branch mcmc_data_0be92724
-#&gt; ✔ skip branch mcmc_data_3ebf80f0
-#&gt; ✔ skip branch mcmc_data_f2432bbf
-#&gt; ✔ skip branch mcmc_data_ac69079a
-#&gt; ✔ skip branch mcmc_data_aaa1acbb
-#&gt; ✔ skip branch mcmc_data_0480a3af
-#&gt; ✔ skip branch mcmc_data_838cf753
-#&gt; ✔ skip branch mcmc_data_662ae017
-#&gt; ✔ skip branch mcmc_data_b58e3b76
-#&gt; ✔ skip branch mcmc_data_fa4cc7ba
-#&gt; ✔ skip branch mcmc_data_afe5680a
-#&gt; ✔ skip branch mcmc_data_75b345b7
-#&gt; ✔ skip branch mcmc_data_91bcbf36
-#&gt; ✔ skip branch mcmc_data_4ee75a24
-#&gt; ✔ skip branch mcmc_data_50bed08b
-#&gt; ✔ skip branch mcmc_data_46ba868e
-#&gt; ✔ skip branch mcmc_data_e7ec179e
-#&gt; ✔ skip branch mcmc_data_b48697aa
-#&gt; ✔ skip branch mcmc_data_c1dfcc8f
-#&gt; ✔ skip branch mcmc_data_ab2e5289
-#&gt; ✔ skip branch mcmc_data_74d3b1e0
-#&gt; ✔ skip branch mcmc_data_2f9c087e
-#&gt; ✔ skip branch mcmc_data_6676bb9f
-#&gt; ✔ skip branch mcmc_data_aad32a18
-#&gt; ✔ skip branch mcmc_data_3d34c1a4
-#&gt; ✔ skip branch mcmc_data_db6f89b0
-#&gt; ✔ skip branch mcmc_data_4f88b783
-#&gt; ✔ skip branch mcmc_data_ca329337
-#&gt; ✔ skip branch mcmc_data_8ebd0f16
-#&gt; ✔ skip branch mcmc_data_3858a64c
-#&gt; ✔ skip branch mcmc_data_3bdbe1aa
-#&gt; ✔ skip branch mcmc_data_7927bc7a
-#&gt; ✔ skip branch mcmc_data_6dd6f27c
-#&gt; ✔ skip branch mcmc_data_e26a397e
-#&gt; ✔ skip branch mcmc_data_1c151b5f
-#&gt; ✔ skip branch mcmc_data_a544c75a
-#&gt; ✔ skip branch mcmc_data_1307550d
-#&gt; ✔ skip branch mcmc_data_39f081fd
-#&gt; ✔ skip branch mcmc_data_9e66ed2d
-#&gt; ✔ skip branch mcmc_data_c93971ab
-#&gt; ✔ skip branch mcmc_data_daf0c6f7
-#&gt; ✔ skip branch mcmc_data_d5fc9555
-#&gt; ✔ skip branch mcmc_data_89f8cd62
-#&gt; ✔ skip branch mcmc_data_10b49a62
-#&gt; ✔ skip branch mcmc_data_ee2100bd
-#&gt; ✔ skip branch mcmc_data_88986825
-#&gt; ✔ skip branch mcmc_data_3e8fefa9
-#&gt; ✔ skip branch mcmc_data_bbc35011
-#&gt; ✔ skip branch mcmc_data_ee814d83
-#&gt; ✔ skip branch mcmc_data_9295dac9
-#&gt; ✔ skip branch mcmc_data_32568b3c
-#&gt; ✔ skip branch mcmc_data_8627605a
-#&gt; ✔ skip branch mcmc_data_d61e4ae0
-#&gt; ✔ skip branch mcmc_data_f265a7fe
-#&gt; ✔ skip branch mcmc_data_9fd8bc3d
-#&gt; ✔ skip branch mcmc_data_cba8ff73
-#&gt; ✔ skip branch mcmc_data_b940f6a9
-#&gt; ✔ skip branch mcmc_data_6135058f
-#&gt; ✔ skip branch mcmc_data_b2aeb051
-#&gt; ✔ skip branch mcmc_data_38b3f0c5
-#&gt; ✔ skip branch mcmc_data_21ac2de4
-#&gt; ✔ skip branch mcmc_data_12f4c5c6
-#&gt; ✔ skip branch mcmc_data_2deb1c1c
-#&gt; ✔ skip branch mcmc_data_e1245f78
-#&gt; ✔ skip branch mcmc_data_f75c8236
-#&gt; ✔ skip branch mcmc_data_04a23ef7
-#&gt; ✔ skip branch mcmc_data_47aa785e
-#&gt; ✔ skip branch mcmc_data_bf335ba8
-#&gt; ✔ skip branch mcmc_data_88789df7
-#&gt; ✔ skip branch mcmc_data_62405d51
-#&gt; ✔ skip branch mcmc_data_acc2d68d
-#&gt; ✔ skip branch mcmc_data_cc0b04c1
-#&gt; ✔ skip branch mcmc_data_0487b1ec
-#&gt; ✔ skip branch mcmc_data_4f37c3f4
-#&gt; ✔ skip branch mcmc_data_9032ddc8
-#&gt; ✔ skip branch mcmc_data_cb7f26c1
-#&gt; ✔ skip branch mcmc_data_30c4edfe
-#&gt; ✔ skip branch mcmc_data_d5d6c4a5
-#&gt; ✔ skip branch mcmc_data_5cf99f48
-#&gt; ✔ skip branch mcmc_model_c0e651c1
-#&gt; ✔ skip branch mcmc_model_f7e6997f
-#&gt; ✔ skip branch mcmc_model_be96d094
-#&gt; ✔ skip branch mcmc_model_de3daafe
-#&gt; ✔ skip branch mcmc_model_e8af3e59
-#&gt; ✔ skip branch mcmc_model_4561392d
-#&gt; ✔ skip branch mcmc_model_b880d938
-#&gt; ✔ skip branch mcmc_model_feaeb0cd
-#&gt; ✔ skip branch mcmc_model_07a4a3b4
-#&gt; ✔ skip branch mcmc_model_6fa6cc36
-#&gt; ✔ skip branch mcmc_model_4f09387c
-#&gt; ✔ skip branch mcmc_model_7bf89232
-#&gt; ✔ skip branch mcmc_model_7eacc34d
-#&gt; ✔ skip branch mcmc_model_f2f3c2ef
-#&gt; ✔ skip branch mcmc_model_7aca3daf
-#&gt; ✔ skip branch mcmc_model_71c12c22
-#&gt; ✔ skip branch mcmc_model_833c4495
-#&gt; ✔ skip branch mcmc_model_cfed47a6
-#&gt; ✔ skip branch mcmc_model_66e37ca5
-#&gt; ✔ skip branch mcmc_model_84f8dba6
-#&gt; ✔ skip branch mcmc_model_8a384a19
-#&gt; ✔ skip branch mcmc_model_d17282f4
-#&gt; ✔ skip branch mcmc_model_1bb9ffbf
-#&gt; ✔ skip branch mcmc_model_fbe1db47
-#&gt; ✔ skip branch mcmc_model_ebe93763
-#&gt; ✔ skip branch mcmc_model_dd6307b5
-#&gt; ✔ skip branch mcmc_model_a9e2a73d
-#&gt; ✔ skip branch mcmc_model_cd38ebc1
-#&gt; ✔ skip branch mcmc_model_f922b1cb
-#&gt; ✔ skip branch mcmc_model_3aaa7991
-#&gt; ✔ skip branch mcmc_model_85ec1b4c
-#&gt; ✔ skip branch mcmc_model_4e514383
-#&gt; ✔ skip branch mcmc_model_d4180ff1
-#&gt; ✔ skip branch mcmc_model_cdfabc8a
-#&gt; ✔ skip branch mcmc_model_defd2781
-#&gt; ✔ skip branch mcmc_model_0f33b6b8
-#&gt; ✔ skip branch mcmc_model_85b49f2c
-#&gt; ✔ skip branch mcmc_model_44382af0
-#&gt; ✔ skip branch mcmc_model_d3bc457a
-#&gt; ✔ skip branch mcmc_model_654f8444
-#&gt; ✔ skip branch mcmc_model_66b2975c
-#&gt; ✔ skip branch mcmc_model_9c999c78
-#&gt; ✔ skip branch mcmc_model_fc9048b8
-#&gt; ✔ skip branch mcmc_model_8fc7b675
-#&gt; ✔ skip branch mcmc_model_57511978
-#&gt; ✔ skip branch mcmc_model_cabf6fa0
-#&gt; ✔ skip branch mcmc_model_b8dbfbfd
-#&gt; ✔ skip branch mcmc_model_733ee94a
-#&gt; ✔ skip branch mcmc_model_67e90f02
-#&gt; ✔ skip branch mcmc_model_d6ab7c7d
-#&gt; ✔ skip branch mcmc_model_220c88b7
-#&gt; ✔ skip branch mcmc_model_535b306a
-#&gt; ✔ skip branch mcmc_model_b98acaac
-#&gt; ✔ skip branch mcmc_model_33cc0173
-#&gt; ✔ skip branch mcmc_model_a52bdb61
-#&gt; ✔ skip branch mcmc_model_bfcab06d
-#&gt; ✔ skip branch mcmc_model_6c5ee4e0
-#&gt; ✔ skip branch mcmc_model_c835059b
-#&gt; ✔ skip branch mcmc_model_53b5f4fe
-#&gt; ✔ skip branch mcmc_model_0154f2e8
-#&gt; ✔ skip branch mcmc_model_0d2c9d47
-#&gt; ✔ skip branch mcmc_model_5c478008
-#&gt; ✔ skip branch mcmc_model_d5dc4067
-#&gt; ✔ skip branch mcmc_model_fe8467a2
-#&gt; ✔ skip branch mcmc_model_c3d577e4
-#&gt; ✔ skip branch mcmc_model_c03dfd0a
-#&gt; ✔ skip branch mcmc_model_8252a25a
-#&gt; ✔ skip branch mcmc_model_9c6c781a
-#&gt; ✔ skip branch mcmc_model_b1ea3ccc
-#&gt; ✔ skip branch mcmc_model_83540740
-#&gt; ✔ skip branch mcmc_model_2369d064
-#&gt; ✔ skip branch mcmc_model_ae150573
-#&gt; ✔ skip branch mcmc_model_f531d0b1
-#&gt; ✔ skip branch mcmc_model_0a824133
-#&gt; ✔ skip branch mcmc_model_dda4c06d
-#&gt; ✔ skip branch mcmc_model_4365f29f
-#&gt; ✔ skip branch mcmc_model_f8ba1d0a
-#&gt; ✔ skip branch mcmc_model_3cd80108
-#&gt; ✔ skip branch mcmc_model_adbcebab
-#&gt; ✔ skip branch mcmc_model_7a522d65
-#&gt; ✔ skip branch mcmc_model_7eeee661
-#&gt; ✔ skip branch mcmc_model_5d632b60
-#&gt; ✔ skip branch mcmc_model_7556a446
-#&gt; ✔ skip branch mcmc_model_26b995d0
-#&gt; ✔ skip branch mcmc_model_3d04796f
-#&gt; ✔ skip branch mcmc_model_fcbd0889
-#&gt; ✔ skip branch mcmc_model_3c3cf5ae
-#&gt; ✔ skip branch mcmc_model_3cb4cd7b
-#&gt; ✔ skip branch mcmc_model_009af40f
-#&gt; ✔ skip branch mcmc_model_5fd6087a
-#&gt; ✔ skip branch mcmc_model_2d1acbbf
-#&gt; ✔ skip branch mcmc_model_56ca0eec
-#&gt; ✔ skip branch mcmc_model_d36885b6
-#&gt; ✔ skip branch mcmc_model_0bf12874
-#&gt; ✔ skip branch mcmc_model_f40d332b
-#&gt; ✔ skip branch mcmc_model_48a2aeda
-#&gt; ✔ skip branch mcmc_model_1c871cf6
-#&gt; ✔ skip branch mcmc_model_c142d23a
-#&gt; ✔ skip branch mcmc_model_59c8959a
-#&gt; ✔ skip branch mcmc_model_e23499bb
-#&gt; • start target mcmc
-#&gt; • built target mcmc
-#&gt; • start target convergence
-#&gt; • built target convergence
-#&gt; • start target coverage
-#&gt; • built target coverage
-#&gt; • end pipeline
-#tar_make_clustermq(workers = 100, reporter = &quot;silent&quot;)</code></pre>
+tar_make_clustermq(workers = 100, reporter = &quot;silent&quot;)</code></pre>
+<p>The following output shows how many targets ran and how many had issues. The rest were skipped because they were already up to date.</p>
+<pre class="r"><code>tar_progress_summary()
+#&gt; # A tibble: 1 x 5
+#&gt;   started built errored canceled since        
+#&gt;     &lt;int&gt; &lt;int&gt;   &lt;int&gt;    &lt;int&gt; &lt;chr&gt;        
+#&gt; 1       0     0       0        0 3.423 seconds</code></pre>
 </div>
 </div>
 <div id="results" class="section level1" number="4">
@@ -665,12 +460,12 @@ tar_make()
 <p>First, we examine convergence diagnostics. There are few visibly divergent simulation reps, so convergence issues seem unlikely to impact coverage statistics.</p>
 <pre class="r"><code>library(gt)
 gt(tar_read(convergence))</code></pre>
-<div id="swusvapqgs" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="zztcaafoit" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#swusvapqgs .gt_table {
+#zztcaafoit .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -695,7 +490,7 @@ gt(tar_read(convergence))</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#swusvapqgs .gt_heading {
+#zztcaafoit .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -707,7 +502,7 @@ gt(tar_read(convergence))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#swusvapqgs .gt_title {
+#zztcaafoit .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -717,7 +512,7 @@ gt(tar_read(convergence))</code></pre>
   border-bottom-width: 0;
 }
 
-#swusvapqgs .gt_subtitle {
+#zztcaafoit .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -727,13 +522,13 @@ gt(tar_read(convergence))</code></pre>
   border-top-width: 0;
 }
 
-#swusvapqgs .gt_bottom_border {
+#zztcaafoit .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#swusvapqgs .gt_col_headings {
+#zztcaafoit .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -748,7 +543,7 @@ gt(tar_read(convergence))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#swusvapqgs .gt_col_heading {
+#zztcaafoit .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -768,7 +563,7 @@ gt(tar_read(convergence))</code></pre>
   overflow-x: hidden;
 }
 
-#swusvapqgs .gt_column_spanner_outer {
+#zztcaafoit .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -780,15 +575,15 @@ gt(tar_read(convergence))</code></pre>
   padding-right: 4px;
 }
 
-#swusvapqgs .gt_column_spanner_outer:first-child {
+#zztcaafoit .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#swusvapqgs .gt_column_spanner_outer:last-child {
+#zztcaafoit .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#swusvapqgs .gt_column_spanner {
+#zztcaafoit .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -800,7 +595,7 @@ gt(tar_read(convergence))</code></pre>
   width: 100%;
 }
 
-#swusvapqgs .gt_group_heading {
+#zztcaafoit .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -822,7 +617,7 @@ gt(tar_read(convergence))</code></pre>
   vertical-align: middle;
 }
 
-#swusvapqgs .gt_empty_group_heading {
+#zztcaafoit .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -837,15 +632,15 @@ gt(tar_read(convergence))</code></pre>
   vertical-align: middle;
 }
 
-#swusvapqgs .gt_from_md > :first-child {
+#zztcaafoit .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#swusvapqgs .gt_from_md > :last-child {
+#zztcaafoit .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#swusvapqgs .gt_row {
+#zztcaafoit .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -864,7 +659,7 @@ gt(tar_read(convergence))</code></pre>
   overflow-x: hidden;
 }
 
-#swusvapqgs .gt_stub {
+#zztcaafoit .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -876,7 +671,7 @@ gt(tar_read(convergence))</code></pre>
   padding-left: 12px;
 }
 
-#swusvapqgs .gt_summary_row {
+#zztcaafoit .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -886,7 +681,7 @@ gt(tar_read(convergence))</code></pre>
   padding-right: 5px;
 }
 
-#swusvapqgs .gt_first_summary_row {
+#zztcaafoit .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -896,7 +691,7 @@ gt(tar_read(convergence))</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#swusvapqgs .gt_grand_summary_row {
+#zztcaafoit .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -906,7 +701,7 @@ gt(tar_read(convergence))</code></pre>
   padding-right: 5px;
 }
 
-#swusvapqgs .gt_first_grand_summary_row {
+#zztcaafoit .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -916,11 +711,11 @@ gt(tar_read(convergence))</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#swusvapqgs .gt_striped {
+#zztcaafoit .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#swusvapqgs .gt_table_body {
+#zztcaafoit .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -929,7 +724,7 @@ gt(tar_read(convergence))</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#swusvapqgs .gt_footnotes {
+#zztcaafoit .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -943,13 +738,13 @@ gt(tar_read(convergence))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#swusvapqgs .gt_footnote {
+#zztcaafoit .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#swusvapqgs .gt_sourcenotes {
+#zztcaafoit .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -963,41 +758,41 @@ gt(tar_read(convergence))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#swusvapqgs .gt_sourcenote {
+#zztcaafoit .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#swusvapqgs .gt_left {
+#zztcaafoit .gt_left {
   text-align: left;
 }
 
-#swusvapqgs .gt_center {
+#zztcaafoit .gt_center {
   text-align: center;
 }
 
-#swusvapqgs .gt_right {
+#zztcaafoit .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#swusvapqgs .gt_font_normal {
+#zztcaafoit .gt_font_normal {
   font-weight: normal;
 }
 
-#swusvapqgs .gt_font_bold {
+#zztcaafoit .gt_font_bold {
   font-weight: bold;
 }
 
-#swusvapqgs .gt_font_italic {
+#zztcaafoit .gt_font_italic {
   font-style: italic;
 }
 
-#swusvapqgs .gt_super {
+#zztcaafoit .gt_super {
   font-size: 65%;
 }
 
-#swusvapqgs .gt_footnote_marks {
+#zztcaafoit .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 65%;
@@ -1019,14 +814,14 @@ gt(tar_read(convergence))</code></pre>
   
 </table>
 </div>
-<p>Finally, we report coverage statistics. If the model is implemented correctly, <code>coverage_50</code> should not differ systematically from 0.5, and <code>coverage_95</code> should not differ systematically from 0.95. Coverage appears nominal in the table below. If there is doubt, simply increase the number of batches or reps per batch in <code>tar_stan_mcmc_rep_summary()</code> and run the pipeline again.</p>
+<p>Finally, we report coverage statistics. Coverage does not appear to systematically deviate from nominal: <code>coverage_50</code> is around 0.5, and <code>coverage_95</code> is around 0.95.</p>
 <pre class="r"><code>gt(tar_read(coverage))</code></pre>
-<div id="ypjvoylgxr" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="eugujtulmo" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#ypjvoylgxr .gt_table {
+#eugujtulmo .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -1051,7 +846,7 @@ gt(tar_read(convergence))</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#ypjvoylgxr .gt_heading {
+#eugujtulmo .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1063,7 +858,7 @@ gt(tar_read(convergence))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#ypjvoylgxr .gt_title {
+#eugujtulmo .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1073,7 +868,7 @@ gt(tar_read(convergence))</code></pre>
   border-bottom-width: 0;
 }
 
-#ypjvoylgxr .gt_subtitle {
+#eugujtulmo .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1083,13 +878,13 @@ gt(tar_read(convergence))</code></pre>
   border-top-width: 0;
 }
 
-#ypjvoylgxr .gt_bottom_border {
+#eugujtulmo .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ypjvoylgxr .gt_col_headings {
+#eugujtulmo .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1104,7 +899,7 @@ gt(tar_read(convergence))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#ypjvoylgxr .gt_col_heading {
+#eugujtulmo .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1124,7 +919,7 @@ gt(tar_read(convergence))</code></pre>
   overflow-x: hidden;
 }
 
-#ypjvoylgxr .gt_column_spanner_outer {
+#eugujtulmo .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1136,15 +931,15 @@ gt(tar_read(convergence))</code></pre>
   padding-right: 4px;
 }
 
-#ypjvoylgxr .gt_column_spanner_outer:first-child {
+#eugujtulmo .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ypjvoylgxr .gt_column_spanner_outer:last-child {
+#eugujtulmo .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ypjvoylgxr .gt_column_spanner {
+#eugujtulmo .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1156,7 +951,7 @@ gt(tar_read(convergence))</code></pre>
   width: 100%;
 }
 
-#ypjvoylgxr .gt_group_heading {
+#eugujtulmo .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1178,7 +973,7 @@ gt(tar_read(convergence))</code></pre>
   vertical-align: middle;
 }
 
-#ypjvoylgxr .gt_empty_group_heading {
+#eugujtulmo .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1193,15 +988,15 @@ gt(tar_read(convergence))</code></pre>
   vertical-align: middle;
 }
 
-#ypjvoylgxr .gt_from_md > :first-child {
+#eugujtulmo .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ypjvoylgxr .gt_from_md > :last-child {
+#eugujtulmo .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ypjvoylgxr .gt_row {
+#eugujtulmo .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1220,7 +1015,7 @@ gt(tar_read(convergence))</code></pre>
   overflow-x: hidden;
 }
 
-#ypjvoylgxr .gt_stub {
+#eugujtulmo .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1232,7 +1027,7 @@ gt(tar_read(convergence))</code></pre>
   padding-left: 12px;
 }
 
-#ypjvoylgxr .gt_summary_row {
+#eugujtulmo .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1242,7 +1037,7 @@ gt(tar_read(convergence))</code></pre>
   padding-right: 5px;
 }
 
-#ypjvoylgxr .gt_first_summary_row {
+#eugujtulmo .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1252,7 +1047,7 @@ gt(tar_read(convergence))</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#ypjvoylgxr .gt_grand_summary_row {
+#eugujtulmo .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1262,7 +1057,7 @@ gt(tar_read(convergence))</code></pre>
   padding-right: 5px;
 }
 
-#ypjvoylgxr .gt_first_grand_summary_row {
+#eugujtulmo .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1272,11 +1067,11 @@ gt(tar_read(convergence))</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#ypjvoylgxr .gt_striped {
+#eugujtulmo .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ypjvoylgxr .gt_table_body {
+#eugujtulmo .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1285,7 +1080,7 @@ gt(tar_read(convergence))</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#ypjvoylgxr .gt_footnotes {
+#eugujtulmo .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1299,13 +1094,13 @@ gt(tar_read(convergence))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#ypjvoylgxr .gt_footnote {
+#eugujtulmo .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#ypjvoylgxr .gt_sourcenotes {
+#eugujtulmo .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1319,41 +1114,41 @@ gt(tar_read(convergence))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#ypjvoylgxr .gt_sourcenote {
+#eugujtulmo .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#ypjvoylgxr .gt_left {
+#eugujtulmo .gt_left {
   text-align: left;
 }
 
-#ypjvoylgxr .gt_center {
+#eugujtulmo .gt_center {
   text-align: center;
 }
 
-#ypjvoylgxr .gt_right {
+#eugujtulmo .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ypjvoylgxr .gt_font_normal {
+#eugujtulmo .gt_font_normal {
   font-weight: normal;
 }
 
-#ypjvoylgxr .gt_font_bold {
+#eugujtulmo .gt_font_bold {
   font-weight: bold;
 }
 
-#ypjvoylgxr .gt_font_italic {
+#eugujtulmo .gt_font_italic {
   font-style: italic;
 }
 
-#ypjvoylgxr .gt_super {
+#eugujtulmo .gt_super {
   font-size: 65%;
 }
 
-#ypjvoylgxr .gt_footnote_marks {
+#eugujtulmo .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 65%;
@@ -1427,10 +1222,14 @@ gt(tar_read(convergence))</code></pre>
 <h1 number="5"><span class="header-section-number">5</span> Resources</h1>
 <ul>
 <li>Source: <a href="https://github.com/wlandau/rmedicine2021-pipeline" class="uri">https://github.com/wlandau/rmedicine2021-pipeline</a></li>
-<li>Slides: <a href="https://wlandau.github.io/rmedicine2021-slides" class="uri">https://wlandau.github.io/rmedicine2021-slides</a></li>
+<li>Slides: <a href="https://wlandau.github.io/rmedicine2021-slides/" class="uri">https://wlandau.github.io/rmedicine2021-slides/</a></li>
 <li><code>targets</code>: <a href="https://docs.ropensci.org/targets/" class="uri">https://docs.ropensci.org/targets/</a></li>
 <li>Target Markdown: <a href="https://books.ropensci.org/targets/markdown.html" class="uri">https://books.ropensci.org/targets/markdown.html</a></li>
+<li>R Markdown: <a href="https://bookdown.org/yihui/rmarkdown" class="uri">https://bookdown.org/yihui/rmarkdown</a></li>
 <li><code>stantargets</code>: <a href="https://docs.ropensci.org/stantargets/" class="uri">https://docs.ropensci.org/stantargets/</a></li>
+<li>Stan: <a href="https://mc-stan.org/" class="uri">https://mc-stan.org/</a></li>
+<li><code>cmdstanr</code>: <a href="https://mc-stan.org/cmdstanr/" class="uri">https://mc-stan.org/cmdstanr/</a></li>
+<li><code>posterior</code>: <a href="https://mc-stan.org/posterior/" class="uri">https://mc-stan.org/posterior/</a></li>
 </ul>
 </div>
 <div id="references" class="section level1 unnumbered">

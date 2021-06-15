@@ -230,6 +230,12 @@ unlink("logs", recursive = TRUE)
 tar_make_clustermq(workers = 100, reporter = "silent")
 ```
 
+The following output shows how many targets ran and how many had issues. The rest were skipped because they were already up to date.
+
+```{r}
+tar_progress_summary()
+```
+
 # Results
 
 First, we examine convergence diagnostics. There are few visibly divergent simulation reps, so convergence issues seem unlikely to impact coverage statistics.
@@ -239,7 +245,7 @@ library(gt)
 gt(tar_read(convergence))
 ```
 
-Finally, we report coverage statistics. If the model is implemented correctly, `coverage_50` should not differ systematically from 0.5, and `coverage_95` should not differ systematically from 0.95. Coverage appears nominal in the table below. If there is doubt, simply increase the number of batches or reps per batch in `tar_stan_mcmc_rep_summary()` and run the pipeline again.
+Finally, we report coverage statistics. Coverage does not appear to systematically deviate from nominal: `coverage_50` is around 0.5, and `coverage_95` is around 0.95.
 
 ```{r}
 gt(tar_read(coverage))
@@ -248,9 +254,13 @@ gt(tar_read(coverage))
 # Resources
 
 * Source: <https://github.com/wlandau/rmedicine2021-pipeline>
-* Slides: <https://wlandau.github.io/rmedicine2021-slides>
+* Slides: <https://wlandau.github.io/rmedicine2021-slides/>
 * `targets`: <https://docs.ropensci.org/targets/>
 * Target Markdown: <https://books.ropensci.org/targets/markdown.html>
-* `stantargets`: <https://docs.ropensci.org/stantargets/>
+* R Markdown: <https://bookdown.org/yihui/rmarkdown>
+* `stantargets`:  <https://docs.ropensci.org/stantargets/>
+* Stan: <https://mc-stan.org/>
+* `cmdstanr`: <https://mc-stan.org/cmdstanr/>
+* `posterior`: <https://mc-stan.org/posterior/>
 
 # References
