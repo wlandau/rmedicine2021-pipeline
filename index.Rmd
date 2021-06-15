@@ -97,6 +97,7 @@ Next, we register the packages required to *run* the pipeline, as well as and gl
 ```{targets settings, tar_globals = TRUE}
 tar_option_set(
   packages = c("extraDistr", "tidyverse", "trialr"),
+  deployment = "main", # Set to "worker" in tar_stan_mcmc_rep_summary().
   storage = "worker",
   retrieval = "worker",
   memory = "transient",
@@ -112,7 +113,7 @@ options(clustermq.scheduler = "sge", clustermq.template = "sge.tmpl")
 
 ## Data generation
 
-The following function simulates a single clinical trial dataset from the prior predictive distribution of the model. The function returns a Stan data list and accepts arguments `n_patients` (number of patients in the trial), `n_visits` (number of scheduled study visits, e.g. repeated measures per patient), and `n_arms` (number of study arms, e.g. treatment groups). To mitigate numerical stability issues, the covariance matrix is restricted (via rejection sampling) such that each response standard deviation lies is less than 10. The `.join_data` list at the end tells `stantargets` to append the prior predictive draws of model parameters to the MCMC output.
+The following function simulates a single clinical trial dataset from the prior predictive distribution of the model. The function returns a Stan data list and accepts arguments `n_patients` (number of patients in the trial), `n_visits` (number of scheduled study visits, e.g. repeated measures per patient), and `n_arms` (number of study arms, e.g. treatment groups). A random 5 values are missing to test the imputation. To mitigate numerical stability issues, the covariance matrix is restricted (via rejection sampling) such that each response standard deviation is less than 8. The `.join_data` list at the end tells `stantargets` to append the prior predictive draws of model parameters to the MCMC output.
 
 ```{targets data, tar_globals = TRUE}
 simulate_data <- function(n_patients = 50, n_visits = 3, n_arms = 2) {
@@ -125,7 +126,7 @@ simulate_data <- function(n_patients = 50, n_visits = 3, n_arms = 2) {
     as.matrix()
   beta <- rnorm(n = ncol(x), mean = 0, sd = 2)
   sigma <- NULL
-  while (is.null(sigma) || max(sigma) > 10) {
+  while (is.null(sigma) || max(sigma) > 8) {
     rho <- rlkjcorr(n = 1, K = n_visits, eta = 1)
     lambda <- t(chol(rho))
     sigma <- rhcauchy(n = n_visits, sigma = 1)
@@ -137,6 +138,10 @@ simulate_data <- function(n_patients = 50, n_visits = 3, n_arms = 2) {
     mutate(response = MASS::mvrnorm(n = 1L, mu = x_beta, Sigma = covariance)) %>%
     ungroup() %>%
     select(response, arm, patient, visit, covariate1, covariate2, group)
+  which_missing <- sample.int(n = length(data$response), size = 5)
+  missing <- rep(0L, length(data$response))
+  missing[which_missing] <- 1L
+  data$response[which_missing] <- -99999
   list(
     data = data,
     y = data$response,
@@ -148,6 +153,9 @@ simulate_data <- function(n_patients = 50, n_visits = 3, n_arms = 2) {
     n_visits = n_visits,
     s_beta = 2,
     s_sigma = 1,
+    missing = missing,
+    count_missing = cumsum(missing),
+    n_missing = sum(missing),
     .join_data = list(
       beta = beta,
       sigma = sigma,
@@ -182,7 +190,8 @@ tar_stan_mcmc_rep_summary(
     # We use Gelman-Rubin potential scale reduction factors to
     # assess convergence:
     rhat = ~posterior::rhat(.x)
-  )
+  ),
+  deployment = "worker"
 )
 ```
 
@@ -200,7 +209,7 @@ Our last target calculates coverage levels across all simulations.
 
 ```{targets coverage, tar_simple = TRUE}
 mcmc %>%
-  filter(!is.na(rhat), variable != "lp__") %>%
+  filter(!is.na(rhat), !grepl("lp__|y_missing", variable)) %>%
   group_by(variable) %>%
   summarize(
     coverage_50 = mean(q25 < .join_data & .join_data < q75),
@@ -230,7 +239,7 @@ unlink("logs", recursive = TRUE)
 tar_make_clustermq(workers = 100, reporter = "silent")
 ```
 
-The following output shows how many targets ran and how many had issues. The rest were skipped because they were already up to date.
+The following output shows how many targets were skipped, how many ran, and how many had issues.
 
 ```{r}
 tar_progress_summary()
