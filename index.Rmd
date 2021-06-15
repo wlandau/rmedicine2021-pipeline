@@ -166,7 +166,7 @@ tar_stan_mcmc_rep_summary(
   name = mcmc,
   stan_files = "model.stan",
   data = simulate_data(), # Runs once per rep.
-  batches = 200, # Number of branch targets.
+  batches = 100, # Number of branch targets.
   reps = 10, # Number of model reps per branch target.
   chains = 4, # Number of MCMC chains.
   parallel_chains = 4, # How many MCMC chains to run in parallel.
