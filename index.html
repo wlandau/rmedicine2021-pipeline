@@ -5725,12 +5725,12 @@ library(stantargets)
   name = mcmc,
   stan_files = &quot;model.stan&quot;,
   data = simulate_data(), # Runs once per rep.
-  batches = 100, # Number of branch targets.
+  batches = 200, # Number of branch targets.
   reps = 10, # Number of model reps per branch target.
   chains = 4, # Number of MCMC chains.
   parallel_chains = 4, # How many MCMC chains to run in parallel.
-  iter_warmup = 1e4, # Number of MCMC warmup iterations to run.
-  iter_sampling = 1e4, # Number of MCMC post-warmup iterations to run.
+  iter_warmup = 4e4, # Number of MCMC warmup iterations to run.
+  iter_sampling = 4e4, # Number of MCMC post-warmup iterations to run.
   summaries = list(
     # Compute posterior intervals at levels 50% and 95%.
     # The 50% intervals should cover prior predictive parameter draws
@@ -5744,7 +5744,7 @@ library(stantargets)
   )
 )
 #&gt; Established _targets.R and _targets_r/targets/mcmc.R.</code></pre>
-<p>After we fit the model, we assess convergence using univariate Gelman-Rubin potential scale reduction factors <span class="citation">(Gelman et al. 2014)</span> on all scalar parameters across all simulations. Below, we report the maximum Gelman factor of each visibly divergent simulation rep (i.e. with a Gelman factor above 1.01).</p>
+<p>After we fit the model, we assess convergence using univariate Gelman-Rubin potential scale reduction factors <span class="citation">(Gelman et al. 2014)</span> on all scalar parameters across all simulations. Below, we report the maximum Gelman factor of each visibly divergent simulation rep (i.e. with a Gelman factor above 1.01). Because this is a single target and easy to define, we can set the <code>tar_simple</code> chunk option to <code>TRUE</code>. That way, the chunk label becomes the target name, and the chunk code becomes the target command.</p>
 <pre class="r"><code>tar_target(convergence, {
   mcmc %&gt;%
     filter(!is.na(rhat) &amp; rhat &gt; 1.01) %&gt;%
@@ -5754,7 +5754,7 @@ library(stantargets)
 })
 #&gt; Defined target convergence automatically from chunk code.
 #&gt; Established _targets.R and _targets_r/targets/convergence.R.</code></pre>
-<p>Our last target calculates coverage levels across all simulations. Because this is a single target and easy to define, we can set the <code>tar_simple</code> chunk option to <code>TRUE</code>. That way, the chunk label becomes the target name, and the chunk code becomes the target command.</p>
+<p>Our last target calculates coverage levels across all simulations.</p>
 <pre class="r"><code>tar_target(coverage, {
   mcmc %&gt;%
     filter(!is.na(rhat), variable != &quot;lp__&quot;) %&gt;%
@@ -5776,15 +5776,15 @@ library(stantargets)
 <h2><span class="header-section-number">3.1</span> Inspect the pipeline</h2>
 <p>But first, it is good practice to visualize the dependency graph to verify that the workflow is correctly specified. All targets should be connected by graph edges, and they should appear in the correct order in relation to one another.</p>
 <pre class="r"><code>tar_visnetwork()</code></pre>
-<div id="htmlwidget-d169c773dee3cd57c267" style="width:672px;height:480px;" class="visNetwork html-widget"></div>
-<script type="application/json" data-for="htmlwidget-d169c773dee3cd57c267">{"x":{"nodes":{"name":["convergence","coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","simulate_data"],"type":["stem","stem","stem","stem","pattern","stem","pattern","function"],"status":["outdated","outdated","outdated","uptodate","uptodate","uptodate","outdated","uptodate"],"seconds":[8.344,7.781,5.272,0.002,162.819,47.683,122148.603,null],"bytes":[363,442,1511656,96,3611115,1732011,1817476,null],"branches":[null,null,null,null,100,null,100,null],"id":["convergence","coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","simulate_data"],"label":["convergence","coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","simulate_data"],"level":[5,5,4,1,2,1,3,1],"color":["#78B7C5","#78B7C5","#78B7C5","#354823","#354823","#354823","#78B7C5","#354823"],"shape":["dot","dot","dot","dot","square","dot","square","triangle"]},"edges":{"from":["mcmc","mcmc_data","mcmc_file_model","simulate_data","mcmc_batch","mcmc","mcmc_model"],"to":["convergence","mcmc_model","mcmc_model","mcmc_data","mcmc_data","coverage","mcmc"],"arrows":["to","to","to","to","to","to","to"]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot","physics":false},"manipulation":{"enabled":false},"edges":{"smooth":{"type":"cubicBezier","forceDirection":"horizontal"}},"physics":{"stabilization":false},"layout":{"hierarchical":{"enabled":true,"direction":"LR"}}},"groups":null,"width":null,"height":null,"idselection":{"enabled":false,"style":"width: 150px; height: 26px","useLabels":true,"main":"Select by id"},"byselection":{"enabled":false,"style":"width: 150px; height: 26px","multiple":false,"hideColor":"rgba(200,200,200,0.5)","highlight":false},"main":{"text":"","style":"font-family:Georgia, Times New Roman, Times, serif;font-weight:bold;font-size:20px;text-align:center;"},"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)","highlight":{"enabled":true,"hoverNearest":false,"degree":{"from":1,"to":1},"algorithm":"hierarchical","hideColor":"rgba(200,200,200,0.5)","labelOnly":true},"collapse":{"enabled":true,"fit":false,"resetHighlight":true,"clusterOptions":null,"keepCoord":true,"labelSuffix":"(cluster)"},"legend":{"width":0.2,"useGroups":false,"position":"right","ncol":1,"stepX":100,"stepY":100,"zoom":true,"nodes":{"label":["Outdated","Up to date","Stem","Pattern","Function"],"color":["#78B7C5","#354823","#899DA4","#899DA4","#899DA4"],"shape":["dot","dot","dot","square","triangle"]},"nodesToDataframe":true}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-de375101a509338a1768" style="width:672px;height:480px;" class="visNetwork html-widget"></div>
+<script type="application/json" data-for="htmlwidget-de375101a509338a1768">{"x":{"nodes":{"name":["convergence","coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","simulate_data"],"type":["stem","stem","stem","stem","pattern","stem","pattern","function"],"status":["outdated","outdated","outdated","uptodate","uptodate","uptodate","outdated","uptodate"],"seconds":[12.262,14.922,9.541,0.002,85.328,47.683,607143.313,null],"bytes":[278,428,3019951,96,3610931,1732011,3634841,null],"branches":[null,null,null,null,200,null,200,null],"id":["convergence","coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","simulate_data"],"label":["convergence","coverage","mcmc","mcmc_batch","mcmc_data","mcmc_file_model","mcmc_model","simulate_data"],"level":[5,5,4,1,2,1,3,1],"color":["#78B7C5","#78B7C5","#78B7C5","#354823","#354823","#354823","#78B7C5","#354823"],"shape":["dot","dot","dot","dot","square","dot","square","triangle"]},"edges":{"from":["mcmc","mcmc_data","mcmc_file_model","simulate_data","mcmc_batch","mcmc","mcmc_model"],"to":["coverage","mcmc_model","mcmc_model","mcmc_data","mcmc_data","convergence","mcmc"],"arrows":["to","to","to","to","to","to","to"]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot","physics":false},"manipulation":{"enabled":false},"edges":{"smooth":{"type":"cubicBezier","forceDirection":"horizontal"}},"physics":{"stabilization":false},"layout":{"hierarchical":{"enabled":true,"direction":"LR"}}},"groups":null,"width":null,"height":null,"idselection":{"enabled":false,"style":"width: 150px; height: 26px","useLabels":true,"main":"Select by id"},"byselection":{"enabled":false,"style":"width: 150px; height: 26px","multiple":false,"hideColor":"rgba(200,200,200,0.5)","highlight":false},"main":{"text":"","style":"font-family:Georgia, Times New Roman, Times, serif;font-weight:bold;font-size:20px;text-align:center;"},"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)","highlight":{"enabled":true,"hoverNearest":false,"degree":{"from":1,"to":1},"algorithm":"hierarchical","hideColor":"rgba(200,200,200,0.5)","labelOnly":true},"collapse":{"enabled":true,"fit":false,"resetHighlight":true,"clusterOptions":null,"keepCoord":true,"labelSuffix":"(cluster)"},"legend":{"width":0.2,"useGroups":false,"position":"right","ncol":1,"stepX":100,"stepY":100,"zoom":true,"nodes":{"label":["Outdated","Up to date","Stem","Pattern","Function"],"color":["#78B7C5","#354823","#899DA4","#899DA4","#899DA4"],"shape":["dot","dot","dot","square","triangle"]},"nodesToDataframe":true}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div id="run-the-pipeline" class="section level2">
 <h2><span class="header-section-number">3.2</span> Run the pipeline</h2>
 <p>Because there are so many simulations to run, the pipeline could take a long time. Below, we use the <code>tar_make_clustermq()</code> to run different targets on different parallel workers on a Sun Grid Engine (SGE) cluster. Because of the long computation time, if there are any outdated targets according to the graph above, it is recommended to run this report in a non-interactive background process (e.g. via the included shell script <code>run.sh</code>) rather than clicking the “Knit” button in the RStudio IDE. While the pipeline is running, you may wish to monitor the SGE workers with <code>qstat</code> and monitor the progress of the targets using <code>tar_watch()</code> and/or <code>tar_poll()</code>.</p>
 <pre class="r"><code>unlink(&quot;logs&quot;, recursive = TRUE)
 tar_make_clustermq(workers = 100, reporter = &quot;silent&quot;)
-#&gt; Master: [7500.3s 0.8% CPU]; Worker: [avg 1.2% CPU, max 458.5 Mb]</code></pre>
+#&gt; Master: [33443.1s 0.6% CPU]; Worker: [avg 1.2% CPU, max 769.2 Mb]</code></pre>
 </div>
 </div>
 <div id="results" class="section level1">
@@ -5792,12 +5792,12 @@ tar_make_clustermq(workers = 100, reporter = &quot;silent&quot;)
 <p>First, we examine convergence diagnostics. There are few visibly divergent simulation reps, so convergence issues seem unlikely to impact coverage statistics.</p>
 <pre class="r"><code>library(gt)
 gt(tar_read(convergence))</code></pre>
-<div id="mpurhnqffh" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="bchzfhktio" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#mpurhnqffh .gt_table {
+#bchzfhktio .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -5822,7 +5822,7 @@ gt(tar_read(convergence))</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#mpurhnqffh .gt_heading {
+#bchzfhktio .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -5834,7 +5834,7 @@ gt(tar_read(convergence))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#mpurhnqffh .gt_title {
+#bchzfhktio .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -5844,7 +5844,7 @@ gt(tar_read(convergence))</code></pre>
   border-bottom-width: 0;
 }
 
-#mpurhnqffh .gt_subtitle {
+#bchzfhktio .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -5854,13 +5854,13 @@ gt(tar_read(convergence))</code></pre>
   border-top-width: 0;
 }
 
-#mpurhnqffh .gt_bottom_border {
+#bchzfhktio .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#mpurhnqffh .gt_col_headings {
+#bchzfhktio .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -5875,7 +5875,7 @@ gt(tar_read(convergence))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#mpurhnqffh .gt_col_heading {
+#bchzfhktio .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -5895,7 +5895,7 @@ gt(tar_read(convergence))</code></pre>
   overflow-x: hidden;
 }
 
-#mpurhnqffh .gt_column_spanner_outer {
+#bchzfhktio .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -5907,15 +5907,15 @@ gt(tar_read(convergence))</code></pre>
   padding-right: 4px;
 }
 
-#mpurhnqffh .gt_column_spanner_outer:first-child {
+#bchzfhktio .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#mpurhnqffh .gt_column_spanner_outer:last-child {
+#bchzfhktio .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#mpurhnqffh .gt_column_spanner {
+#bchzfhktio .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -5927,7 +5927,7 @@ gt(tar_read(convergence))</code></pre>
   width: 100%;
 }
 
-#mpurhnqffh .gt_group_heading {
+#bchzfhktio .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -5949,7 +5949,7 @@ gt(tar_read(convergence))</code></pre>
   vertical-align: middle;
 }
 
-#mpurhnqffh .gt_empty_group_heading {
+#bchzfhktio .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -5964,15 +5964,15 @@ gt(tar_read(convergence))</code></pre>
   vertical-align: middle;
 }
 
-#mpurhnqffh .gt_from_md > :first-child {
+#bchzfhktio .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#mpurhnqffh .gt_from_md > :last-child {
+#bchzfhktio .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#mpurhnqffh .gt_row {
+#bchzfhktio .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -5991,7 +5991,7 @@ gt(tar_read(convergence))</code></pre>
   overflow-x: hidden;
 }
 
-#mpurhnqffh .gt_stub {
+#bchzfhktio .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -6003,7 +6003,7 @@ gt(tar_read(convergence))</code></pre>
   padding-left: 12px;
 }
 
-#mpurhnqffh .gt_summary_row {
+#bchzfhktio .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -6013,7 +6013,7 @@ gt(tar_read(convergence))</code></pre>
   padding-right: 5px;
 }
 
-#mpurhnqffh .gt_first_summary_row {
+#bchzfhktio .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -6023,7 +6023,7 @@ gt(tar_read(convergence))</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#mpurhnqffh .gt_grand_summary_row {
+#bchzfhktio .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -6033,7 +6033,7 @@ gt(tar_read(convergence))</code></pre>
   padding-right: 5px;
 }
 
-#mpurhnqffh .gt_first_grand_summary_row {
+#bchzfhktio .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -6043,11 +6043,11 @@ gt(tar_read(convergence))</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#mpurhnqffh .gt_striped {
+#bchzfhktio .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#mpurhnqffh .gt_table_body {
+#bchzfhktio .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -6056,7 +6056,7 @@ gt(tar_read(convergence))</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#mpurhnqffh .gt_footnotes {
+#bchzfhktio .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -6070,13 +6070,13 @@ gt(tar_read(convergence))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#mpurhnqffh .gt_footnote {
+#bchzfhktio .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#mpurhnqffh .gt_sourcenotes {
+#bchzfhktio .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -6090,41 +6090,41 @@ gt(tar_read(convergence))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#mpurhnqffh .gt_sourcenote {
+#bchzfhktio .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#mpurhnqffh .gt_left {
+#bchzfhktio .gt_left {
   text-align: left;
 }
 
-#mpurhnqffh .gt_center {
+#bchzfhktio .gt_center {
   text-align: center;
 }
 
-#mpurhnqffh .gt_right {
+#bchzfhktio .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#mpurhnqffh .gt_font_normal {
+#bchzfhktio .gt_font_normal {
   font-weight: normal;
 }
 
-#mpurhnqffh .gt_font_bold {
+#bchzfhktio .gt_font_bold {
   font-weight: bold;
 }
 
-#mpurhnqffh .gt_font_italic {
+#bchzfhktio .gt_font_italic {
   font-style: italic;
 }
 
-#mpurhnqffh .gt_super {
+#bchzfhktio .gt_super {
   font-size: 65%;
 }
 
-#mpurhnqffh .gt_footnote_marks {
+#bchzfhktio .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 65%;
@@ -6140,13 +6140,15 @@ gt(tar_read(convergence))</code></pre>
   </thead>
   <tbody class="gt_table_body">
     <tr><td class="gt_row gt_left">4bf0f60b</td>
-<td class="gt_row gt_right">2.170718</td></tr>
-    <tr><td class="gt_row gt_left">d287910c</td>
-<td class="gt_row gt_right">1.048701</td></tr>
-    <tr><td class="gt_row gt_left">3df4c68c</td>
-<td class="gt_row gt_right">1.015173</td></tr>
-    <tr><td class="gt_row gt_left">4bdd23ed</td>
-<td class="gt_row gt_right">1.013737</td></tr>
+<td class="gt_row gt_right">1.826676</td></tr>
+    <tr><td class="gt_row gt_left">159eec42</td>
+<td class="gt_row gt_right">1.803255</td></tr>
+    <tr><td class="gt_row gt_left">1d0d58c6</td>
+<td class="gt_row gt_right">1.031285</td></tr>
+    <tr><td class="gt_row gt_left">43581461</td>
+<td class="gt_row gt_right">1.029925</td></tr>
+    <tr><td class="gt_row gt_left">2758d247</td>
+<td class="gt_row gt_right">1.011343</td></tr>
   </tbody>
   
   
@@ -6154,12 +6156,12 @@ gt(tar_read(convergence))</code></pre>
 </div>
 <p>Finally, we report coverage statistics. If the model is implemented correctly, <code>coverage_50</code> should not differ systematically from 0.5, and <code>coverage_95</code> should not differ systematically from 0.95. Coverage appears nominal in the table below. If there is doubt, simply increase the number of batches or reps per batch in <code>tar_stan_mcmc_rep_summary()</code> and run the pipeline again.</p>
 <pre class="r"><code>gt(tar_read(coverage))</code></pre>
-<div id="vwnfdvztbd" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="izagjkkrpx" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#vwnfdvztbd .gt_table {
+#izagjkkrpx .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -6184,7 +6186,7 @@ gt(tar_read(convergence))</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#vwnfdvztbd .gt_heading {
+#izagjkkrpx .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -6196,7 +6198,7 @@ gt(tar_read(convergence))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#vwnfdvztbd .gt_title {
+#izagjkkrpx .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -6206,7 +6208,7 @@ gt(tar_read(convergence))</code></pre>
   border-bottom-width: 0;
 }
 
-#vwnfdvztbd .gt_subtitle {
+#izagjkkrpx .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -6216,13 +6218,13 @@ gt(tar_read(convergence))</code></pre>
   border-top-width: 0;
 }
 
-#vwnfdvztbd .gt_bottom_border {
+#izagjkkrpx .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#vwnfdvztbd .gt_col_headings {
+#izagjkkrpx .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -6237,7 +6239,7 @@ gt(tar_read(convergence))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#vwnfdvztbd .gt_col_heading {
+#izagjkkrpx .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -6257,7 +6259,7 @@ gt(tar_read(convergence))</code></pre>
   overflow-x: hidden;
 }
 
-#vwnfdvztbd .gt_column_spanner_outer {
+#izagjkkrpx .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -6269,15 +6271,15 @@ gt(tar_read(convergence))</code></pre>
   padding-right: 4px;
 }
 
-#vwnfdvztbd .gt_column_spanner_outer:first-child {
+#izagjkkrpx .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#vwnfdvztbd .gt_column_spanner_outer:last-child {
+#izagjkkrpx .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#vwnfdvztbd .gt_column_spanner {
+#izagjkkrpx .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -6289,7 +6291,7 @@ gt(tar_read(convergence))</code></pre>
   width: 100%;
 }
 
-#vwnfdvztbd .gt_group_heading {
+#izagjkkrpx .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -6311,7 +6313,7 @@ gt(tar_read(convergence))</code></pre>
   vertical-align: middle;
 }
 
-#vwnfdvztbd .gt_empty_group_heading {
+#izagjkkrpx .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -6326,15 +6328,15 @@ gt(tar_read(convergence))</code></pre>
   vertical-align: middle;
 }
 
-#vwnfdvztbd .gt_from_md > :first-child {
+#izagjkkrpx .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#vwnfdvztbd .gt_from_md > :last-child {
+#izagjkkrpx .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#vwnfdvztbd .gt_row {
+#izagjkkrpx .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -6353,7 +6355,7 @@ gt(tar_read(convergence))</code></pre>
   overflow-x: hidden;
 }
 
-#vwnfdvztbd .gt_stub {
+#izagjkkrpx .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -6365,7 +6367,7 @@ gt(tar_read(convergence))</code></pre>
   padding-left: 12px;
 }
 
-#vwnfdvztbd .gt_summary_row {
+#izagjkkrpx .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -6375,7 +6377,7 @@ gt(tar_read(convergence))</code></pre>
   padding-right: 5px;
 }
 
-#vwnfdvztbd .gt_first_summary_row {
+#izagjkkrpx .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -6385,7 +6387,7 @@ gt(tar_read(convergence))</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#vwnfdvztbd .gt_grand_summary_row {
+#izagjkkrpx .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -6395,7 +6397,7 @@ gt(tar_read(convergence))</code></pre>
   padding-right: 5px;
 }
 
-#vwnfdvztbd .gt_first_grand_summary_row {
+#izagjkkrpx .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -6405,11 +6407,11 @@ gt(tar_read(convergence))</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#vwnfdvztbd .gt_striped {
+#izagjkkrpx .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#vwnfdvztbd .gt_table_body {
+#izagjkkrpx .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -6418,7 +6420,7 @@ gt(tar_read(convergence))</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#vwnfdvztbd .gt_footnotes {
+#izagjkkrpx .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -6432,13 +6434,13 @@ gt(tar_read(convergence))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#vwnfdvztbd .gt_footnote {
+#izagjkkrpx .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#vwnfdvztbd .gt_sourcenotes {
+#izagjkkrpx .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -6452,41 +6454,41 @@ gt(tar_read(convergence))</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#vwnfdvztbd .gt_sourcenote {
+#izagjkkrpx .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#vwnfdvztbd .gt_left {
+#izagjkkrpx .gt_left {
   text-align: left;
 }
 
-#vwnfdvztbd .gt_center {
+#izagjkkrpx .gt_center {
   text-align: center;
 }
 
-#vwnfdvztbd .gt_right {
+#izagjkkrpx .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#vwnfdvztbd .gt_font_normal {
+#izagjkkrpx .gt_font_normal {
   font-weight: normal;
 }
 
-#vwnfdvztbd .gt_font_bold {
+#izagjkkrpx .gt_font_bold {
   font-weight: bold;
 }
 
-#vwnfdvztbd .gt_font_italic {
+#izagjkkrpx .gt_font_italic {
   font-style: italic;
 }
 
-#vwnfdvztbd .gt_super {
+#izagjkkrpx .gt_super {
   font-size: 65%;
 }
 
-#vwnfdvztbd .gt_footnote_marks {
+#izagjkkrpx .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 65%;
@@ -6503,53 +6505,53 @@ gt(tar_read(convergence))</code></pre>
   </thead>
   <tbody class="gt_table_body">
     <tr><td class="gt_row gt_left">beta[1]</td>
-<td class="gt_row gt_right">0.505</td>
-<td class="gt_row gt_right">0.949</td></tr>
+<td class="gt_row gt_right">0.4915</td>
+<td class="gt_row gt_right">0.9475</td></tr>
     <tr><td class="gt_row gt_left">beta[2]</td>
-<td class="gt_row gt_right">0.511</td>
-<td class="gt_row gt_right">0.954</td></tr>
+<td class="gt_row gt_right">0.5055</td>
+<td class="gt_row gt_right">0.9440</td></tr>
     <tr><td class="gt_row gt_left">beta[3]</td>
-<td class="gt_row gt_right">0.475</td>
-<td class="gt_row gt_right">0.947</td></tr>
+<td class="gt_row gt_right">0.4830</td>
+<td class="gt_row gt_right">0.9470</td></tr>
     <tr><td class="gt_row gt_left">beta[4]</td>
-<td class="gt_row gt_right">0.482</td>
-<td class="gt_row gt_right">0.945</td></tr>
+<td class="gt_row gt_right">0.4870</td>
+<td class="gt_row gt_right">0.9455</td></tr>
     <tr><td class="gt_row gt_left">beta[5]</td>
-<td class="gt_row gt_right">0.473</td>
-<td class="gt_row gt_right">0.948</td></tr>
+<td class="gt_row gt_right">0.4895</td>
+<td class="gt_row gt_right">0.9480</td></tr>
     <tr><td class="gt_row gt_left">beta[6]</td>
-<td class="gt_row gt_right">0.520</td>
-<td class="gt_row gt_right">0.958</td></tr>
+<td class="gt_row gt_right">0.5105</td>
+<td class="gt_row gt_right">0.9485</td></tr>
     <tr><td class="gt_row gt_left">beta[7]</td>
-<td class="gt_row gt_right">0.504</td>
-<td class="gt_row gt_right">0.952</td></tr>
+<td class="gt_row gt_right">0.4935</td>
+<td class="gt_row gt_right">0.9490</td></tr>
     <tr><td class="gt_row gt_left">beta[8]</td>
-<td class="gt_row gt_right">0.513</td>
-<td class="gt_row gt_right">0.947</td></tr>
+<td class="gt_row gt_right">0.4935</td>
+<td class="gt_row gt_right">0.9465</td></tr>
     <tr><td class="gt_row gt_left">lambda[2,1]</td>
-<td class="gt_row gt_right">0.501</td>
-<td class="gt_row gt_right">0.951</td></tr>
+<td class="gt_row gt_right">0.5130</td>
+<td class="gt_row gt_right">0.9535</td></tr>
     <tr><td class="gt_row gt_left">lambda[2,2]</td>
-<td class="gt_row gt_right">0.487</td>
-<td class="gt_row gt_right">0.947</td></tr>
+<td class="gt_row gt_right">0.4980</td>
+<td class="gt_row gt_right">0.9495</td></tr>
     <tr><td class="gt_row gt_left">lambda[3,1]</td>
-<td class="gt_row gt_right">0.476</td>
-<td class="gt_row gt_right">0.952</td></tr>
+<td class="gt_row gt_right">0.5085</td>
+<td class="gt_row gt_right">0.9485</td></tr>
     <tr><td class="gt_row gt_left">lambda[3,2]</td>
-<td class="gt_row gt_right">0.505</td>
-<td class="gt_row gt_right">0.945</td></tr>
+<td class="gt_row gt_right">0.4980</td>
+<td class="gt_row gt_right">0.9470</td></tr>
     <tr><td class="gt_row gt_left">lambda[3,3]</td>
-<td class="gt_row gt_right">0.471</td>
-<td class="gt_row gt_right">0.935</td></tr>
+<td class="gt_row gt_right">0.4880</td>
+<td class="gt_row gt_right">0.9440</td></tr>
     <tr><td class="gt_row gt_left">sigma[1]</td>
-<td class="gt_row gt_right">0.489</td>
-<td class="gt_row gt_right">0.950</td></tr>
+<td class="gt_row gt_right">0.4975</td>
+<td class="gt_row gt_right">0.9395</td></tr>
     <tr><td class="gt_row gt_left">sigma[2]</td>
-<td class="gt_row gt_right">0.503</td>
-<td class="gt_row gt_right">0.946</td></tr>
+<td class="gt_row gt_right">0.4945</td>
+<td class="gt_row gt_right">0.9460</td></tr>
     <tr><td class="gt_row gt_left">sigma[3]</td>
-<td class="gt_row gt_right">0.499</td>
-<td class="gt_row gt_right">0.942</td></tr>
+<td class="gt_row gt_right">0.5060</td>
+<td class="gt_row gt_right">0.9465</td></tr>
   </tbody>
   
   

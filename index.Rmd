@@ -170,8 +170,8 @@ tar_stan_mcmc_rep_summary(
   reps = 10, # Number of model reps per branch target.
   chains = 4, # Number of MCMC chains.
   parallel_chains = 4, # How many MCMC chains to run in parallel.
-  iter_warmup = 2e4, # Number of MCMC warmup iterations to run.
-  iter_sampling = 2e4, # Number of MCMC post-warmup iterations to run.
+  iter_warmup = 4e4, # Number of MCMC warmup iterations to run.
+  iter_sampling = 4e4, # Number of MCMC post-warmup iterations to run.
   summaries = list(
     # Compute posterior intervals at levels 50% and 95%.
     # The 50% intervals should cover prior predictive parameter draws
@@ -186,7 +186,7 @@ tar_stan_mcmc_rep_summary(
 )
 ```
 
-After we fit the model, we assess convergence using univariate Gelman-Rubin potential scale reduction factors [@bda3] on all scalar parameters across all simulations. Below, we report the maximum Gelman factor of each visibly divergent simulation rep (i.e. with a Gelman factor above 1.01).
+After we fit the model, we assess convergence using univariate Gelman-Rubin potential scale reduction factors [@bda3] on all scalar parameters across all simulations. Below, we report the maximum Gelman factor of each visibly divergent simulation rep (i.e. with a Gelman factor above 1.01). Because this is a single target and easy to define, we can set the `tar_simple` chunk option to `TRUE`. That way, the chunk label becomes the target name, and the chunk code becomes the target command.
 
 ```{targets convergence, tar_simple = TRUE}
 mcmc %>%
@@ -196,7 +196,7 @@ mcmc %>%
   arrange(desc(max_rhat))
 ```
 
-Our last target calculates coverage levels across all simulations. Because this is a single target and easy to define, we can set the `tar_simple` chunk option to `TRUE`. That way, the chunk label becomes the target name, and the chunk code becomes the target command.
+Our last target calculates coverage levels across all simulations. 
 
 ```{targets coverage, tar_simple = TRUE}
 mcmc %>%
