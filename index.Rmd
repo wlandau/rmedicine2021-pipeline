@@ -205,7 +205,7 @@ mcmc %>%
   arrange(desc(max_rhat))
 ```
 
-Our last target calculates coverage levels across all simulations. 
+Our last target calculates coverage as averaged over the prior predictive distribution. 
 
 ```{targets coverage, tar_simple = TRUE}
 mcmc %>%
