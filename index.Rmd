@@ -260,7 +260,19 @@ Finally, we report coverage statistics. Coverage does not appear to systematical
 gt(tar_read(coverage))
 ```
 
-# Resources
+# Final notes
+
+The results above provide evidence that the model was implemented correctly. With that established, we can move on to the real task at hand: compare this model with a legacy inverse-Wishart-based model to explore how the choice of prior distribution affects inference on real clinical datasets.  
+
+## Thanks
+
+* rOpenSci software review of `stantargets`:
+    * Editor: Melina Vidoni
+    * Reviewers: Krzysztof Sakrejda and Matt Warkentin
+* Target Markdown: crucial advice from Christophe Dervieux and Yihui Xie during initial development.
+* Richard Payne and Karen Price reviewed this Bayesian model validation project.
+
+## Resources
 
 * Source: <https://github.com/wlandau/rmedicine2021-pipeline>
 * Slides: <https://wlandau.github.io/rmedicine2021-slides/>
@@ -272,4 +284,4 @@ gt(tar_read(coverage))
 * `cmdstanr`: <https://mc-stan.org/cmdstanr/>
 * `posterior`: <https://mc-stan.org/posterior/>
 
-# References
+## References
