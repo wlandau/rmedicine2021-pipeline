@@ -7,9 +7,9 @@ The `targets` R package enhances the reproducibility, scale, and maintainability
 Resource | Link
 ---|---
 Slides | <https://wlandau.github.io/rmedicine2021-slides/>
-Slide source | <https://github.com/wlandau/rmedicine2021-slides/>
+Slide source | <https://github.com/wlandau/rmedicine2021-slides>
 Pipeline report | <https://wlandau.github.io/rmedicine2021-pipeline/>
-Pipeline source | <https://github.com/wlandau/rmedicine2021-pipeline/>
+Pipeline source | <https://github.com/wlandau/rmedicine2021-pipeline>
 `targets` | <https://docs.ropensci.org/targets/>
 Target Markdown | <https://books.ropensci.org/targets/markdown.html>
 `stantargets` |  <https://docs.ropensci.org/stantargets/>
