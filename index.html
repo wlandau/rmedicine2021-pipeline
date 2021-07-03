@@ -320,7 +320,7 @@ pre code {
 </ol></li>
 <li>For each parameter <span class="math inline">\(\theta_j\)</span>, calculate coverage as averaged over the prior predictive distribution: <span class="math inline">\(C_j = \frac{1}{n} \sum_{i = 1}^r c_{ij}\)</span>. If <span class="math inline">\(C_j\)</span> is systematically different from <span class="math inline">\(x\)</span>%, then there are problems with the model, the implementation, or the validation workflow.</li>
 </ul>
-<p>This technique is similar to simulation-based calibration (SBC) <span class="citation">(Cook, Gelman, and Rubin 2006; Talts et al. 2020)</span>. SBC may be more robust than the interval-based validation technique above, but the latter is currently easier to perform with <code>stantargets</code> and easier to communicate for high-dimensional models.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<p>This technique is based on the concept of calibration explained at <a href="https://statmodeling.stat.columbia.edu/2017/04/12/bayesian-posteriors-calibrated/">https://statmodeling.stat.columbia.edu/2017/04/12/bayesian-posteriors-calibrated/</a> <span class="citation">(Carpenter 2017)</span>, and it is similar to simulation-based calibration (SBC) <span class="citation">(Cook, Gelman, and Rubin 2006; Talts et al. 2020)</span>. SBC may be more robust than the interval-based validation technique above, but interval-based validation is currently easier to perform with <code>stantargets</code> and easier to communicate for high-dimensional models.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
 </div>
 </div>
 <div id="construct-the-pipeline" class="section level1" number="2">
@@ -1274,6 +1274,9 @@ gt(tar_read(convergence))</code></pre>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-alvarez2016bayesian" class="csl-entry">
 Alvarez, Ignacio, Jarad Niemi, and Matt Simpson. 2016. <span>“Bayesian Inference for a Covariance Matrix.”</span> <a href="http://arxiv.org/abs/1408.4050">http://arxiv.org/abs/1408.4050</a>.
+</div>
+<div id="ref-carpenter2017" class="csl-entry">
+Carpenter, Bob. 2017. <span>“Bayesian Posteriors are Calibrated by Definition.”</span> <a href="https://statmodeling.stat.columbia.edu/2017/04/12/bayesian-posteriors-calibrated/">https://statmodeling.stat.columbia.edu/2017/04/12/bayesian-posteriors-calibrated/</a>.
 </div>
 <div id="ref-cook2006" class="csl-entry">
 Cook, Samantha R., Andrew Gelman, and Donald B. Rubin. 2006. <span>“Validation of Software for Bayesian Models Using Posterior Quantiles.”</span> <em>Journal of Computational and Graphical Statistics</em> 15 (3): 675–92. <a href="http://www.jstor.org/stable/27594203">http://www.jstor.org/stable/27594203</a>.

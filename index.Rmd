@@ -65,7 +65,7 @@ The goal of this validation exercise is to verify that the fitted model recovers
   4. Let $x \in (0, 1)$ be the target coverage level. (In this particular workflow, we choose values 0.5 and 0.95 for $x$.) For each scalar model parameter $\theta_j$, let $c_{ij}$ = 1 if the $100 \cdot x$% posterior interval covers the prior predictive draw of $\theta_j$ from (1). Otherwise, $c_{ij}$ = 0.
 * For each parameter $\theta_j$, calculate coverage as averaged over the prior predictive distribution: $C_j = \frac{1}{n} \sum_{i = 1}^r c_{ij}$. If $C_j$ is systematically different from $x$%, then there are problems with the model, the implementation, or the validation workflow.
 
-This technique is similar to simulation-based calibration (SBC) [@cook2006; @talts2020]. SBC may be more robust than the interval-based validation technique above, but the latter is currently easier to perform with `stantargets` and easier to communicate for high-dimensional models.^[Parameter-specific rank statistic histograms can be difficult to inspect when there are many parameters.]
+This technique is based on the concept of calibration explained at <https://statmodeling.stat.columbia.edu/2017/04/12/bayesian-posteriors-calibrated/> [@carpenter2017], and it is similar to simulation-based calibration (SBC) [@cook2006; @talts2020]. SBC may be more robust than the interval-based validation technique above, but interval-based validation is currently easier to perform with `stantargets` and easier to communicate for high-dimensional models.^[Parameter-specific rank statistic histograms can be difficult to inspect when there are many parameters.]
 
 # Construct the pipeline
 
