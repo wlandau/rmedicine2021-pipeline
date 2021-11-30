@@ -282,7 +282,7 @@ pre code {
 #&gt; }
 #&gt; parameters {
 #&gt;   vector[n_beta] beta; // vector of model coefficients
-#&gt;   vector[n_visits] sigma; // standard deviations of the response at each visit
+#&gt;   vector&lt;lower=0&gt;[n_visits] sigma; // standard deviations of the response at each visit
 #&gt;   cholesky_factor_corr[n_visits] lambda; // Cholesky factor of the correlation matrix among visits within patients
 #&gt;   vector[n_missing] y_missing; // missing values to impute
 #&gt; }

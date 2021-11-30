@@ -14,7 +14,7 @@ data {
 }
 parameters {
   vector[n_beta] beta; // vector of model coefficients
-  vector[n_visits] sigma; // standard deviations of the response at each visit
+  vector<lower=0>[n_visits] sigma; // standard deviations of the response at each visit
   cholesky_factor_corr[n_visits] lambda; // Cholesky factor of the correlation matrix among visits within patients
   vector[n_missing] y_missing; // missing values to impute
 }
