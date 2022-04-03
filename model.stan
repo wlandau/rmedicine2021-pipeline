@@ -23,6 +23,7 @@ model {
   int last_visit; // last visit/observation of the current patient
   vector[n_observations] mu = x * beta; // mean response
   vector[n_observations] y_imputed; // data vector with imputed missing values
+  matrix[n_visits, n_visits] sigma_lambda = diag_pre_multiply(sigma, lambda);
   for (observation in 1:n_observations){
     // Impute the missing data:
     y_imputed[observation] = missing[observation] == 1 ? y_missing[count_missing[observation]] : y[observation];
@@ -31,7 +32,7 @@ model {
     last_visit = patient * n_visits; // Find the last visit of the current patient.
     first_visit = last_visit - n_visits + 1; // Find the first visit of the current patient.
     // Each patient is multivariate normal with the same unstructured covariance:
-    y_imputed[first_visit:last_visit] ~ multi_normal_cholesky(mu[first_visit:last_visit], diag_pre_multiply(sigma, lambda));
+    y_imputed[first_visit:last_visit] ~ multi_normal_cholesky(mu[first_visit:last_visit], sigma_lambda);
   }
   beta ~ normal(0, s_beta); // independent fixed effects
   sigma ~ cauchy(0, s_sigma); // diffuse prior on the visit-specific standard deviations

@@ -236,7 +236,7 @@ Because there are so many simulations to run, the pipeline could take a long tim
 
 ```{r pipeline}
 unlink("logs", recursive = TRUE)
-tar_make_clustermq(workers = 100, reporter = "silent")
+tar_make_clustermq(workers = 50, reporter = "silent")
 ```
 
 The following output shows how many targets were skipped, how many ran, and how many had issues.
